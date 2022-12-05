@@ -123,6 +123,7 @@ import { generalDebounce } from "@/common/lib/utils"
 import { queryAccountBalance } from "@debionetwork/polkadot-provider"
 import { setReadNotification } from "@/common/lib/api"
 import { queryGetAssetBalance, queryGetAllOctopusAssets } from "@/common/lib/polkadot-provider/query/octopus-assets"
+import getEnv from "@/common/lib/utils/env"
 
 let timeout
 
@@ -182,7 +183,8 @@ export default {
         icon: "debio-logo",
         currency: "DBIO",
         unit: "ether",
-        balance: 0
+        balance: 0,
+        tokenId: ""
       },
 
       {
@@ -190,7 +192,8 @@ export default {
         icon: "near-logo",
         currency: "USN",
         unit: "ether",
-        balance: 0
+        balance: 0,
+        tokenId: ""
       },
 
       {
@@ -198,7 +201,8 @@ export default {
         icon: "tether-logo",
         currency: "USDT",
         unit: "mwei",
-        balance: 0
+        balance: 0,
+        tokenId: ""
       }
     ],
     octopusAsset: []
@@ -226,6 +230,14 @@ export default {
         ? this.getActiveMenu.id - 1
         : null
     }
+  },
+
+  created() {
+    this.polkadotWallets.forEach(wallet => {
+      if(wallet.name ==="usdt") {
+        wallet.tokenId = getEnv("VUE_APP_DEBIO_USDT_TOKEN_ID")
+      }
+    })
   },
 
   async mounted () {
@@ -321,10 +333,10 @@ export default {
       this.octopusAsset = []
       const assets = await queryGetAllOctopusAssets(this.api)
       for (let i = 0; i < assets.length; i++) {
-        const name = assets[i][0].toHuman()[0]
+        const tokenId = assets[i][0].toHuman()[0]
         const id = assets[i][1].toHuman()
         const data = await queryGetAssetBalance(this.api, id, this.wallet.address)
-        const assetData = {id, data, name:  name.split(".")[0]}
+        const assetData = {id, data, name:  tokenId.split(".")[0], tokenId}
         this.octopusAsset.push(assetData)
       }
 
@@ -334,7 +346,7 @@ export default {
     async fetchPolkadotBallance() {  
       this.polkadotWallets.forEach(async (wallet) => {
         if (wallet.name !== "debio") {
-          const data = this.octopusAsset.find(a => a.name === wallet.name)
+          const data = this.octopusAsset.find(a => a.name === wallet.name || a.tokenId === wallet.tokenId)
           if (!data) return
           wallet.balance = this.web3.utils.fromWei(data.data.balance.replaceAll(",", ""), wallet.unit)
           wallet.id = data.id
