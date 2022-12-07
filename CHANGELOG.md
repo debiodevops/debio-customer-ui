@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.2.1](https://github.com/debionetwork/debio-customer-ui/compare/2.2.0...2.2.1) (2022-12-05)
+
+
+### Bug Fixes
+
+* add countdown subscription in calendar ([#695](https://github.com/debionetwork/debio-customer-ui/issues/695)) ([492f756](https://github.com/debionetwork/debio-customer-ui/commit/492f756115a1b2ffeea4c1e8d2f1ba9771685fb2))
+* add new env for usdt token id ([#693](https://github.com/debionetwork/debio-customer-ui/issues/693)) ([38c64e1](https://github.com/debionetwork/debio-customer-ui/commit/38c64e1015b00b2831635a6d7bb5ef7920bae748))
+* insufficient balance for menstrual subscription ([#694](https://github.com/debionetwork/debio-customer-ui/issues/694)) ([622e5fd](https://github.com/debionetwork/debio-customer-ui/commit/622e5fddcb36004c2404de429f302230359f3540))
+
 ## [2.2.0](https://github.com/debionetwork/debio-customer-ui/compare/2.1.7...2.2.0) (2022-11-30)
 
 

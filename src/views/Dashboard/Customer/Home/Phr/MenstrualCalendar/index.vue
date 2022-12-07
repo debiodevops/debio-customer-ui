@@ -81,10 +81,16 @@
               height="240px"
             )
 
-          v-list.mt-5
-            v-list-item-content Unlock Menstrual Calendar Tracking & Prediction anonymously in decentralized manner
-            v-list-item-content Unlock Menstrual Calendar Cycle Report & Statistics
-            v-list-item-content Unlock Menstrual Calendar Journaling & Mood Tracking
+          .menstrual-calendar__list
+            .menstrual-calendar__content-list Unlock Menstrual Calendar Tracking & Prediction anonymously in decentralized manner
+            .menstrual-calendar__content-list 
+              div Unlock Menstrual Calendar Cycle Report & Statistics
+              v-alert.menstrual-calendar__alert(color="#FFE6E6" )
+                .menstrual-calendar__alert-text Coming Soon
+            .menstrual-calendar__content-list 
+              div Unlock Menstrual Calendar Journaling & Mood Tracking
+              v-alert.menstrual-calendar__alert(color="#FFE6E6" )
+                .menstrual-calendar__alert-text Coming Soon
 
         ui-debio-card.menstrual-calendar__subscription-plan(width="480")
             template(v-if="!paymentPreview")
@@ -119,6 +125,7 @@
                       .menstrual-calendar__plan-card-desc.pt-1.ml-8 {{ plan.description }}
 
                 ui-debio-button(
+                  :disabled="!subscription"
                   color="secondary"
                   width="100%"
                   @click="toPaymentPreview"
@@ -178,9 +185,9 @@ export default {
     plans: [
       {duration: "Monthly", description: "For users on a budget who want to try out menstrual date", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "Month"},
       {duration: "Quarterly", description: "For users on a budget who want to track menstrual cycle quarterly", price: 0, currency: "DBIO", usd: 0, promo: "Save 10%", periode: "3 Months"},
-      {duration: "Yearly", description: "For users on a budget who want to keep tracking menstrual cycle annualy", price: 0, currency: "DBIO", usd: 0, promo: "Save 50%", periode: "Year"}
+      {duration: "Annually", description: "For users on a budget who want to keep tracking menstrual cycle annualy", price: 0, currency: "DBIO", usd: 0, promo: "Save 50%", periode: "Year"}
     ],
-    subscription: "",
+    subscription: null,
     paymentPreview: false,
     isSuccess: false,
     showAlert: false,
@@ -324,13 +331,13 @@ export default {
         const data = await getMenstrualSubscriptionPrices(this.api, plan.duration, plan.currency) 
         const rate = await this.getRate()
         plan.price = formatPrice(data.amount, plan.currency)
-        plan.usd = (Number(plan.price.split(",").join("")) * rate).toFixed(4)
+        plan.usd = (Number(plan.price.split(",").join("")) * rate).toFixed(8)
       })
     },
 
     async getTxWeight() {
       const txWeight = await addMenstrualSubscriptionFee(this.api, this.wallet, this.subscription.duration, this.subscription.currency)
-      this.txWeight = `${Number(this.web3.utils.fromWei(String(txWeight.partialFee), "ether")).toFixed(4)} DBIO`
+      this.txWeight = `${Number(this.web3.utils.fromWei(String(txWeight.partialFee), "ether")).toFixed(8)} DBIO`
     },
 
     setActive(currency) {
@@ -480,5 +487,26 @@ export default {
       justify-content: space-between
       gap: 20px
 
+    &__alert
+      height: auto
+      padding: 2px
+      margin-bottom: 1px
+
+    &__alert-text
+      color: #FF8F8F
+      font-size: 12px
+      text-transform: none !important
+
+    &__list
+      display: flex
+      flex-direction: column
+      margin-top: 20px !important
+      gap: 20px
+
+    &__content-list
+      margin-top: 8px !important
+      display: flex
+      widows: 100%
+      gap: 10px
 
 </style>
