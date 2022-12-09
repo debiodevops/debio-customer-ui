@@ -17,13 +17,13 @@
         .menu-card__sub-title Service Price
         .menu-card__price 
           | {{ dataService.servicePrice }}
-          | {{ dataService.currency }}
+          | {{ formatUSDTE(dataService.currency) }}
     
       .menu-card__details
         .menu-card__sub-title Quality Control Price
         .menu-card__price 
           | {{ dataService.qcPrice }} 
-          | {{ dataService.currency }}
+          | {{ formatUSDTE(dataService.currency) }}
 
       .menu-card__operation +
       hr.menu-card__line
@@ -32,7 +32,7 @@
         .menu-card__sub-title-medium Total Price
         .menu-card__price-medium
           | {{ dataService.totalPrice }} 
-          | {{ dataService.currency}}
+          | {{ formatUSDTE(dataService.currency)}}
 
       .menu-card__rate ( {{ this.usdRate }} USD )
 
@@ -148,6 +148,7 @@ import { getConversion, getOrderDetail } from "@/common/lib/api"
 import { getDNACollectionProcess } from "@/common/lib/api"
 import { errorHandler } from "@/common/lib/error-handler"
 import { createOrder } from "@/common/lib/polkadot-provider/command/order"
+import { formatUSDTE } from "@/common/lib/price-format.js"
 import { processRequest } from "@/common/lib/polkadot-provider/command/service-request"
 
 
@@ -179,7 +180,8 @@ export default {
     errorTitle: "",
     errorMsg: "",
     loadingPayment: false,
-    fetching: false
+    fetching: false,
+    formatUSDTE
   }),
 
   async mounted() {
@@ -223,7 +225,6 @@ export default {
       stakingData: (state) => state.lab.stakingData,
       web3: (state) => state.metamask.web3,
       lastEventData: (state) => state.substrate.lastEventData,
-      usnBalance: (state) => state.substrate.usnBalance,
       usdtBalance: (state) => state.substrate.usdtBalance,
       polkadotWallet: (state) => state.substrate.polkadotWallet
     })
@@ -328,7 +329,7 @@ export default {
       this.loadingPayment = true
 
       try {
-        const balance =  this.dataService.currency === "USN" ? this.usnBalance : this.usdtBalance       
+        const balance = this.usdtBalance     
         if (Number(balance) - 1 <= Number(this.dataService.totalPrice.replaceAll(",", ""))) {
           this.loadingPayment = false
           this.showError = true
@@ -364,7 +365,7 @@ export default {
     },
 
     async createOrder() {
-      const assetId = await this.getAssetId(this.dataService.currency)    
+      const assetId = await this.getAssetId(this.dataService.currency === "USDTE" ? "USDT.e" : this.dataService.currency) 
       const customerBoxPublicKey = await this.getCustomerPublicKey() 
       const indexPrice = 0
       await createOrder(

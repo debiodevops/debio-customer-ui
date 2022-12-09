@@ -84,9 +84,6 @@ export default {
     SET_WALLET_BALANCE(state, balance) {
       state.walletBalance = Number(balance).toFixed(4)
     },
-    SET_USN_BALANCE(state, balance) {
-      state.usnBalance = balance
-    },
     SET_USDT_BALANCE(state, balance) {
       state.usdtBalance = balance
     },

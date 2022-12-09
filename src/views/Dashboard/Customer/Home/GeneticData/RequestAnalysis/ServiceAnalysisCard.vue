@@ -41,11 +41,11 @@
 import { mapState } from "vuex"
 import { queryGeneticAnalysisOrderById } from "@/common/lib/polkadot-provider/query/genetic-analysis-orders"
 import { queryGeneticAnalystByAccountId, queryGeneticAnalystServicesByHashId} from "@debionetwork/polkadot-provider"
-
+import { formatUSDTE } from "@/common/lib/price-format.js"
 
 export default {
   name: "ServiceAnalysisCard",
-
+  
   data: () => ({
     showDetail: false,
     serviceName: null,
@@ -95,7 +95,7 @@ export default {
     this.description = this.service.description
     this.duration = this.service.duration
     this.durationType = this.service.durationType
-    this.price = `${this.formatBalance(this.service.priceDetail[0].totalPrice, this.service.priceDetail[0].currency)} ${this.service.priceDetail[0].currency}`
+    this.price = `${this.formatBalance(this.service.priceDetail[0].totalPrice, formatUSDTE(this.service.priceDetail[0].currency))} ${formatUSDTE(this.service.priceDetail[0].currency)}`
     this.analystName = `${this.service.analystsInfo.info.firstName} ${this.service.analystsInfo.info.lastName}`
     this.specialization = this.service.analystsInfo.info.specialization
     this.profileImage = this.service.analystsInfo.info.profileImage
@@ -109,7 +109,7 @@ export default {
 
     formatBalance(balance, currency) {
       let unit
-      currency === "USDT" ? unit = "mwei" : unit = "ether"
+      currency === "USDT" || currency === "USDT.e" ? unit = "mwei" : unit = "ether"
       const formatedBalance = this.web3.utils.fromWei(String(balance.replaceAll(",", "")), unit)
       return Number(formatedBalance).toLocaleString("en-US")
     },
@@ -151,7 +151,7 @@ export default {
       this.description = service.description
       this.duration = service.duration
       this.durationType = service.durationType
-      this.price = `${this.formatBalance(service.priceDetail[0].totalPrice, service.priceDetail[0].currency)} ${service.priceDetail[0].currency}`
+      this.price = `${this.formatBalance(service.priceDetail[0].totalPrice, formatUSDTE(service.priceDetail[0].currency))} ${formatUSDTE(service.priceDetail[0].currency)}`
       this.analystName = `${service.analystsInfo.info.firstName} ${service.analystsInfo.info.lastName}`
       this.specialization = service.analystsInfo.info.specialization
       this.profileImage = service.analystsInfo.info.profileImage

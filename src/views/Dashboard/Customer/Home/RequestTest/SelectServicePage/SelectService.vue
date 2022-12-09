@@ -19,7 +19,7 @@
             :countRate="service.countServiceRate"
             :lab-name="service.labName"
             :price="service.totalPrice"
-            :currency="service.currency"
+            :currency="formatUSDTE(service.currency)"
             :city="service.city"
             :region="service.regionName"
             :country="service.countryName"
@@ -57,7 +57,7 @@ import NoLab from "../NoLab.vue"
 import MenuCard from "../MenuCard.vue"
 import ServiceDetailDialog from "../ServiceDetailDialog.vue"
 import { queryLastOrderHashByCustomer, queryOrderDetailByOrderID } from "@debionetwork/polkadot-provider"
-import { formatPrice } from "@/common/lib/price-format.js"
+import { formatPrice, formatUSDTE } from "@/common/lib/price-format.js"
 
 export default {
   name: "SelectService",
@@ -79,7 +79,8 @@ export default {
     showServiceDetailDialog: false,
     lastOrder: null,
     showAlert: false,
-    services: null
+    services: null,
+    formatUSDTE
   }),
 
   computed: {

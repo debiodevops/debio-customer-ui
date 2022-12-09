@@ -174,9 +174,7 @@ export default {
       web3: (state) => state.metamask.web3,
       lastEventData: (state) => state.substrate.lastEventData,
       mnemonicData: (state) => state.substrate.mnemonicData,
-      polkadotWallet: (state) => state.substrate.polkadotWallet,
-      usnBalance: (state) => state.substrate.usnBalance,
-      usdtBalance: (state) => state.substrate.usdtBalance
+      polkadotWallet: (state) => state.substrate.polkadotWallet
     })
   },
 

@@ -166,15 +166,19 @@ export default {
     },
 
     async getAssetId(currency) {
+
+      currency === "USDTE" ? "USDT.e" : currency
       let assetId = 0
       const wallet = this.polkadotWallet.find(wallet => wallet?.currency?.toUpperCase() === currency?.toUpperCase())
+      console.log(wallet)
+
       assetId = wallet.id
       return assetId
     },
 
     async onSelect () {
       this.loading = true
-      const balance = this.selectedService.currency === "USDT" ? this.usdtBalance : this.usnBalance
+      const balance = this.usdtBalance
       if (Number(this.selectedService.totalPrice) >= balance - 1) {
         this.error = {
           title: "Insufficient Balance",
@@ -185,7 +189,7 @@ export default {
       }
 
       const customerBoxPublicKey = await this.getCustomerPublicKey()        
-      const assetId = await this.getAssetId(this.selectedService.currency)
+      const assetId = await this.getAssetId(this.selectedService.currency === "USDTE" ? "USDT.e" : this.selectedService.currency)
 
       await createOrder(
         this.api,

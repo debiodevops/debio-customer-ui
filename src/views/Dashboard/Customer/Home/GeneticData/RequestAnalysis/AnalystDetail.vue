@@ -112,6 +112,8 @@ import { queryLastGeneticAnalysisOrderByCustomer } from "@/common/lib/polkadot-p
 import { downloadFile, uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
 // import SpinnerLoader from "@bit/joshk.vue-spinners-css.spinner-loader"
 import UploadingDialog from "@/common/components/Dialog/UploadingDialog"
+import { formatUSDTE } from "@/common/lib/price-format.js"
+
 
 export default {
   name: "AnalystDetail",
@@ -158,7 +160,8 @@ export default {
       lastEventData: (state) => state.substrate.lastEventData,
       selectedGeneticData: (state) => state.geneticData.selectedData,
       service: (state) => state.geneticData.selectedAnalysisSerivice,
-      polkadotWallet: (state) => state.substrate.polkadotWallet
+      polkadotWallet: (state) => state.substrate.polkadotWallet,
+      usdtBalance: (state) => state.substrate.usdtBalance
     }),
 
     computeAvatar() {
@@ -167,7 +170,7 @@ export default {
     },
     
     computePrice() {
-      return `${this.formatBalance(this.service.priceDetail[0].totalPrice, this.service.priceDetail[0].currency)} ${this.service.priceDetail[0].currency}`
+      return `${this.formatBalance(this.service.priceDetail[0].totalPrice, formatUSDTE(this.service.priceDetail[0].currency))} ${formatUSDTE(this.service.priceDetail[0].currency)}`
     }
   },
 
@@ -243,6 +246,11 @@ export default {
       if (this.walletBalance < txWeight) {
         this.errorAlert = true 
         this.closeDialog()
+        return
+      }
+
+      if (!this.usdtBalance) {
+        this.errorAlert = true 
         return
       }
 
@@ -377,7 +385,6 @@ export default {
     },
 
     async upload({ encryptedFileChunks, fileName, fileType, fileSize }) {
-
       for (let i = 0; i < encryptedFileChunks.length; i++) {
         const data = JSON.stringify(encryptedFileChunks[i]) // not working if the size is large
         const blob = new Blob([data], { type: fileType })
@@ -397,16 +404,15 @@ export default {
       if (this.geneticLink) {
         await this.createOrder()
       }
-
-
     },
 
     formatBalance(balance, currency) {
       let unit
-      currency === "USDT" ? unit = "mwei" : unit = "ether"
+      currency === "USDT"|| currency === "USDT.e" ? unit = "mwei" : unit = "ether"
       const formatedBalance = this.web3.utils.fromWei(String(balance.replaceAll(",", "")), unit)
       return Number(formatedBalance).toLocaleString("en-US")
     },
+
 
     async getAssetId(currency) {
       let assetId = 0
@@ -416,9 +422,10 @@ export default {
     },
 
     async createOrder() {
+      console.log("creating order...")
       const priceIndex = 0
       const currency = this.service.priceDetail[0].currency
-      const assetId = await this.getAssetId(currency)
+      const assetId = await this.getAssetId(currency === "USDTE" ? "USDT.e" : currency)
 
       await createGeneticAnalysisOrder(
         this.api,

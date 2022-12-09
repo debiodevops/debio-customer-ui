@@ -33,7 +33,7 @@
       )
         .payment-history__price-details
           | {{ formatPrice(item.service_info.prices_by_currency[0].total_price.replaceAll(',', ''), item.service_info.prices_by_currency[0].currency) }}
-          | {{ item.service_info.prices_by_currency[0].currency }}
+          | {{ formatUSDTE(item.service_info.prices_by_currency[0].currency) }}
 
       template(v-slot:[`item.status`]="{ item }")
         span(:style="{ color: setButtonBackground(item.status) }") {{ item.status }}
@@ -54,7 +54,7 @@ import { mapState } from "vuex"
 import { searchIcon } from "@debionetwork/ui-icons"
 import { generalDebounce } from "@/common/lib/utils"
 import { getOrderList } from "@/common/lib/api"
-import { formatPrice } from "@/common/lib/price-format.js"
+import { formatPrice, formatUSDTE } from "@/common/lib/price-format.js"
 
 export default {
   name: "CustomerPaymentHistory",
@@ -62,6 +62,7 @@ export default {
   data: () => ({
     searchIcon,
     formatPrice,
+    formatUSDTE,
 
     searchQuery: "",
     paymentHeaders: [

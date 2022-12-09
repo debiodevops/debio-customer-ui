@@ -271,7 +271,7 @@ export default {
 
     formatPrice(price, currency) {
       let unit
-      currency === "USDT" ? unit = "mwei" : unit = "ether"
+      currency === "USDT" || currency === "USDT.e" ? unit = "mwei" : unit = "ether"
       const formatedPrice = this.web3.utils.fromWei(String(price.replaceAll(",", "")), unit)
       return parseFloat(formatedPrice)
     },

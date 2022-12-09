@@ -12,7 +12,7 @@
               b.menu-card__service-sub-title Price
               .menu-card__service-description
                 | {{ serviceDetail.totalPrice }}
-                | {{ serviceDetail.currency }} 
+                | {{ formatUSDTE(serviceDetail.currency) }} 
             v-col(cols="6.5") 
               b.menu-card__service-sub-title Duration
               .menu-card__service-description
@@ -31,6 +31,8 @@
 <script>
 
 import { getLocations } from "@/common/lib/api"
+import { formatUSDTE } from "@/common/lib/price-format.js"
+
 
 
 export default {
@@ -40,7 +42,8 @@ export default {
   },
 
   data: () => ({
-    countries: []
+    countries: [],
+    formatUSDTE
   }),
 
   computed: {

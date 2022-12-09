@@ -143,17 +143,7 @@
 
             .subscription-setting__plan-payment-card-title PAY WITH CURRENCY
             
-            v-chip-group.subscription-setting__plan-payment-card-chips(v-model="currency" column)
-              v-chip.mr-8(label outlined large)
-                v-avatar(right width="30")
-                  v-img.pr-5(
-                    alt="no-list-data"
-                    src="@/assets/near-logo.svg"
-                    max-width="24px"
-                    max-height="24px"
-                  )
-                span.ma-3 USN (Near)
-                
+            v-chip-group.subscription-setting__plan-payment-card-chips(v-model="currency" column)                
               v-chip(label outlined large)
                 v-avatar(right width="30")
                   v-img.pr-5(
@@ -162,7 +152,7 @@
                     max-width="24px"
                     max-height="24px"
                   )
-                span.ma-3 USDT (TETHER)
+                span.ma-3 USDT.e (TETHER)
 
             .subscription-setting__trans-weight
               .subscription-setting__trans-weight-text Estimated transaction weight
