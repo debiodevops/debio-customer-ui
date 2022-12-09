@@ -113,7 +113,7 @@
                     ui-debio-card(width="410").my-1
                       .menstrual-calendar__plan-card-wrapper
                         v-radio.menstrual-calendar__plan-card-radio(
-                          :label="plan.duration" 
+                          :label="plan.label" 
                           :value="plan" 
                           color="secondary"
                         )
@@ -183,9 +183,9 @@ export default {
   data: () => ({
     alertTriangleIcon, checkCircleIcon,
     plans: [
-      {duration: "Monthly", description: "For users on a budget who want to try out menstrual date", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "Month"},
-      {duration: "Quarterly", description: "For users on a budget who want to track menstrual cycle quarterly", price: 0, currency: "DBIO", usd: 0, promo: "Save 10%", periode: "3 Months"},
-      {duration: "Annually", description: "For users on a budget who want to keep tracking menstrual cycle annualy", price: 0, currency: "DBIO", usd: 0, promo: "Save 50%", periode: "Year"}
+      {label: "Monthly", duration: "Monthly", description: "For users on a budget who want to try out menstrual date", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "Month"},
+      {label: "Quarterly", duration: "Quarterly", description: "For users on a budget who want to track menstrual cycle quarterly", price: 0, currency: "DBIO", usd: 0, promo: "Save 10%", periode: "3 Months"},
+      {label: "Annualy", duration: "Yearly", description: "For users on a budget who want to keep tracking menstrual cycle annualy", price: 0, currency: "DBIO", usd: 0, promo: "Save 50%", periode: "Year"}
     ],
     subscription: null,
     paymentPreview: false,
