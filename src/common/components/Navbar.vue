@@ -92,6 +92,7 @@
                     v-divider.navbar__balance-divider-sec
 
               template(slot="footer" v-if="getActiveMenu.action")
+                v-btn.navbar__footer-button(outlined block color="#FE379E" dark @click="exportKeystoreAction()") Export Keystore
                 v-btn.navbar__footer-button(block color="#FE379E" dark @click="handleDropdownAction(getActiveMenu.type)") {{ getActiveMenu.action }}
 
     v-progress-linear.navbar__loading(
@@ -365,6 +366,25 @@ export default {
 
     openTutorialToken() {
       window.open("https://docs.debio.network/getting-started/how-to-bridge-your-usddbio-and-usdusdt-to-the-debio-network-appchain", "__blank")
+    },
+
+    exportKeystoreAction() {
+      try {
+        const keystore = localStorage.getKeystore()
+        const address = localStorage.getAddress()
+        const file = new Blob([keystore], {type: "text/json;charset=utf-8"})
+        const downloadUrl = window.URL.createObjectURL(file)
+        const downloadLink = document.createElement("a")
+        downloadLink.href = downloadUrl
+        downloadLink.target = "_blank"
+        downloadLink.download = `${address}.json`
+
+        downloadLink.click()
+
+        window.URL.revokeObjectURL(downloadUrl)
+      } catch (err) {
+        console.error(err)
+      }
     }
   }
 }
