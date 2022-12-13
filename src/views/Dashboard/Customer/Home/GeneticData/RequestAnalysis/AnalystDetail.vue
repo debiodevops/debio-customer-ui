@@ -160,8 +160,7 @@ export default {
       lastEventData: (state) => state.substrate.lastEventData,
       selectedGeneticData: (state) => state.geneticData.selectedData,
       service: (state) => state.geneticData.selectedAnalysisSerivice,
-      polkadotWallet: (state) => state.substrate.polkadotWallet,
-      usdtBalance: (state) => state.substrate.usdtBalance
+      polkadotWallet: (state) => state.substrate.polkadotWallet
     }),
 
     computeAvatar() {
@@ -246,11 +245,6 @@ export default {
       if (this.walletBalance < txWeight) {
         this.errorAlert = true 
         this.closeDialog()
-        return
-      }
-
-      if (!this.usdtBalance) {
-        this.errorAlert = true 
         return
       }
 
@@ -422,7 +416,6 @@ export default {
     },
 
     async createOrder() {
-      console.log("creating order...")
       const priceIndex = 0
       const currency = this.service.priceDetail[0].currency
       const assetId = await this.getAssetId(currency === "USDTE" ? "USDT.e" : currency)

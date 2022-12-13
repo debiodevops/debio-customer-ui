@@ -162,7 +162,7 @@ export default {
   },
 
   watch: {
-    lastEventData(e) {
+    async lastEventData(e) {
       if (e !== null) {
         const dataEvent = JSON.parse(e.data.toString())
         if (e.method === "GeneticAnalysisOrderPaid") {
@@ -179,6 +179,7 @@ export default {
             this.$router.push({ name: "customer-request-analysis-success", params: {id: this.orderId} })
           }
         }
+        await this.getBalance()
       }
     }
   },
@@ -194,7 +195,7 @@ export default {
       await this.getBalance()
     }
 
-    if (Number(this.balance) < Number(this.orderPrice.replaceAll(",", ""))) {
+    if (Number(this.balance) <= Number(this.orderPrice.replaceAll(",", ""))) { 
       this.isDeficit = true
     }
   },

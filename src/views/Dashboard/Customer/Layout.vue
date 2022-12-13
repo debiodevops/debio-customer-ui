@@ -172,7 +172,10 @@ export default {
       { text: "Dashboard", disabled: false, active: false, route: "customer-dashboard", icon: gridIcon },
       { text: "My Test", disabled: false, active: false, route: "my-test", icon: boxIcon },
       { text: "My PHR", disabled: false, active: false, route: "customer-phr", icon: fileTextIcon, withSub: true, 
-        subMenu: [{text: "Menstrual Calendar", route: "menstrual-calendar", active: false}]
+        subMenu: [
+          {text: "Menstrual Calendar", route: "menstrual-calendar", active: false},
+          {text: "Second Opinion", route: "second-opinion", active: false}
+        ]
       },
       { text: "My Genetic Data", disabled: false, active: false, route: "customer-genetic-data", icon: geneticDnaIcon},
       { text: "Data Bounty", disabled: false, active: false, route: "customer-data-bounty-maintenance", icon: databaseIcon }, // TO ADJUST ONCE THE FEATURE IS READY

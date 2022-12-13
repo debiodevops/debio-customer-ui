@@ -95,6 +95,12 @@ export default [
           else next()
         }
       },
+      {
+        path: "phr/second-opinion",
+        name: "second-opinion",
+        meta: { pageHeader: "Second Opinion", parent: "customer-phr" },
+        component: () => import(/* webpackChunkName */ "@/views/Dashboard/Customer/Home/Phr/SecondOpinion")
+      },
 
       {
         path: "my-test/:page?",
