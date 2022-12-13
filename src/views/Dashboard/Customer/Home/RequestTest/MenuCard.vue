@@ -12,7 +12,7 @@
             .menu-card__name 
               b {{ title }}
             .menu-card__price 
-              b {{ price }} {{ currency.toUpperCase() }}
+              b {{ price }} {{ currency }}
           .menu-card__category Test Category : {{ category }}
           .menu-card__description {{ description }}
           
