@@ -337,9 +337,11 @@ export default {
         if (wallet.name !== "debio") {
           const data = this.octopusAsset.find(a => a.name === wallet.name || a.tokenId === wallet.tokenId)
           if (!data) return
-          wallet.balance = this.web3.utils.fromWei(data.data.balance.replaceAll(",", ""), wallet.unit)
           wallet.id = data.id
-          if (wallet.name === "usdt") this.setUSDTBalance(wallet.balance)
+          if (data.data) {
+            wallet.balance = this.web3.utils.fromWei(data.data.balance.replaceAll(",", ""), wallet.unit)
+            if (wallet.name === "usdt") this.setUSDTBalance(wallet.balance)
+          }
         }
       })
       this.setPolkadotWallet(this.polkadotWallets)

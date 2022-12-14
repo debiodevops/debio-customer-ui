@@ -202,8 +202,8 @@ export default {
 
   methods: {
     async getBalance() {
-      if(this.orderCurrency === "DBIO") this.balance = this.walletBalance
-      if(this.orderCurrency === "USDT" || this.orderCurrency === "USDTE") this.balance = this.usdtBalance
+      this.balance = this.orderCurrency === "DBIO" ?  this.walletBalance : 0
+      this.balance = this.orderCurrency === "USDT" || this.orderCurrency === "USDTE" && this.usdtBalance ? this.usdtBalance : 0
     },
 
     async getGeneticData() {
