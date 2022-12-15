@@ -103,6 +103,13 @@ export default [
       },
 
       {
+        path: "phr/second-opinion-request",
+        name: "second-opinion-request",
+        meta: { pageHeader: "Second Opinion", parent: "customer-phr" },
+        component: () => import(/* webpackChunkName */ "@/views/Dashboard/Customer/Home/Phr/SecondOpinion/RequestPage/index.vue")
+      },
+
+      {
         path: "my-test/:page?",
         name: "my-test",
         meta: { pageHeader: "My Test" },
