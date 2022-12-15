@@ -193,6 +193,7 @@ export default {
 
     async fetchData () {
       try {
+        this.isLoadingData = true
         const { data } = await getServiceRequestByCustomer(this.pair.address)
         this.items = data
         this.items.sort((a, b) => {
@@ -210,9 +211,9 @@ export default {
           return 0
           
         })
-        this.isLoadingData = false
       } catch (error) {
         console.log(error)
+      } finally {
         this.isLoadingData = false
       }
     },
