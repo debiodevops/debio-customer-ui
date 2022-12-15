@@ -1,7 +1,7 @@
 export default Object.freeze({
-  FERTILITY: "Today is your fertilation day, on this day you have high probability of pergancy during sexual intercourse.",
-  OVULATION: "Today is your ovulation day, on this day you have high probability of pergancy during sexual intercourse.",
-  NONE: "Today is your normal day of menstrual cycle, on this day you have low probability of pergancy during sexual intercourse",
+  FERTILITY: "Today is your fertilization day, on this day you have high probability of pregnancy during sexual intercourse.",
+  OVULATION: "Today is your ovulation day, on this day you have high probability of pregnancy during sexual intercourse.",
+  NONE: "Today is your normal day of menstrual cycle, on this day you have low probability of pregnancy during sexual intercourse",
   MENSTRUATION: (num) => {
     let day 
 
@@ -13,6 +13,6 @@ export default Object.freeze({
     if (num === 6) day = "sixth"
     if (num === 7) day = "seventh"
 
-    return `Today is your ${day} day of your menstruation cycle, on this day you have low probability of pergancy during sexual intercourse.`
+    return `Today is your ${day} day of your menstruation cycle, on this day you have low probability of pregnancy during sexual intercourse.`
   }
 })

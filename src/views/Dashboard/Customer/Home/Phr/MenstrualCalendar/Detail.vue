@@ -273,8 +273,8 @@ export default {
 
     getSummary() {
       if(this.todaySum.menstruation) return moods.MENSTRUATION(this.todaySum.days)
-      if(this.todaySum.fertility) return moods.FERTILITY
       if(this.todaySum.ovulation) return moods.OVULATION
+      if(this.todaySum.fertility) return moods.FERTILITY
       return moods.NONE
     },
 
