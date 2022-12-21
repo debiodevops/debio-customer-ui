@@ -39,8 +39,7 @@
 
 <script>
 import { mapState } from "vuex"
-import { queryGeneticAnalysisOrderById } from "@/common/lib/polkadot-provider/query/genetic-analysis-orders"
-import { queryGeneticAnalystByAccountId, queryGeneticAnalystServicesByHashId} from "@debionetwork/polkadot-provider"
+import { queryGeneticAnalysisOrderById, queryGeneticAnalystByAccountId, queryGeneticAnalystServicesByHashId} from "@debionetwork/polkadot-provider"
 import { formatUSDTE } from "@/common/lib/price-format.js"
 
 export default {
