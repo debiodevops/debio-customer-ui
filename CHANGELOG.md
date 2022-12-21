@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.3.0](https://github.com/debionetwork/debio-customer-ui/compare/2.2.1...2.3.0) (2022-12-16)
+
+
+### Features
+
+* add pop up install polkadot extension ([#714](https://github.com/debionetwork/debio-customer-ui/issues/714)) ([d906d6f](https://github.com/debionetwork/debio-customer-ui/commit/d906d6fcaa9a43abe8e0882c4a0c91391864f21c))
+* add second opinion and fix bugs ([#709](https://github.com/debionetwork/debio-customer-ui/issues/709)) ([7a6fb30](https://github.com/debionetwork/debio-customer-ui/commit/7a6fb3042220e04139058c48030f59a322fec6d8))
+* change USDT to USDT.e ([#698](https://github.com/debionetwork/debio-customer-ui/issues/698)) ([4832f15](https://github.com/debionetwork/debio-customer-ui/commit/4832f15daa18a1d903a2227eb8a95261b62dd78c))
+* export keystore ([#708](https://github.com/debionetwork/debio-customer-ui/issues/708)) ([67d30cc](https://github.com/debionetwork/debio-customer-ui/commit/67d30ccc13b97e645c944fa8ae9467e22bc258be))
+
+
+### Bug Fixes
+
+* coming soon label menstrual calendar landing page ([#697](https://github.com/debionetwork/debio-customer-ui/issues/697)) ([13f09e3](https://github.com/debionetwork/debio-customer-ui/commit/13f09e3c7ed14479fefd47c082bd4090c9f25fa5))
+* payemnt when no octopusAsset ([36ec2bc](https://github.com/debionetwork/debio-customer-ui/commit/36ec2bcc9313bf30e80cd50fb0898315b706e66e))
+* payment when no octopusAsset ([#718](https://github.com/debionetwork/debio-customer-ui/issues/718)) ([36ec2bc](https://github.com/debionetwork/debio-customer-ui/commit/36ec2bcc9313bf30e80cd50fb0898315b706e66e))
+* query price menstrual subscription ([#705](https://github.com/debionetwork/debio-customer-ui/issues/705)) ([73626c5](https://github.com/debionetwork/debio-customer-ui/commit/73626c5152b36e6be19c0718c1de9179e5c86f68))
+* remove toUpperCase on menu card ([#712](https://github.com/debionetwork/debio-customer-ui/issues/712)) ([3a4224d](https://github.com/debionetwork/debio-customer-ui/commit/3a4224dd12522c4c10a556146672739b56728631))
+* staking tab ([#715](https://github.com/debionetwork/debio-customer-ui/issues/715)) ([a6ce9b3](https://github.com/debionetwork/debio-customer-ui/commit/a6ce9b3c4869f3a72ee8ffbb095a83c0057dfd5f))
+* typos on summary component ([#713](https://github.com/debionetwork/debio-customer-ui/issues/713)) ([3d8bfda](https://github.com/debionetwork/debio-customer-ui/commit/3d8bfdac515a0682a5fb98bf2cafd95d36a1adb9))
+* USDTE on Payment Details page ([#707](https://github.com/debionetwork/debio-customer-ui/issues/707)) ([7cb9e77](https://github.com/debionetwork/debio-customer-ui/commit/7cb9e77c195efc38da40e6ae448f066ce7352489))
+
 ## [2.2.1](https://github.com/debionetwork/debio-customer-ui/compare/2.2.0...2.2.1) (2022-12-05)
 
 
