@@ -1,5 +1,30 @@
 <template lang="pug">
   v-card.grant-access-card
+    ui-debio-modal.hp-dashboard__modal-connect(
+      :show="showConnect"
+      :show-title="false"
+      :show-cta="false"
+      @onClose="showConnect = false"
+    )
+      v-img(
+        alt="debio-to-myriad"
+        src="@/assets/debio-to-myriad.svg"
+        max-width="129px"
+        max-height="48px"
+      )
+
+      h2.mt-5 Redirecting You to Myriad
+      .grant-access-card__subtitle
+        p The Second Opinion Marketplace requires a Polkadot account to conduct transactions.
+        p By clicking this button below, you will download your account's keystore and you will be asked to upload that keystore in the Polkadot extension to export your account.
+        p Do you wish to continue?
+
+      ui-debio-button(
+        width="304px"
+        block
+        color="secondary"
+        @click="toContinue"
+      ) CONTINUE & EXPORT KEYSTORE
 
     ui-debio-modal(
       :show="showModal"
@@ -97,6 +122,7 @@
           width="100px"
           block
           color="secondary"
+          @click="toSecondOpinion"
         ) Next
 
     template(v-if="isAddNewPHR")
@@ -251,6 +277,7 @@ import { validateForms } from "@/common/lib/validate"
 import { errorHandler } from "@/common/lib/error-handler"
 import { uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
 import { fileTextIcon, alertIcon, pencilIcon, trashIcon, eyeOffIcon, eyeIcon } from "@debionetwork/ui-icons"
+import { web3Enable, web3Accounts, web3FromAddress } from "@polkadot/extension-dapp"
 
 
 const englishAlphabet = val => (val && /^[A-Za-z0-9!@#$%^&*\\(\\)\-_=+:;"',.\\/? ]+$/.test(val)) || errorMessage.INPUT_CHARACTER("English alphabet")
@@ -268,6 +295,7 @@ export default {
     showModal: false,
     fileEmpty: false,
     disabledButton: false,
+    showConnect: false,
     showModalConfirm: null,
     publicKey: null,
     secretKey: null,
@@ -435,6 +463,29 @@ export default {
     onDelete(id) {
       this.showModalConfirm = null
       this.phr.files = this.phr.files.filter(file => file.createdAt !== id)
+    },
+    
+    toSecondOpinion() {
+      console.log("toSecondOpinion")
+      this.showConnect = true
+    },
+
+    async toContinue() {
+      const sender = this.wallet.address
+      const allInjected = await web3Enable("Debio Network");
+      if (!allInjected) return this.isNotInstalled = false
+
+      const allAccounts = await web3Accounts()
+      if (!allAccounts.length) await this.exportKeystoreAction()
+      
+      const account = allAccounts.find(account => account.address === sender)
+      if(!account) await this.exportKeystoreAction()
+
+      const injector = await web3FromAddress(sender)
+      if (injector) {
+        this.showConnect = false
+        this.$router.push({ name: "connecting-page"})
+      }
     },
 
     async getPHRHistory() {
@@ -716,6 +767,9 @@ export default {
 
     &__checkbox
       margin-top: -5px !important
+
+    &__subtitle
+      width: 304px
 
     &__document-title,
     &__document-category,

@@ -12,6 +12,12 @@ const routes = [
   {
     path: "*",
     component: () => import(/* webpackChunkName */ "@/views/NotFound")
+  },
+
+  {
+    path: "/connecting-page",
+    name: "connecting-page",
+    component: () => import(/* webpackChunkName */ "@/views/Dashboard/Customer/Home/Phr/SecondOpinion/ConnectingPage")
   }
 ]
 

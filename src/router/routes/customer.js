@@ -95,6 +95,7 @@ export default [
           else next()
         }
       },
+
       {
         path: "phr/second-opinion",
         name: "second-opinion",
