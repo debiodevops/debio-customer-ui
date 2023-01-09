@@ -179,10 +179,10 @@ export default {
     async onSelect () {
       this.loading = true
       const balance = this.usdtBalance
-      if (Number(this.selectedService.totalPrice) >= balance - 1) {
+      if (Number(this.selectedService.totalPrice) >= balance - 0.1) {
         this.error = {
           title: "Insufficient Balance",
-          message: "Your transaction cannot succeed due to insufficient balance, check your account balance"
+          message: "Your transaction cannot succeed due to insufficient balance or do not meet minimum deposit amount, check your account balance"
         }
         this.loading = false 
         return
