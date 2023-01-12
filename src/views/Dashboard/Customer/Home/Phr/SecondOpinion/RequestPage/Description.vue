@@ -17,7 +17,7 @@
       variant="large"
       label="Describe your symptoms"
       placeholder="Describe how you feels..."
-      v-model="description"
+      v-model="symptoms"
       validate-on-blur
       outlined
       block
@@ -43,19 +43,19 @@ export default {
 
   data: () => ({
     category: null,
-    description: null
+    symptoms: null
   }),
 
   computed: {
     disable() {
-      return !this.category || !this.description
+      return !this.category || !this.symptoms
     }
   },
 
 
   methods: {
     onSubmit() {
-      this.$emit("click", {category: this.category, description:this.description})
+      this.$emit("click", {category: this.category, symptoms:this.symptoms})
     }
   }
 

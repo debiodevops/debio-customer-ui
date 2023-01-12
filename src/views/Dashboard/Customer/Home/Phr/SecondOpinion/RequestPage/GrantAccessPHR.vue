@@ -278,6 +278,7 @@ import { errorHandler } from "@/common/lib/error-handler"
 import { uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
 import { fileTextIcon, alertIcon, pencilIcon, trashIcon, eyeOffIcon, eyeIcon } from "@debionetwork/ui-icons"
 import { web3Enable, web3Accounts, web3FromAddress } from "@polkadot/extension-dapp"
+import localStorage from "@/common/lib/local-storage"
 
 
 const englishAlphabet = val => (val && /^[A-Za-z0-9!@#$%^&*\\(\\)\-_=+:;"',.\\/? ]+$/.test(val)) || errorMessage.INPUT_CHARACTER("English alphabet")
@@ -466,13 +467,13 @@ export default {
     },
     
     toSecondOpinion() {
-      console.log("toSecondOpinion")
       this.showConnect = true
     },
 
     async toContinue() {
       const sender = this.wallet.address
-      const allInjected = await web3Enable("Debio Network");
+      const allInjected = await web3Enable("Debio Network")
+
       if (!allInjected) return this.isNotInstalled = false
 
       const allAccounts = await web3Accounts()
@@ -485,6 +486,25 @@ export default {
       if (injector) {
         this.showConnect = false
         this.$router.push({ name: "connecting-page"})
+      }
+    },
+
+    exportKeystoreAction(){
+      try {
+        const keystore = localStorage.getKeystore()
+        const address = localStorage.getAddress()
+        const file = new Blob([keystore], {type: "text/json;charset=utf-8"})
+        const downloadUrl = window.URL.createObjectURL(file)
+        const downloadLink = document.createElement("a")
+        downloadLink.href = downloadUrl
+        downloadLink.target = "_blank"
+        downloadLink.download = `${address}.json`
+
+        downloadLink.click()
+
+        window.URL.revokeObjectURL(downloadUrl)
+      } catch (err) {
+        console.error(err)
       }
     },
 

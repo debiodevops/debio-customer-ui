@@ -8,6 +8,7 @@ import lab from "./lab"
 import rating from "./rating"
 import geneticData from "./genetic-data"
 import menstrualCalendar from "./menstrual-calendar"
+import secondOpinion from "./second-opinion"
 
 
 
@@ -23,7 +24,8 @@ export default new Vuex.Store({
     lab,
     rating,
     geneticData,
-    menstrualCalendar
+    menstrualCalendar,
+    secondOpinion
   },
   state: {
   },

@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex"
 import Description from "./Description"
 import GrantAccessPHR from "./GrantAccessPHR"
 
@@ -46,9 +47,15 @@ export default {
 
   components: { Description, GrantAccessPHR },
 
-
   methods: {
+    ...mapMutations({
+      setSecondOpinionCategory: "secondOpinion/SET_SECOND_OPINION_CATEGORY",
+      setSecondOpinionSymptoms: "secondOpinion/SET_SECOND_OPINION_SYMPTOMS"
+    }),
+
     onSubmit(val) {
+      this.setSecondOpinionCategory(val.category)
+      this.setSecondOpinionSymptoms(val.symptoms)
       this.dataRequest = val
       this.isDescribing = false
       this.step = 2

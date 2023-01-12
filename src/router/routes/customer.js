@@ -87,8 +87,8 @@ export default [
       },
       {
         path: "phr/maintenance",
-        name: "menstrual-calendar-maintenance",
-        meta: { pageHeader: "Menstrual Calendar", parent: "customer-phr" },
+        name: "second-opinion-maintenance",
+        meta: { pageHeader: "Second Opinion", parent: "customer-phr" },
         component: () => import(/* webpackChunkName */ "@/views/Dashboard/maintenancePageLayout"),
         beforeEnter: (to, from, next) => {
           if (from.path === "") next({ name: "customer-dashboard" })
