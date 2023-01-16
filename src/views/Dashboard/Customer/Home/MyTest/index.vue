@@ -129,8 +129,8 @@
                         ui-debio-button.pa-4(
                           height="25px"
                           width="50%"
-                          color="secondary"
                           dark
+                          color="#F3F3F3"
                           :bind="attrs"
                           :on="on"
                         ) Add As Bounty
