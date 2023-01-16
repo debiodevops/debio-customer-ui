@@ -30,7 +30,7 @@
 
     ui-debio-banner.customer-test__banner(
       title="My Test"
-      subtitle="Privacy-first biomedical process. Get your own biomedical sample at home, proceed it anonymously to expert and scientist!"
+      subtitle="Collect your own biological sample at home and package it to an expert and/or scientist"
       with-decoration
       gradientColor="tertiary"
     )
@@ -56,9 +56,9 @@
       .customer-my-test__tabs
         template
           v-tabs(v-model="tabs")
-            v-tab.tab-section Test List
+            v-tab.tab-section Orders
             
-            v-tab.tab-section Stake Service
+            v-tab.tab-section Request Service
               
         v-tabs-items(v-model="tabs")
           v-tab-item
@@ -159,7 +159,7 @@
 
           LoadingDialog(
             :show="loadingDialog"
-            desc="Please wait while we're processing your payment"
+            desc="Please wait while we are processing your payment."
           )
 
           ui-debio-error-dialog(
