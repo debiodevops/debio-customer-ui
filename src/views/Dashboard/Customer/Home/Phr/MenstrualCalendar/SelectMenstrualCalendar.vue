@@ -546,7 +546,7 @@ export default {
     async onSubmitAverage() {
       this.startDaySelectedAverage = this.daySelectedAverage
       this.selectAverage = false
-      this.stepText = "By choosing your menstrual day, you’ll get your menstrual calendar information"
+      this.stepText = "by choosing your menstrual dates. we will estimate your menstruation date"
     },
 
     goToDetailMenstrual() {

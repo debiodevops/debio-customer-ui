@@ -450,7 +450,7 @@ export default {
       const endDateSubscription = date + this.durationSubscription[subscriptionDetail.duration]
 
       const reminder = Math.ceil((endDateSubscription - currentDate) / (24 * 60 * 60 * 1000))
-      if (reminder < 30) {
+      if (reminder <= 30) {
         this.reminder = reminder === 1 ? `${reminder} Day` : `${reminder} Days`
       } else if (reminder < 365) {
         const month = Math.floor(reminder / 30)

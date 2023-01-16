@@ -60,7 +60,7 @@
           stroke
         )
 
-        .menstrual-calendar__modal-desc Contratulations! Now you have unlocked menstrual calendar feature
+        .menstrual-calendar__modal-desc Congratulations! You have unlocked the menstrual calendar feature
 
         ui-debio-button(
           color="secondary" 
@@ -72,7 +72,7 @@
 
       .menstrual-calendar__subscription
         ui-debio-card.menstrual-calendar__subscription-text(width="654")
-          .menstrual-calendar__subscription-text-span Get my subscription plan!
+          .menstrual-calendar__subscription-text-span Get a Subcription plan!
           .menstrual-calendar__subscription-text-header Benefit of Subscription
           v-img.mt-10(
               block
@@ -82,7 +82,7 @@
             )
 
           .menstrual-calendar__list
-            .menstrual-calendar__content-list Unlock Menstrual Calendar Tracking & Prediction anonymously in decentralized manner
+            .menstrual-calendar__content-list Unlock Anonymous Menstrual Calendar Tracking & Estimation in Decentralized Manner
             .menstrual-calendar__content-list 
               div Unlock Menstrual Calendar Cycle Report & Statistics
               v-alert.menstrual-calendar__alert(color="#FFE6E6" )
@@ -139,7 +139,7 @@
                   .menstrual-calendar__plan-payment-card-total-text {{ subscription.duration }}
                   .menstrual-calendar__plan-card-price Burn {{ subscription.price }} {{ subscription.currency }}/ {{ subscription.periode}}                  
                     .menstrual-calendar__plan-card-price-convert ({{ subscription.usd }} USD)
-                .menstrual-calendar__plan-payment-card-notes Any eligible subscription credit will be applied until it runs out. Your subscription will renew for {{ subscription.price }} {{ subscription.currency }} / {{ subscription.periode }} on {{getExpiredDate( subscription.periode )}}. Have any questions? 
+                .menstrual-calendar__plan-payment-card-notes Any eligible subscription credit will be applied until it runs out. Your subscription will be renew for {{ subscription.price }} {{ subscription.currency }} / {{ subscription.periode }} on {{getExpiredDate( subscription.periode )}}. Have any questions? 
                   a Contact our support team
 
 
@@ -183,9 +183,9 @@ export default {
   data: () => ({
     alertTriangleIcon, checkCircleIcon,
     plans: [
-      {label: "Monthly", duration: "Monthly", description: "For users on a budget who want to try out menstrual date", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "Month"},
-      {label: "Quarterly", duration: "Quarterly", description: "For users on a budget who want to track menstrual cycle quarterly", price: 0, currency: "DBIO", usd: 0, promo: "Save 10%", periode: "3 Months"},
-      {label: "Annualy", duration: "Yearly", description: "For users on a budget who want to keep tracking menstrual cycle annualy", price: 0, currency: "DBIO", usd: 0, promo: "Save 50%", periode: "Year"}
+      {label: "Monthly", duration: "Monthly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "Month"},
+      {label: "Quarterly", duration: "Quarterly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 10%", periode: "3 Months"},
+      {label: "Annualy", duration: "Yearly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 50%", periode: "Year"}
     ],
     subscription: null,
     paymentPreview: false,

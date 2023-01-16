@@ -3,7 +3,7 @@
     .menstrual-calendar-banner
       .menstrual-calendar-banner__content
         .menstrual-calendar-banner__title Menstrual Calendar
-        .menstrual-calendar-banner__sub-title Smart way to track menstrual cycles.
+        .menstrual-calendar-banner__sub-title Smart way to track your menstrual calendar.
 
       v-img(
         alt="no-list-data"
