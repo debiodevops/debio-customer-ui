@@ -23,27 +23,26 @@
           .dialog-service__sub-title Description
           .dialog-service__description {{ computeLongDescription }}
 
-          .dialog-service__link(v-if="computePurchaseLink")
-            b Link Purchase Kit: 
-            a(:href="computePurchaseLink" target="_blank") {{ computePurchaseLink }}
-
         div.dialog-service__service-duration
-          .dialog-service__sub-title Maximum Duration
+          .dialog-service__sub-title Expected Duration
           .dialog-service__description          
             div {{ selectedService.duration }} {{ selectedService.durationType}}
       
-      v-row.dialog-service__lab-detail
-        v-col(cols="3")
+      .dialog-service__lab-detail
+        div
           ui-debio-avatar.dialog-service__lab-image(:src="selectedService.labImage" size="75" rounded)
         
-        v-col(cols="6")
-          .dialog-service__sub-title {{ selectedService.labName }}
+        .dialog-service__lab-detail-v-info
+          .dialog-service__lab-detail-h-info
+            .dialog-service__sub-title {{ selectedService.labName }}
+            ui-debio-rating(:rating="selectedService.labRate" :total-reviews="selectedService.countRateLab" size="10")
+          
           .dialog-service__address          
             span {{ selectedService.labAddress }}, {{ selectedService.city }}, {{ country(selectedService.country) }}
-
-        v-col(cols="3")
-          ui-debio-rating(:rating="selectedService.labRate" :total-reviews="selectedService.countRateLab" size="10")         
-
+          .dialog-service__link(v-if="computePurchaseLink")
+            b Website: 
+            a(:href="computePurchaseLink" target="_blank") {{ computePurchaseLink }}
+       
       .dialog-service__button
         ui-debio-button.dialog-service__button-text(
           color="secondary" 
@@ -234,8 +233,6 @@ export default {
       margin: 0rem 2.25rem
 
     &__service-description
-      max-height: 160px
-      overflow: scroll
       margin-bottom: 1.125rem
 
     &__title
@@ -265,7 +262,17 @@ export default {
       @include body-text-3-opensans
 
     &__lab-detail
-      padding: 10px 30px
+      display: flex
+      gap: 6px
+      padding: 10px 35px
+
+    &__lab-detail-h-info
+      display: flex
+      justify-content: space-between
+
+    &__lab-detail-v-info
+      display: flex
+      flex-direction: column
 
     &__button
       margin-top: 15px

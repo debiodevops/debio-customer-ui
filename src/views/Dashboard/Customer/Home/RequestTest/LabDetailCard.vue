@@ -26,6 +26,7 @@
         b.menu-card__lab-title {{ serviceDetail.labName }}
           ui-debio-rating.menu-card__rating(:rating="serviceDetail.labRate" :total-reviews="serviceDetail.countRateLab" size="10")
           .menu-card__address {{ serviceDetail.labAddress }}, {{ serviceDetail.city }}, {{ computeCountry(serviceDetail.country) }}
+          a(:href="computePurchaseLink" target="_blank") {{ computePurchaseLink }}
 </template>
 
 <script>
@@ -49,6 +50,10 @@ export default {
   computed: {
     computeAvatar() {
       return this.serviceDetail.serviceImage ? this.serviceDetail.serviceImage : require("@/assets/debio-logo.png")
+    },
+
+    computePurchaseLink () {
+      return this.serviceDetail.longDescription.split("||")[1]
     }
   },
 
@@ -134,6 +139,11 @@ export default {
       margin: 35px 20px
     
     &__address
+      width: 201px
+      color: #757274
+      @include body-text-3-opensans
+
+    &__website
       width: 201px
       color: #757274
       @include body-text-3-opensans
