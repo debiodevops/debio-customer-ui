@@ -15,7 +15,7 @@
           src="@/assets/menstrual-calendar-dialog.svg"
           height="160px"
         )
-        
+
         .menstrual-calendar-detail__modal-desc Choose date to perform action, select preffered action in the right of the calendar
         ui-debio-button(
           color="secondary"
@@ -37,7 +37,7 @@
               span.menstrual-calendar-detail__head-text-reminder
                 v-icon(small color="rgba(255, 143, 143, 1)") mdi-clock-outline 
                 span Your subscription will end in {{ reminder }}
-          
+
           v-divider.menstrual-calendar-detail__divider
 
           .menstrual-calendar-detail__options
@@ -84,7 +84,7 @@
           .menstrual-calendar-detail__note
             .menstrual-calendar-detail__note-text Note
             span.menstrual-calendar-detail__note-desc your previous menstrual cycle does not guarantee your future menstrual cycle medically or diagnostically
-            
+
 
         .menstrual-calendar-detail__menu
           ui-debio-card.menstrual-calendar-detail__summary(width="394")
@@ -98,7 +98,7 @@
               .menstrual-calendar-detail__summary-text
                 .menstrual-calendar-detail__summary-title Summary
                 .menstrual-calendar-detail__summary-desc Today Overview
-          
+
           ui-debio-card(width="394")
             .menstrual-calendar-detail__text {{ getSummary() }}
 
@@ -139,9 +139,9 @@
               .menstrual-calendar-detail__setting-text
                 .menstrual-calendar-detail__summary-title Menstrual Calendar Settings
                 .menstrual-calendar-detail__summary-desc Update menstruation day and subscription
-           
+
             v-divider.menstrual-calendar-detail__navigation
-            
+
             ui-debio-button.menstrual-calendar-detail__button(
               color="#F3F3F3" 
               height="48"
@@ -155,12 +155,10 @@
               color="#F3F3F3" 
               height="48"
               width="100%"
-              disabled
               @click="toSubscriptionSetting()"
             ) 
               .menstrual-calendar-detail__button-text Subscription Settings
-              v-alert.menstrual-calendar-detail__alert.ml-1(color="#FFE6E6" )
-                .menstrual-calendar-detail__alert-text Coming Soon
+
               v-icon mdi-chevron-right
 
             ui-debio-button.menstrual-calendar-detail__button(
@@ -202,18 +200,18 @@ export default {
     showStart: false,
     averageCycle: 0,
     monthList: [
-      {value: 0, text: "January"},
-      {value: 1, text: "February"},
-      {value: 2, text: "March"},
-      {value: 3, text: "April"},
-      {value: 4, text: "May"},
-      {value: 5, text: "June"},
-      {value: 6, text: "July"},
-      {value: 7, text: "August"},
-      {value: 8, text: "September"},
-      {value: 9, text: "October"},
-      {value: 10, text: "November"},
-      {value: 11, text: "December"}
+      { value: 0, text: "January" },
+      { value: 1, text: "February" },
+      { value: 2, text: "March" },
+      { value: 3, text: "April" },
+      { value: 4, text: "May" },
+      { value: 5, text: "June" },
+      { value: 6, text: "July" },
+      { value: 7, text: "August" },
+      { value: 8, text: "September" },
+      { value: 9, text: "October" },
+      { value: 10, text: "November" },
+      { value: 11, text: "December" }
     ],
     menstrualCalendarData: null,
     menstruationPeriodeIndex: [],
@@ -233,7 +231,7 @@ export default {
     ...mapState({
       api: (state) => state.substrate.api,
       wallet: (state) => state.substrate.wallet
-    })  
+    })
   },
 
   watch: {
@@ -258,10 +256,10 @@ export default {
         this.selectedMonth = 11
         this.selectedYear--
       }
-      this.selectedMonthText = this.monthList[this.selectedMonth].text        
+      this.selectedMonthText = this.monthList[this.selectedMonth].text
     },
 
-    next() { 
+    next() {
       if (this.selectedMonth < 11) {
         this.selectedMonth++
       } else {
@@ -272,9 +270,9 @@ export default {
     },
 
     getSummary() {
-      if(this.todaySum.menstruation) return moods.MENSTRUATION(this.todaySum.days)
-      if(this.todaySum.ovulation) return moods.OVULATION
-      if(this.todaySum.fertility) return moods.FERTILITY
+      if (this.todaySum.menstruation) return moods.MENSTRUATION(this.todaySum.days)
+      if (this.todaySum.ovulation) return moods.OVULATION
+      if (this.todaySum.fertility) return moods.FERTILITY
       return moods.NONE
     },
 
@@ -286,7 +284,7 @@ export default {
         const today = new Date()
         const firstDateCurrentMonth = new Date(this.selectedYear, this.selectedMonth, 1)
         const firstDateNextMonth = new Date(this.selectedYear, this.selectedMonth + 1, 0)
-        
+
         const dayFirstDateCurrentMonth = firstDateCurrentMonth.getDay() === 0 ? 6 : firstDateCurrentMonth.getDay() - 1
         const dayFirstDateNextMonth = firstDateNextMonth.getDay() === 0 ? 6 : firstDateNextMonth.getDay() - 1
 
@@ -302,7 +300,7 @@ export default {
         let indexDate = 0
         this.menstruationPeriodeIndex = []
 
-        const menstrualCycleLogByOwner = await getLastMenstrualCalendarCycleLogByOwner(this.api, menstrualCalendar[menstrualCalendar.length-1])
+        const menstrualCycleLogByOwner = await getLastMenstrualCalendarCycleLogByOwner(this.api, menstrualCalendar[menstrualCalendar.length - 1])
         const cycle = []
 
         for (let i = 0; i < menstrualCycleLogByOwner.length; i++) {
@@ -321,13 +319,13 @@ export default {
           if (cycle[i].menstruation) {
             if (i === 0) {
               temp.push(cycle[i])
-            } else if(new Date(yesterday).getDate() !== day - 1) {
+            } else if (new Date(yesterday).getDate() !== day - 1) {
               temp.push(cycle[i])
             }
           }
         }
 
-        const lastMens = temp[temp.length-1]
+        const lastMens = temp[temp.length - 1]
 
         let firstDayOfLastPeriod
         let lastMonthPrediction = []
@@ -336,7 +334,7 @@ export default {
 
         // define cycle when first day of menstruation is in the middle - end of month
 
-        if(lastMens) {
+        if (lastMens) {
           firstDayOfLastPeriod = new Date(Number(lastMens.date.replaceAll(",", "")))
           for (let pointer = 0; pointer < 17; pointer++) { // loop up to 16 as the longest date for fertility
 
@@ -363,7 +361,7 @@ export default {
             }
 
 
-            const lastPeriod =  temp.find(t => new Date(Number(t.date.replaceAll(",", ""))).getMonth() === this.selectedMonth - 1)
+            const lastPeriod = temp.find(t => new Date(Number(t.date.replaceAll(",", ""))).getMonth() === this.selectedMonth - 1)
 
             // calculate fertility days (9 dayas)
             if (pointer > 8) {
@@ -389,7 +387,7 @@ export default {
 
         // define cycle when first day of menstruation is in the beginning of month
 
-        while(date.getTime() < endDate.getTime()) {
+        while (date.getTime() < endDate.getTime()) {
           date = new Date(this.selectedYear, this.selectedMonth, (-(dayFirstDateCurrentMonth - 1) + indexDate))
           const log = cycle.filter(log => Number(log.date.replaceAll(",", "")) === date.getTime())
           const menstruation = log[0]
@@ -400,9 +398,9 @@ export default {
 
           let currentData = {
             date: date.getTime(),
-            menstruation: log.length && menstruation.menstruation ? 1: 0,
-            prediction: lastMonthPrediction.find(pred => pred === date.getTime()) || (indexDate >= this.menstruationPeriodeIndex[0] + Number(data.averageCycle) &&  indexDate < this.menstruationPeriodeIndex[0] + Number(data.averageCycle) + 5) ? 1 : 0,
-            fertility:  lastMonthFertility.find(pred => pred === date.getTime()) || indexDate >= this.menstruationPeriodeIndex[0] + 8 && indexDate <= this.menstruationPeriodeIndex[0] + 16 ? 1 : 0,
+            menstruation: log.length && menstruation.menstruation ? 1 : 0,
+            prediction: lastMonthPrediction.find(pred => pred === date.getTime()) || (indexDate >= this.menstruationPeriodeIndex[0] + Number(data.averageCycle) && indexDate < this.menstruationPeriodeIndex[0] + Number(data.averageCycle) + 5) ? 1 : 0,
+            fertility: lastMonthFertility.find(pred => pred === date.getTime()) || indexDate >= this.menstruationPeriodeIndex[0] + 8 && indexDate <= this.menstruationPeriodeIndex[0] + 16 ? 1 : 0,
             ovulation: lastMonthOvulation.find(pred => pred === date.getTime()) || indexDate >= this.menstruationPeriodeIndex[0] + 13 && indexDate <= this.menstruationPeriodeIndex[0] + 15 ? 1 : 0,
             symptoms: symptoms
           }
@@ -415,7 +413,7 @@ export default {
               this.todaySum.index = num
               this.todaySum.days = i
             })
-            
+
           }
           indexDate++
         }
@@ -444,7 +442,7 @@ export default {
 
       // get current date
       let currentDate = new Date().getTime()
-      
+
       // date subscription
       const date = subscriptionDetail.updatedAt === "0" ? Number(subscriptionDetail.createdAt.split(",").join("")) : Number(subscriptionDetail.updatedAt.split(",").join(""))
       const endDateSubscription = date + this.durationSubscription[subscriptionDetail.duration]
@@ -462,7 +460,7 @@ export default {
         }
       } else {
         const year = Math.floor(reminder / 365)
-        
+
         this.reminder = `${year} ${year === 1 ? "Year" : "Years"}`
       }
     }
