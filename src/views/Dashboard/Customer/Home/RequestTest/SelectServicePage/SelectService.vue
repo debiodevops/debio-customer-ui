@@ -117,6 +117,7 @@ export default {
     async getServices () {
 
       for (let i = 0; i < this.services.length; i++) {
+        console.log(this.services)
         let {
           id: serviceId,
           lab_id: labId,
@@ -126,7 +127,8 @@ export default {
             city,
             region,
             country,
-            profile_image: labImage
+            profile_image: labImage,
+            website: labWebsite
           },
           info: {
             name: serviceName,
@@ -195,7 +197,8 @@ export default {
           resultSample,
           serviceFlow,
           countryName,
-          regionName
+          regionName,
+          labWebsite
         }
         if (service.verificationStatus === "Verified") {
           if (service.stakeStatus === "Staked") {

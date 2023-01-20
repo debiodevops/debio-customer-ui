@@ -29,7 +29,7 @@
             div {{ selectedService.duration }} {{ selectedService.durationType}}
       
       .dialog-service__lab-detail
-        div
+        .dialog-service__lab-picture
           ui-debio-avatar.dialog-service__lab-image(:src="selectedService.labImage" size="75" rounded)
         
         .dialog-service__lab-detail-v-info
@@ -39,9 +39,9 @@
           
           .dialog-service__address          
             span {{ selectedService.labAddress }}, {{ selectedService.city }}, {{ country(selectedService.country) }}
-          .dialog-service__link(v-if="computePurchaseLink")
+          .dialog-service__link(v-if="selectedService.labWebsite") 
             b Website: 
-            a(:href="computePurchaseLink" target="_blank") {{ computePurchaseLink }}
+            a.dialog-service__link-text(:href="selectedService.labWebsite" target="_blank") {{ selectedService.labWebsite }}
        
       .dialog-service__button
         ui-debio-button.dialog-service__button-text(
@@ -120,10 +120,6 @@ export default {
         return description  
       }
       return ""
-    },
-
-    computePurchaseLink () {
-      return this.selectedService.longDescription.split("||")[1]
     }
   },
 
@@ -254,8 +250,16 @@ export default {
       @include body-text-3-opensans
 
     &__link
+      display: flex
+      flex-grow: 0
       margin-top: 10px
+      gap: 3px
       @include body-text-3-opensans
+
+    &__link-text
+      overflow: hidden
+      text-overflow: ellipsis
+      white-space: nowrap
     
     &__address
       color: gray
@@ -264,15 +268,21 @@ export default {
     &__lab-detail
       display: flex
       gap: 6px
-      padding: 10px 35px
+      margin: 10px 35px
 
     &__lab-detail-h-info
       display: flex
       justify-content: space-between
 
     &__lab-detail-v-info
+      flex: 1
       display: flex
       flex-direction: column
+      overflow: hidden
+      flex-wrap: nowrap
+
+    &__lab-picture
+      flex: 0
 
     &__button
       margin-top: 15px

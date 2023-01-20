@@ -50,7 +50,8 @@ describe("Lab Detail Card", () => {
           labRate: "",
           labAddress: "",
           city: "",
-          country: ""
+          country: "",
+          labWebsite: ""
         }
       },
       data: () => ({
