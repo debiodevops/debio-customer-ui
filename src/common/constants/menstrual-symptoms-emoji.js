@@ -1,12 +1,5 @@
 export default [
   {
-    name: "emoji-depressed",
-    text: "Depressed",
-    disabled: "inactive",
-    color: "#363636"
-  },
-
-  {
     name: "emoji-exhausted",
     text: "Exhausted",
     disabled: "inactive",
@@ -27,7 +20,6 @@ export default [
     color: "#363636"
   },
 
-        
   {
     name: "emoji-unwell",
     text: "Unwell",
@@ -36,16 +28,15 @@ export default [
   },
 
   {
-    name: "emoji-angry",
-    text: "Angry",
+    name: "emoji-depressed",
+    text: "Depressed",
     disabled: "inactive",
     color: "#363636"
   },
 
-
   {
-    name: "emoji-hungry",
-    text: "Hungry",
+    name: "emoji-angry",
+    text: "Angry",
     disabled: "inactive",
     color: "#363636"
   },
@@ -63,18 +54,28 @@ export default [
     disabled: "inactive",
     color: "#363636"
   },
+
   {
     name: "emoji-egg",
-    text: "Unprotected Sex",
-    disabled: "inactive",
-    color: "#363636"
-  },
-  {
-    name: "emoji-banana",
     text: "No Sex",
     disabled: "inactive",
     color: "#363636"
   },
+  
+  {
+    name: "emoji-banana",
+    text: "Unprotected Sex",
+    disabled: "inactive",
+    color: "#363636"
+  },
+
+  {
+    name: "emoji-hungry",
+    text: "Hungry",
+    disabled: "inactive",
+    color: "#363636"
+  },
+
   {
     name: "emoji-craving",
     text: "Craving",

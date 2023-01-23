@@ -331,14 +331,17 @@ export default {
         let date = startDate
         let indexDate = 0
         const emojiDays = {...this.emojiDays}
-        
         while(date.getTime() < endDate.getTime()) {
           date = new Date(this.selectedYear, this.selectedMonth, (-(dayFirstDateCurrentMonth - 1) + indexDate))
+          const log = this.cycleLog.filter(log => Number(log.date.replaceAll(",", "")) === date.getTime())
+          const menstruation = log[0]
           const symptoms = emojiDays[date.getTime()]
 
+          const isMenstruation = menstruation?.menstruation ? 1 : 0
           let currentData = {
             date: date.getTime(),
-            symptoms: symptoms
+            symptoms: symptoms,
+            menstruation: isMenstruation
           }
 
           menstrualCalendarData.cycleLog.push(currentData)
@@ -382,9 +385,11 @@ export default {
           emojiDays[date.getTime()] = menstruation ? menstruation.symptoms : emojiDays[date.getTime()] ?? []
           const symptoms = emojiDays[date.getTime()]
 
+          const isMenstruation = menstruation?.menstruation ? 1 : 0
           let currentData = {
             date: date.getTime(),
-            symptoms: symptoms
+            symptoms: symptoms,
+            menstruation: isMenstruation
           }
 
           menstrualCalendarData.cycleLog.push(currentData)
