@@ -30,8 +30,11 @@ import {
   myriadRegistration, 
   getNonce, 
   myriadAuth,
-  registerVisibilityTimeline } from "@/common/lib/api"
+  registerVisibilityTimeline,
+  myriadPostCreate,
+  getMyriadListByRole } from "@/common/lib/api"
 import { generateUsername } from "@/common/lib/username-generator.js"
+import { postRequestOpinion } from "@/common/lib/polkadot-provider/command/second-opinion"
 import { u8aToHex } from "@polkadot/util"
 import getEnv from "@/common/lib/utils/env"
 
@@ -48,7 +51,10 @@ export default {
       api: (state) => state.substrate.api,
       wallet: (state) => state.substrate.wallet,
       mnemonicData: (state) => state.substrate.mnemonicData,
-      category: (state) => state.secondOpinion.category
+      category: (state) => state.secondOpinion.category,
+      text: (state) => state.secondOpinion.symptoms,
+      phrIds: (state) => state.secondOpinion.phrIds,
+      lastEventData: (state) => state.substrate.lastEventData
     })
   },
 
@@ -86,6 +92,11 @@ export default {
         const data = await myriadCheckUser(address)
         const timelineId = this.category === "Physical Health" ? getEnv("VUE_APP_PHYSICAL_HEALTH_TIMELINE_ID") : getEnv("VUE_APP_MENTAL_HEALTH_TIMELINE_ID")
         await registerVisibilityTimeline(data.jwt, timelineId, data.user_id)
+        const userIds = await getMyriadListByRole(this.category)
+        const userIdList = userIds.data.map((user) => user.user_id)
+        
+        await this.createMyriadPost(data.jwt, data.user_id, userIdList)
+
         return data
       } catch (err) {
         if(err.response.status === 404) await this.generateUsername()
@@ -127,10 +138,39 @@ export default {
         walletType: "polkadot{.js}",
         networkType: "debio",
         role: "customer"
-
       })
       await this.checkMyriadUser()
       return jwt
+    },
+
+    async createMyriadPost(userJwt, userId, phIds) {
+      const info = {
+        createdBy: userId,
+        isNSFW: false,
+        mentions: [],
+        rawText: this.text,
+        text: this.text,
+        status: "published",
+        tag: [this.category],
+        selectedUserIds: phIds,
+        visibility: "selected_user"
+      }
+
+      const res = await myriadPostCreate(userJwt, info)
+      await this.postToSubstrate(res)
+      return res
+    },
+
+    async postToSubstrate(data) {
+      const info = {
+        category: this.category,
+        description: this.text,
+        geneticDataIds: this.phrIds,
+        opinionIds: [],
+        myriadPostId: data.id
+      }
+      await postRequestOpinion(this.api, this.wallet, info)
+      window.open(`${getEnv("VUE_APP_PHYSICAL_HEALTH_TIMELINE_ID")}/post/${data.id}`)
     }
   }
 }

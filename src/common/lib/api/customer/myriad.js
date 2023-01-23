@@ -36,13 +36,13 @@ export async function myriadAuth(info) {
   return data
 }
 
-export async function registerVisibilityTimeline(JWT, timelineId, userId) {
+export async function registerVisibilityTimeline(jwt, timelineId, userId) {
   const request = axios.create({
     baseURL: getEnv("VUE_APP_BACKEND_API"),
     headers: {
       "Content-Type": "application/json",
       "debio-api-key": getEnv("VUE_APP_DEBIO_API_KEY"),
-      "JWT": JWT
+      "JWT": jwt
     },
     auth: {
       username: getEnv("VUE_APP_USERNAME"),
@@ -51,8 +51,44 @@ export async function registerVisibilityTimeline(JWT, timelineId, userId) {
   })
 
   const { data } = request.post(`myriad/timeline/add-user`, {
-    params: { userId, timelineId }
+    params: { selectedUser: [userId], timelineId }
   })
 
+  return data
+}
+
+export async function getMyriadListByRole(category) {
+  let role
+  if (category === "Physical Health") {
+    role = "health-professional/physical-health"
+  } else if (category === "Mental Health") {
+    role = "health-professional/mental-health"
+  } else {
+    role = "customer"
+  }
+
+  const { data } = await apiClientRequest.get(`myriad/list/userid`, {
+    params: { role }
+  })
+  return data
+}
+
+export async function myriadPostCreate( jwt, info) {
+  const request = axios.create({
+    baseURL: getEnv("VUE_APP_BACKEND_API"),
+    headers: {
+      "Content-Type": "application/json",
+      "debio-api-key": getEnv("VUE_APP_DEBIO_API_KEY"),
+      "JWT": jwt
+    },
+    auth: {
+      username: getEnv("VUE_APP_USERNAME"),
+      password: getEnv("VUE_APP_PASSWORD")
+    }
+  })
+
+  const { data } = request.post(`myriad/post/create`, {
+    params: { info }
+  })
   return data
 }

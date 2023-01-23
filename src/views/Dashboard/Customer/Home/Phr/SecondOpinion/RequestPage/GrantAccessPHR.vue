@@ -263,7 +263,7 @@
 
 <script>
 
-import { mapState } from "vuex"
+import { mapState, mapMutations } from "vuex"
 import { u8aToHex } from "@polkadot/util"
 import Kilt from "@kiltprotocol/sdk-js"
 import CryptoJS from "crypto-js"
@@ -436,6 +436,9 @@ export default {
   },
 
   methods: {
+    ...mapMutations({
+      setPHRIds: "secondOpinion/SET_PHR_IDS"
+    }),
 
     initialDataKey() {
       const cred = Kilt.Identity.buildFromMnemonic(this.mnemonicData.toString(CryptoJS.enc.Utf8))
@@ -467,6 +470,8 @@ export default {
     },
     
     toSecondOpinion() {
+      const ids = this.grantedAccess.map(data => data.id)
+      this.setPHRIds(ids)
       this.showConnect = true
     },
 

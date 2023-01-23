@@ -151,7 +151,8 @@ export default {
           "geneticAnalysis",
           "userProfile",
           "menstrualSubscription",
-          "octopusAssets"
+          "octopusAssets",
+          "opinionRequestor"
         ]
 
         const block =  await api.rpc.chain.getBlock()

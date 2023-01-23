@@ -1,6 +1,7 @@
 const defaultState = {
   category: null,
-  symptoms: null
+  symptoms: null,
+  phrIds: null
 }
 
 export default {
@@ -12,6 +13,9 @@ export default {
     },
     SET_SECOND_OPINION_SYMPTOMS(state, symptoms) {
       state.symptoms = symptoms
+    },
+    SET_PHR_IDS(state, ids) {
+      state.phrIds = ids
     }
   }
 }
