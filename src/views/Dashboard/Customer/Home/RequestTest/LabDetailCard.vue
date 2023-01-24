@@ -128,7 +128,9 @@ export default {
 
     &__lab-title
       width: 201px
-      height: 64px !important
+      display: flex
+      flex-direction: column
+      gap: 3px
       @include body-text-3-opensans-medium
 
     &__line

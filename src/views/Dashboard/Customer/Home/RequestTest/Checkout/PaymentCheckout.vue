@@ -95,7 +95,8 @@ export default {
           city,
           region,
           country,
-          profileImage: labImage
+          profileImage: labImage,
+          website: labWebsite
         },
         verificationStatus,
         stakeStatus
@@ -137,6 +138,7 @@ export default {
         labRate: labRateData.rating,
         labAddress,
         labImage,
+        labWebsite,
         totalPrice: formatPrice(detailPrice.totalPrice.replaceAll(",", ""), detailPrice.currency.toUpperCase()),
         servicePrice: formatPrice(detailPrice.priceComponents[0].value.replaceAll(",",""), detailPrice.currency.toUpperCase()),
         qcPrice: formatPrice(detailPrice.additionalPrices[0].value.replaceAll(",",""), detailPrice.currency.toUpperCase()),

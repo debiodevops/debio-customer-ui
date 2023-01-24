@@ -117,7 +117,6 @@ export default {
     async getServices () {
 
       for (let i = 0; i < this.services.length; i++) {
-        console.log(this.services)
         let {
           id: serviceId,
           lab_id: labId,
@@ -222,7 +221,6 @@ export default {
     },
     
     async getDetailService(service) {
-
       this.lastOrder = await queryLastOrderHashByCustomer(
         this.api,
         this.wallet.address
@@ -235,6 +233,7 @@ export default {
           return
         }
       }
+      console.log("service", service)
       this.setProductsToRequest(service)
       this.showServiceDetailDialog = true
     },
