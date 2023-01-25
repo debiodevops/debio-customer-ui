@@ -1,4 +1,4 @@
-.<template lang="pug">
+<template lang="pug">
   .menstrual-calendar
     .menstrual-calendar__wrapper
       MenstrualCalendarBanner
@@ -75,10 +75,10 @@
           .menstrual-calendar__subscription-text-span Get a Subcription plan!
           .menstrual-calendar__subscription-text-header Benefit of Subscription
           v-img.mt-10(
-              block
-              alt="no-list-data"
-              src="@/assets/menstrual-calendar-brosure.svg"
-              height="240px"
+            block
+            alt="no-list-data"
+            src="@/assets/menstrual-calendar-brosure.svg"
+            height="240px"
             )
 
           .menstrual-calendar__list
@@ -93,76 +93,77 @@
                 .menstrual-calendar__alert-text Coming Soon
 
         ui-debio-card.menstrual-calendar__subscription-plan(width="480")
-            template(v-if="!paymentPreview")
-              .menstrual-calendar__subscription-plan-header Select Subscription Plan
+          template(v-if="!paymentPreview")
+            .menstrual-calendar__subscription-plan-header Select Subscription Plan
 
-            template(v-if="paymentPreview")
-              v-btn.menstrual-calendar__subscription-payment-back(icon @click="toSubsPlan")
-                v-icon mdi-chevron-left
-              .menstrual-calendar__subscription-plan-header Select Payment Methods
-            
-            .menstrual-calendar__subscription-plan-breadcrumbs
-              v-breadcrumbs(:items="breadcrumbs")
-                template(v-slot:divider)
-                  v-icon mdi-chevron-right
+          template(v-if="paymentPreview")
+            v-btn.menstrual-calendar__subscription-payment-back(icon @click="toSubsPlan")
+              v-icon mdi-chevron-left
+            .menstrual-calendar__subscription-plan-header Select Payment Methods
 
-            template(v-if="!paymentPreview")
-              .menstrual-calendar__plan-card
-                v-radio-group(v-model="subscription")
-                  template(v-for="plan in plans" )
-                    ui-debio-card(width="410").my-1
-                      .menstrual-calendar__plan-card-wrapper
-                        v-radio.menstrual-calendar__plan-card-radio(
-                          :label="plan.label" 
-                          :value="plan" 
-                          color="secondary"
-                        )
-                        v-alert.menstrual-calendar__plan-card-alert(v-if="plan.promo" color="#E7FFE6" )
-                          .menstrual-calendar__plan-card-alert-text {{ plan.promo }}
-                        .menstrual-calendar__plan-card-price Burn {{ plan.price }} {{ plan.currency}}
-                          .menstrual-calendar__plan-card-price-convert ({{ plan.usd }} USD)
+          .menstrual-calendar__subscription-plan-breadcrumbs
+            v-breadcrumbs(:items="breadcrumbs")
+              template(v-slot:divider)
+                v-icon mdi-chevron-right
 
-                      .menstrual-calendar__plan-card-desc.pt-1.ml-8 {{ plan.description }}
+          template(v-if="!paymentPreview")
+            .menstrual-calendar__plan-card
+              v-radio-group(v-model="subscription")
+                template(v-for="plan in plans" )
+                  ui-debio-card(width="410").my-1
+                    .menstrual-calendar__plan-card-wrapper
+                      v-radio.menstrual-calendar__plan-card-radio(
+                        :label="plan.label" 
+                        :value="plan" 
+                        color="secondary"
+                      )
+                      v-alert.menstrual-calendar__plan-card-alert(v-if="plan.promo" color="#E7FFE6" )
+                        .menstrual-calendar__plan-card-alert-text {{ plan.promo }}
+                      .menstrual-calendar__plan-card-price Burn {{ plan.price }} {{ plan.currency}}
+                        .menstrual-calendar__plan-card-price-scratch(v-if="plan.promo") Burn {{ plan.promoPrice }} {{ plan.currency }}
+                        .menstrual-calendar__plan-card-price-convert ({{ plan.usd }} USD)
 
-                ui-debio-button(
-                  :disabled="!subscription"
-                  color="secondary"
-                  width="100%"
-                  @click="toPaymentPreview"
-                ) Select Plan
-            
-            template(v-if="paymentPreview")
-              v-card.menstrual-calendar__plan-payment-card
-                .menstrual-calendar__plan-payment-card-title Purchase Details
-                v-divider.ma-4
-                .menstrual-calendar__plan-payment-card-detail
-                  .menstrual-calendar__plan-payment-card-total-text {{ subscription.duration }}
-                  .menstrual-calendar__plan-card-price Burn {{ subscription.price }} {{ subscription.currency }}/ {{ subscription.periode}}                  
-                    .menstrual-calendar__plan-card-price-convert ({{ subscription.usd }} USD)
-                .menstrual-calendar__plan-payment-card-notes Any eligible subscription credit will be applied until it runs out. Your subscription will be renew for {{ subscription.price }} {{ subscription.currency }} / {{ subscription.periode }} on {{getExpiredDate( subscription.periode )}}. Have any questions? 
-                  a Contact our support team
-
-
-              .menstrual-calendar__trans-weight
-                .menstrual-calendar__trans-weight-text Estimated transaction weight
-                  v-tooltip.visible(bottom )
-                    template(v-slot:activator="{ on, attrs }")
-                      v-icon.dialog-confirmation__trans-weight-icon(
-                        style="font-size: 12px;"
-                        color="primary"
-                        dark
-                        v-bind="attrs"
-                        v-on="on"
-                      ) mdi-alert-circle-outline 
-                    span(style="font-size: 10px;") Total fee paid in DBIO to execute this transaction.
-
-                div( style="font-size: 12px;" ) {{ txWeight}}
+                    .menstrual-calendar__plan-card-desc.pt-1.ml-8 {{ plan.description }}
 
               ui-debio-button(
+                :disabled="!subscription"
                 color="secondary"
                 width="100%"
-                @click="showAlert = true"
-              ) Pay Now!
+                @click="toPaymentPreview"
+              ) Select Plan
+
+          template(v-if="paymentPreview")
+            v-card.menstrual-calendar__plan-payment-card
+              .menstrual-calendar__plan-payment-card-title Purchase Details
+              v-divider.ma-4
+              .menstrual-calendar__plan-payment-card-detail
+                .menstrual-calendar__plan-payment-card-total-text {{ subscription.duration }}
+                .menstrual-calendar__plan-card-price Burn {{ subscription.price }} {{ subscription.currency }}/ {{ subscription.periode}}                  
+                  .menstrual-calendar__plan-card-price-convert ({{ subscription.usd }} USD)
+              .menstrual-calendar__plan-payment-card-notes Any eligible subscription credit will be applied until it runs out. Your subscription will be renew for {{ subscription.price }} {{ subscription.currency }} / {{ subscription.periode }} on {{getExpiredDate( subscription.periode )}}. Have any questions? 
+                a Contact our support team
+
+
+            .menstrual-calendar__trans-weight
+              .menstrual-calendar__trans-weight-text Estimated transaction weight
+                v-tooltip.visible(bottom )
+                  template(v-slot:activator="{ on, attrs }")
+                    v-icon.dialog-confirmation__trans-weight-icon(
+                      style="font-size: 12px;"
+                      color="primary"
+                      dark
+                      v-bind="attrs"
+                      v-on="on"
+                    ) mdi-alert-circle-outline 
+                  span(style="font-size: 10px;") Total fee paid in DBIO to execute this transaction.
+
+              div( style="font-size: 12px;" ) {{ txWeight}}
+
+            ui-debio-button(
+              color="secondary"
+              width="100%"
+              @click="showAlert = true"
+            ) Pay Now!
 
 </template>
 
@@ -183,9 +184,9 @@ export default {
   data: () => ({
     alertTriangleIcon, checkCircleIcon,
     plans: [
-      {label: "Monthly", duration: "Monthly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "Month"},
-      {label: "Quarterly", duration: "Quarterly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 10%", periode: "3 Months"},
-      {label: "Annualy", duration: "Yearly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 50%", periode: "Year"}
+      { label: "Monthly", duration: "Monthly", description: "For users on a budget who want to try out menstrual calendar", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "Month", promoPrice: 0 },
+      { label: "Quarterly", duration: "Quarterly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 10%", periode: "3 Months", promoPrice: 0 },
+      { label: "Annualy", duration: "Yearly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 50%", periode: "Year", promoPrice: 0 }
     ],
     subscription: null,
     paymentPreview: false,
@@ -211,7 +212,7 @@ export default {
   }),
 
   computed: {
-    
+
     ...mapState({
       api: (state) => state.substrate.api,
       wallet: (state) => state.substrate.wallet,
@@ -220,7 +221,7 @@ export default {
       walletBalance: (state) => state.substrate.walletBalance
     })
   },
-  
+
   watch: {
     lastEventData(e) {
       if (e !== null) {
@@ -242,7 +243,7 @@ export default {
     subscription: {
       deep: true,
       immediate: true,
-      handler: generalDebounce(async function() {
+      handler: generalDebounce(async function () {
         await this.getTxWeight()
       }, 500)
     }
@@ -266,26 +267,26 @@ export default {
 
     async getRate() {
       const rate = await getConversion()
-      return rate.dbioToUsd      
+      return rate.dbioToUsd
     },
 
     getExpiredDate(period) {
       const today = new Date()
       let newDate
 
-      if(period === "Month") {
-        newDate = new Date(today.setMonth(today.getMonth()+1))
+      if (period === "Month") {
+        newDate = new Date(today.setMonth(today.getMonth() + 1))
       }
 
-      if(period === "3 Months") {
-        newDate = new Date(today.setMonth(today.getMonth()+3))
+      if (period === "3 Months") {
+        newDate = new Date(today.setMonth(today.getMonth() + 3))
       }
 
-      if(period === "Year") {
+      if (period === "Year") {
         newDate = new Date(today.setMonth(today.getMonth() + 12))
       }
 
-      let day =  newDate.getDate() - 1
+      let day = newDate.getDate() - 1
       let month = newDate.toLocaleString("default", { month: "short" })
       let year = newDate.getFullYear()
       return `${day} ${month} ${year}`
@@ -293,7 +294,7 @@ export default {
 
     async toSusbsribe() {
       this.loading = true
-      
+
       const price = Number(String(this.subscription.price).split(",").join(""))
       if (this.walletBalance < price) {
         this.error = {
@@ -315,24 +316,40 @@ export default {
     async getActiveSubscription() {
       const activeSubs = await getActiveSubscriptionByOwner(this.api, this.wallet.address)
       const menstrualCalendar = await getLastMenstrualCalendarByOwner(this.api, this.wallet.address)
-      
+
       if (activeSubs) {
         if (!menstrualCalendar) {
-          this.$router.push({ name: "menstrual-calendar-selection"})
+          this.$router.push({ name: "menstrual-calendar-selection" })
           return
-        } 
+        }
 
-        this.$router.push({ name: "menstrual-calendar-detail"})
+        this.$router.push({ name: "menstrual-calendar-detail" })
       }
     },
 
     async getSubscriptionPrices() {
-      this.plans.forEach(async plan => {
-        const data = await getMenstrualSubscriptionPrices(this.api, plan.duration, plan.currency) 
-        const rate = await this.getRate()
-        plan.price = formatPrice(data.amount, plan.currency)
-        plan.usd = (Number(plan.price.split(",").join("")) * rate).toFixed(8)
-      })
+      let monthlyPrice
+      this.plans.forEach(async (plan) => {
+        getMenstrualSubscriptionPrices(
+          this.api,
+          plan.duration,
+          plan.currency
+        ).then((data) => {
+          this.getRate().then((rate) => {
+            plan.price = formatPrice(data.amount, plan.currency);
+            plan.usd = (Number(plan.price.split(",").join("")) * rate).toFixed(8);
+            if (plan.duration === "Monthly") {
+              monthlyPrice = plan.price
+            }
+            if (plan.duration === "Quarterly") {
+              plan.promoPrice = (Number(monthlyPrice.split(",").join("")) * 3);
+            }
+            if (plan.duration === "Yearly") {
+              plan.promoPrice = (Number(monthlyPrice.split(",").join("")) * 12);
+            }
+          });
+        });
+      });
     },
 
     async getTxWeight() {
@@ -355,7 +372,7 @@ export default {
       this.breadcrumbs[0].disabled = false
       this.breadcrumbs[1].disabled = true
     },
-    
+
     toMenstrualCalendar() {
       this.showAlert = false
       this.isSuccess = false
@@ -397,24 +414,38 @@ export default {
 
     &__plan-card-desc
       color: #757274
+      overflow:auto
+      width:55%
       @include body-text-3
 
     &__subscription-plan-breadcrumbs
       margin: -22px
 
     &__plan-card-price
+      justify-content:end
+      text-align:right
       @include button-2
 
+    &__plan-card-price-scratch
+      text-align: right
+      justify-content:end
+      opacity: 0.6
+      text-decoration: line-through
+      @include body-text-4
+
     &__plan-card-price-convert
+      text-align: right
+      justify-content:end
       color: #FF56E0
       @include body-text-5
     
     &__plan-card-alert
       height: 24px
       margin-left: -40px
+      background: #E0FFE1
+      padding: 4px 12px
 
     &__plan-card-alert-text
-      margin-top: -12px
       color: #32D47D
       font-size: 12px
 
