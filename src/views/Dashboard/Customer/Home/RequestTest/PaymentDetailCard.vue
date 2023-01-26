@@ -18,7 +18,7 @@
         .menu-card__price 
           | {{ dataService.servicePrice }}
           | {{ formatUSDTE(dataService.currency) }}
-    
+
       .menu-card__details
         .menu-card__sub-title Quality Control Price
         .menu-card__price 
@@ -39,16 +39,16 @@
       .menu-card__details.mt-5(v-if="$route.name === 'customer-request-test-checkout'")
         .menu-card__trans-weight Estimated Transaction Weight
           v-tooltip.visible(bottom)
-              template(v-slot:activator="{ on, attrs }")
-                v-icon.menu-card__icon(
-                  color="primary"
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                ) mdi-alert-circle-outline 
-              span(style="font-size: 10px;") Total fee paid in DBIO to execute this transaction.
+            template(v-slot:activator="{ on, attrs }")
+              v-icon.menu-card__icon(
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              ) mdi-alert-circle-outline 
+            span(style="font-size: 10px;") Total fee paid in DBIO to execute this transaction.
         .menu-card__trans-weight-amount {{ Number(txWeight).toFixed(4) }} DBIO
-      
+
       div(class="text-center" v-if="$route.name === 'customer-request-test-checkout' && status === 'Cancelled'")
         div(class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
           ui-debio-button(
@@ -108,7 +108,7 @@
             :disabled="loading"
             :loading="loadingPayment"
             ) Pay
-            
+
       CancelDialog(
         :show="cancelDialog"
         :orderId="orderId"
@@ -137,7 +137,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex"
-import CryptoJS from "crypto-js"	
+import CryptoJS from "crypto-js"
 import Kilt from "@kiltprotocol/sdk-js"
 import { u8aToHex } from "@polkadot/util"
 import CancelDialog from "@/common/components/Dialog/CancelDialog"
@@ -155,7 +155,7 @@ import { processRequest } from "@/common/lib/polkadot-provider/command/service-r
 
 export default {
   name: "PaymentDetailCard",
-  
+
   components: {
     CancelDialog
   },
@@ -185,24 +185,24 @@ export default {
   }),
 
   async mounted() {
-    if(this.$route.name === "customer-request-test-checkout" && !this.dataService) {
+    if (this.$route.name === "customer-request-test-checkout" && !this.dataService) {
       this.toDashboard()
       return
     }
-    
-    if(this.$route.name === "customer-request-test-success") {
+
+    if (this.$route.name === "customer-request-test-success") {
       this.success = true
     }
 
-    if(this.$route.params.id) {
+    if (this.$route.params.id) {
       this.isCreated = true
       const orderId = this.$route.params.id
- 
+
       this.lastOrder = await queryLastOrderHashByCustomer(
         this.api,
         this.wallet.address
       )
-      
+
       if (this.lastOrder) {
         const detailOrder = await queryOrderDetailByOrderID(this.api, orderId)
         this.detailOrder = detailOrder
@@ -252,11 +252,11 @@ export default {
       }
 
       if (event.method === "OrderPaid") {
-        if(dataEvent[0].orderFlow === "RequestTest"){
+        if (dataEvent[0].orderFlow === "RequestTest") {
           this.loadingPayment = false
           this.success = true
-          
-          this.$router.push({ 
+
+          this.$router.push({
             name: "customer-request-test-success",
             params: {
               id: dataEvent[0].id
@@ -268,11 +268,11 @@ export default {
         await this.processRequestService(dataEvent[0])
       }
 
-      if(event.method === "ServiceRequestUpdated") this.$router.push({ name: "customer-request-test-success"})
+      if (event.method === "ServiceRequestUpdated") this.$router.push({ name: "customer-request-test-success" })
     },
-    
+
     dataService(val) {
-      if(val) this.getUsdRate()
+      if (val) this.getUsdRate()
     }
   },
 
@@ -288,7 +288,7 @@ export default {
         this.api,
         this.wallet.address
       )
-      
+
       const txWeight = await setOrderPaidFee(
         this.api,
         this.wallet,
@@ -310,7 +310,7 @@ export default {
       this.fetching = true
       let totalPrice
 
-      if(this.$route.params.id) {
+      if (this.$route.params.id) {
         totalPrice = this.dataService.totalPrice
       } else {
         totalPrice = this.dataService.totalPrice.split(",").join("")
@@ -321,16 +321,16 @@ export default {
       this.fetching = false
     },
 
-    toPaymentHistory () {
+    toPaymentHistory() {
       this.$router.push({ name: "customer-payment-history" })
     },
 
-    async onSubmit () {
+    async onSubmit() {
       this.loadingPayment = true
 
       try {
-        const balance = this.usdtBalance     
-        if (Number(balance) - 1 <= Number(this.dataService.totalPrice.replaceAll(",", ""))) {
+        const balance = this.usdtBalance
+        if (Number(balance) - 0.1 <= Number(this.dataService.totalPrice.replaceAll(",", ""))) {
           this.loadingPayment = false
           this.showError = true
           const error = await errorHandler("Insufficient Balance")
@@ -340,7 +340,7 @@ export default {
           return
         }
 
-        if(this.isCreated) {
+        if (this.isCreated) {
           this.lastOrder = await queryLastOrderHashByCustomer(
             this.api,
             this.wallet.address
@@ -349,7 +349,7 @@ export default {
           await setOrderPaid(this.api, this.wallet, this.lastOrder)
           return
         }
-        
+
         await this.createOrder()
       } catch (err) {
         this.loadingPayment = false
@@ -365,8 +365,8 @@ export default {
     },
 
     async createOrder() {
-      const assetId = await this.getAssetId(this.dataService.currency === "USDTE" ? "USDT.e" : this.dataService.currency) 
-      const customerBoxPublicKey = await this.getCustomerPublicKey() 
+      const assetId = await this.getAssetId(this.dataService.currency === "USDTE" ? "USDT.e" : this.dataService.currency)
+      const customerBoxPublicKey = await this.getCustomerPublicKey()
       const indexPrice = 0
       await createOrder(
         this.api,
@@ -393,7 +393,7 @@ export default {
       return u8aToHex(identity.boxKeyPair.publicKey)
     },
 
-    async toInstruction (val) {
+    async toInstruction(val) {
 
       const description = this.dataService.longDescription.split("||")
 
@@ -407,8 +407,8 @@ export default {
       window.open(link, "_blank")
     },
 
-    showCancelConfirmation () {
-      if(!this.isCreated) {
+    showCancelConfirmation() {
+      if (!this.isCreated) {
         this.toDashboard()
         return
       }
@@ -421,15 +421,15 @@ export default {
       this.isCancelled = true
 
       await cancelOrder(
-        this.api, 
+        this.api,
         this.wallet,
         this.$route.params.id
       )
-      
+
     },
 
     toDashboard() {
-      this.$router.push({name: "customer-dashboard"})
+      this.$router.push({ name: "customer-dashboard" })
     },
 
     async getDataService() {
