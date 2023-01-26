@@ -1,173 +1,174 @@
 <template lang="pug">
 .customer-test
-    modalBounty(
-      :show="isShowModalBounty"
-      :title="computeModalTitle"
-      :sub-title="computeModalSubtitle"
-      :link="computeModalLink"
-      :loading="modalBountyLoading"
-    )
-      .modal-bounty__cta.d-flex.mt-8.justify-center
-        ui-debio-button(
-          v-if="!!isBountyError"
-          color="secondary"
-          block
-          outlined
-          @click="isBountyError = null"
-        ) Try again
+  modalBounty(
+    :show="isShowModalBounty"
+    :title="computeModalTitle"
+    :sub-title="computeModalSubtitle"
+    :link="computeModalLink"
+    :loading="modalBountyLoading"
+  )
+    .modal-bounty__cta.d-flex.mt-8.justify-center
+      ui-debio-button(
+        v-if="!!isBountyError"
+        color="secondary"
+        block
+        outlined
+        @click="isBountyError = null"
+      ) Try again
 
-        ui-debio-button(
-          v-else-if="isSuccessBounty"
-          color="secondary"
-          width="100"
-          outlined
-          @click="handleSuccessBounty"
-        ) Ok
+      ui-debio-button(
+        v-else-if="isSuccessBounty"
+        color="secondary"
+        width="100"
+        outlined
+        @click="handleSuccessBounty"
+      ) Ok
 
-        template(v-else)
-          ui-debio-button(outlined color="secondary" width="100" @click="isShowModalBounty = false") Cancel
-          ui-debio-button(color="secondary" width="100" @click="downloadFile") Yes
+      template(v-else)
+        ui-debio-button(outlined color="secondary" width="100" @click="isShowModalBounty = false") Cancel
+        ui-debio-button(color="secondary" width="100" @click="downloadFile") Yes
 
-    ui-debio-banner.customer-test__banner(
-      title="My Test"
-      subtitle="Collect your own biological sample at home and package it to an expert and/or scientist"
-      with-decoration
-      gradientColor="tertiary"
-    )
-      template(slot="illustration")
-        ui-debio-icon(
-          :icon="medicalResearchIllustration"
-          :size="cardBlock ? 250 : 180"
-          view-box="10 0 245 175"
-          fill
+  ui-debio-banner.customer-test__banner(
+    title="My Test"
+    subtitle="Collect your own biological sample at home and package it to an expert and/or scientist"
+    with-decoration
+    gradientColor="tertiary"
+  )
+    template(slot="illustration")
+      ui-debio-icon(
+        :icon="medicalResearchIllustration"
+        :size="cardBlock ? 250 : 180"
+        view-box="10 0 245 175"
+        fill
+      )
+
+    template(slot="cta")
+      .banner-card
+        router-link.banner-card__container(:to="{name: 'customer-request-test'}")
+          ui-debio-icon.banner-card__icon(
+            :icon="cardGradient"
+            size="50"
+          )
+          .banner-card__text Request a Test
+            .banner-card__sub-text Get your biological sample tested or stake $DBIO to request Lab
+
+  .customer-my-test
+    .customer-my-test__tabs
+      template
+        v-tabs(v-model="tabs")
+          v-tab.tab-section Orders
+
+          v-tab.tab-section Request Service
+
+      v-tabs-items(v-model="tabs")
+        v-tab-item
+          .customer-my-test__table
+            ui-debio-data-table(
+              :headers="headers"
+              :items="testList"
+              :loading="isLoadingData"
+            )
+              template(class="titleSection" v-slot:[`item.serviceName`]="{item}")
+                div(class="detailLab d-flex align-center")
+                  .customer-my-test__title-detail
+                    ui-debio-avatar(
+                      :src="setServiceImage(item.serviceImage)"
+                      size="42"
+                      rounded
+                    )
+                  div
+                    div.customer-my-test__title-name
+                      span {{ item.serviceName }}
+                    div.customer-my-test__title-number
+                      span {{ item.dnaSampleTrackingId}}
+
+              template(v-slot:[`item.labName`]="{ item }")
+                .d-flex.flex-column.customer-my-test__lab-name
+                  span {{ item.labName }}
+
+              template(v-slot:[`item.orderDate`]="{ item }")
+                span {{ item.orderDate }}
+
+              template(v-slot:[`item.updatedAt`]="{ item }")
+                span {{ item.updatedAt }}
+
+              template(v-slot:[`item.orderStatus`]="{item}")
+                .customer-my-test__status
+                  span(:style="{color: setStatusColor(item.orderStatus)}") {{ setTestStatus(item.orderStatus) }}
+
+              template(v-slot:[`item.actions`]="{ item }")
+                .customer-my-test__actions
+                  ui-debio-button.pa-4(
+                    height="25px"
+                    width="50%"
+                    dark
+                    color="primary"
+                    @click="goToDetail(item.orderId)"
+                  ) Details
+
+                  ui-debio-button.pa-4(
+                    v-if="item.orderStatus !== 'ResultReady'"
+                    v-show="item.orderStatus === 'Registered'"
+                    height="25px"
+                    width="50%"
+                    dark
+                    color="secondary"
+                    @click="goToInstruction(item)"
+                  ) Instruction
+                  // ui-debio-button.pa-4(
+                    v-if="item.orderStatus !== 'Registered'"
+                    v-show="item.orderStatus === 'ResultReady'"
+                    height="25px"
+                    width="50%"
+                    dark
+                    color="secondary"
+                    @click="handleSelectedBounty(item)"
+                  //) Add as Bounty
+                  v-tooltip(top)
+                    template(v-slot:activator="{ on, attrs }")
+                      ui-debio-button.pa-4(
+                      height="25px"
+                      width="50%"
+                      dark
+                      class='white--text' 
+                      color="#cacaca"
+                      :bind="attrs"
+                      :on="on"
+                      ) Add As Bounty
+                    span Coming Soon
+
+        v-tab-item
+          .customer-my-test__table
+          StakingServiceTab(
+            ref="staking"
+            @unstake="showDialog = true"
+            @loading="loadingDialog = true"
+            @closeLoading="loadingDialog = false"
+            @error="showError"
+          )
+          ConfirmationDialog(
+            :show="showDialog"
+            :loading="isLoading"
+            :txWeight="Number(txWeight).toFixed(4)"
+            title="Unstake"
+            btnMessage="Unstake"
+            message="Your staking amount will be returned after 144 hours or 6 days"
+            @click="unstakeService"
+            this.isLoding = true
+            @close="showDialog=false"
+          )
+
+        LoadingDialog(
+          :show="loadingDialog"
+          desc="Please wait while we are processing your payment."
         )
 
-      template(slot="cta")
-        .banner-card
-          router-link.banner-card__container(:to="{name: 'customer-request-test'}")
-            ui-debio-icon.banner-card__icon(
-              :icon="cardGradient"
-              size="50"
-            )
-            .banner-card__text Request a Test
-              .banner-card__sub-text Get your biological sample tested or stake $DBIO to request Lab
-
-    .customer-my-test
-      .customer-my-test__tabs
-        template
-          v-tabs(v-model="tabs")
-            v-tab.tab-section Orders
-            
-            v-tab.tab-section Request Service
-              
-        v-tabs-items(v-model="tabs")
-          v-tab-item
-            .customer-my-test__table
-              ui-debio-data-table(
-                :headers="headers"
-                :items="testList"
-                :loading="isLoadingData"
-              )
-                template(class="titleSection" v-slot:[`item.serviceName`]="{item}")
-                  div(class="detailLab d-flex align-center")
-                    .customer-my-test__title-detail
-                      ui-debio-avatar(
-                        :src="setServiceImage(item.serviceImage)"
-                        size="42"
-                        rounded
-                      )
-                    div
-                      div.customer-my-test__title-name
-                        span {{ item.serviceName }}
-                      div.customer-my-test__title-number
-                        span {{ item.dnaSampleTrackingId}}
-
-                template(v-slot:[`item.labName`]="{ item }")
-                  .d-flex.flex-column.customer-my-test__lab-name
-                    span {{ item.labName }}
-
-                template(v-slot:[`item.orderDate`]="{ item }")
-                  span {{ item.orderDate }}
-
-                template(v-slot:[`item.updatedAt`]="{ item }")
-                  span {{ item.updatedAt }}
-
-                template(v-slot:[`item.orderStatus`]="{item}")
-                  .customer-my-test__status
-                    span(:style="{color: setStatusColor(item.orderStatus)}") {{ setTestStatus(item.orderStatus) }}
-
-                template(v-slot:[`item.actions`]="{ item }")
-                  .customer-my-test__actions
-                    ui-debio-button.pa-4(
-                      height="25px"
-                      width="50%"
-                      dark
-                      color="primary"
-                      @click="goToDetail(item.orderId)"
-                    ) Details
-                    
-                    ui-debio-button.pa-4(
-                      v-if="item.orderStatus !== 'ResultReady'"
-                      v-show="item.orderStatus === 'Registered'"
-                      height="25px"
-                      width="50%"
-                      dark
-                      color="secondary"
-                      @click="goToInstruction(item)"
-                    ) Instruction
-                    // ui-debio-button.pa-4(
-                      v-if="item.orderStatus !== 'Registered'"
-                      v-show="item.orderStatus === 'ResultReady'"
-                      height="25px"
-                      width="50%"
-                      dark
-                      color="secondary"
-                      @click="handleSelectedBounty(item)"
-                    //) Add as Bounty
-                    v-tooltip(top)
-                      template(v-slot:activator="{ on, attrs }")
-                        ui-debio-button.pa-4(
-                          height="25px"
-                          width="50%"
-                          dark
-                          color="#F3F3F3"
-                          :bind="attrs"
-                          :on="on"
-                        ) Add As Bounty
-                      span Coming Soon
-
-          v-tab-item
-            .customer-my-test__table
-            StakingServiceTab(
-              ref="staking"
-              @unstake="showDialog = true"
-              @loading="loadingDialog = true"
-              @closeLoading="loadingDialog = false"
-              @error="showError"
-            )
-            ConfirmationDialog(
-              :show="showDialog"
-              :loading="isLoading"
-              :txWeight="Number(txWeight).toFixed(4)"
-              title="Unstake"
-              btnMessage="Unstake"
-              message="Your staking amount will be returned after 144 hours or 6 days"
-              @click="unstakeService"
-              this.isLoding = true
-              @close="showDialog=false"
-            )
-
-          LoadingDialog(
-            :show="loadingDialog"
-            desc="Please wait while we are processing your payment."
-          )
-
-          ui-debio-error-dialog(
-            :show="!!error"
-            :title="error ? error.title : ''"
-            :message="error ? error.message : ''"
-            @close="error = null"
-          )
+        ui-debio-error-dialog(
+          :show="!!error"
+          :title="error ? error.title : ''"
+          :message="error ? error.message : ''"
+          @close="error = null"
+        )
 </template>
 
 <script>
@@ -218,7 +219,7 @@ export default {
     loadingDialog: false,
     txWeight: 0,
     testList: [],
-    error:null,
+    error: null,
     cardGradient,
     headers: [
       { text: "Service Name", value: "serviceName", sortable: true },
@@ -241,7 +242,7 @@ export default {
     }),
 
     userAddress() {
-      return JSON.parse(localStorage.getKeystore()) ["Address"]
+      return JSON.parse(localStorage.getKeystore())["Address"]
     },
 
     computeModalTitle() {
@@ -269,7 +270,7 @@ export default {
     lastEventData(event) {
       if (event === null) return
       const dataEvent = JSON.parse(event.data.toString())
-    
+
       if (event.method === "DataStaked") {
         this.$store.dispatch("substrate/addAnyNotification", {
           address: this.wallet.address,
@@ -280,7 +281,7 @@ export default {
             params: null
           },
           role: "customer"
-        })  
+        })
       }
     },
 
@@ -299,7 +300,7 @@ export default {
     const txWeight = await unstakeRequestFee(this.api, this.wallet, this.stakingId)
     this.txWeight = this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
   },
-  
+
   async created() {
     if (this.mnemonicData) await this.initialData()
   },
@@ -325,7 +326,7 @@ export default {
 
         const newList = orderList.filter(order => order._source.status !== "Unpaid" && order._source.status !== "Cancelled")
         newList.forEach(async (order) => {
-          const { 
+          const {
             id: orderId,
             lab_info: {
               name: labName
@@ -350,7 +351,7 @@ export default {
 
           const orderDetail = {
             orderId,
-            dnaSampleTrackingId, 
+            dnaSampleTrackingId,
             labName,
             serviceName,
             serviceImage,
@@ -361,7 +362,7 @@ export default {
             dnaCollectionProcess,
             description,
             dnaTestResults,
-            timestamp: new Date (parseInt(dnaSample.updatedAt.replaceAll(",", ""))).getTime().toString()
+            timestamp: new Date(parseInt(dnaSample.updatedAt.replaceAll(",", ""))).getTime().toString()
           }
 
           this.testList.push(orderDetail)
@@ -404,12 +405,12 @@ export default {
     },
 
     goToDetail(id) {
-      this.$router.push({ name: "order-history-detail", params: {id}})
+      this.$router.push({ name: "order-history-detail", params: { id } })
     },
 
     async goToInstruction(item) {
 
-      if(item.description.split("||").length > 1) {
+      if (item.description.split("||").length > 1) {
         window.open(item.description.split("||")[1], "_blank")
         return
       }
@@ -443,7 +444,7 @@ export default {
         }
 
         await syncDecryptedFromIPFS(
-          this.selectedBounty.resultLink.replace("https://ipfs.io/ipfs/",""),
+          this.selectedBounty.resultLink.replace("https://ipfs.io/ipfs/", ""),
           pair,
           `${this.selectedBounty?.trackingId}.vcf`,
           "text/vCard"
@@ -473,18 +474,18 @@ export default {
       this.isBounty = false
     },
 
-    async unstakeService () {
+    async unstakeService() {
       const requestId = this.stakingId
       this.isLoading = true
       await unstakeRequest(
-        this.api, 
-        this.wallet, 
-        requestId, 
+        this.api,
+        this.wallet,
+        requestId,
         this.fetchStakingTab
       )
     },
 
-    fetchStakingTab () {
+    fetchStakingTab() {
       this.$refs.staking.fetchData()
       this.isLoading = false
       this.showDialog = false
