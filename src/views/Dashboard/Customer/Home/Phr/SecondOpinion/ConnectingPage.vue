@@ -91,7 +91,7 @@ export default {
       try {
         const data = await myriadCheckUser(address)
         const timelineId = this.category === "Physical Health" ? getEnv("VUE_APP_PHYSICAL_HEALTH_TIMELINE_ID") : getEnv("VUE_APP_MENTAL_HEALTH_TIMELINE_ID")
-        await registerVisibilityTimeline(data.jwt, timelineId, data.user_id)
+        await registerVisibilityTimeline(timelineId, data.user_id)
         const userIds = await getMyriadListByRole(this.category)
         const userIdList = userIds.data.map((user) => user.user_id)
         
@@ -105,21 +105,25 @@ export default {
     },
 
     async generateUsername() {
-      const name = await generateUsername()
+      let name = ""
+      do {
+        name = await generateUsername()
+      } while (name.length > 16)
+      
+
       const username = name.split(" ").join("").toLowerCase()
       const isUsernameExisted = (await checkMyriadUsername(username)).status
       if (!isUsernameExisted) {
         try {
-          await myriadRegistration({
+          const data = await myriadRegistration({
             username,
             name,
             address: this.addressHex,
             role: "customer"
           })
-          
+          return data
         } catch (err) {
           console.error(err)
-          console.log(err.response)
         }
       }
 
@@ -153,11 +157,12 @@ export default {
         status: "published",
         tag: [this.category],
         selectedUserIds: phIds,
-        visibility: "selected_user"
+        visibility: "selected_user",
+        postType:this.category.toUpperCase().split(" ").join("_")
       }
 
-      const res = await myriadPostCreate(userJwt, info)
-      await this.postToSubstrate(res)
+      const res = await myriadPostCreate(userJwt, info)      
+      await this.postToSubstrate(res.data)
       return res
     },
 
@@ -169,8 +174,13 @@ export default {
         opinionIds: [],
         myriadPostId: data.id
       }
-      await postRequestOpinion(this.api, this.wallet, info)
-      window.open(`${getEnv("VUE_APP_PHYSICAL_HEALTH_TIMELINE_ID")}/post/${data.id}`)
+
+      await postRequestOpinion(
+        this.api, 
+        this.wallet, 
+        info,
+        window.open(`${getEnv("VUE_APP_MYRIAD_URL")}/post/${data.id}`)
+      )
     }
   }
 }

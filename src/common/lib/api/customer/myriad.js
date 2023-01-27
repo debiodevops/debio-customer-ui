@@ -18,9 +18,7 @@ export async function checkMyriadUsername(username) {
 }
 
 export async function myriadRegistration(info) {
-  const { data } =  await apiClientRequest.post(`myriad/register`, {
-    params: { info }
-  })
+  const { data } =  await apiClientRequest.post(`myriad/register`, info)
   return data
 }
 
@@ -30,28 +28,16 @@ export async function getNonce(address) {
 }
 
 export async function myriadAuth(info) {
-  const { data } = await apiClientRequest.post(`myriad/auth`, {
-    params: { info }
+  const { data } = apiClientRequest.post(`myriad/auth`, {
+    ...info
   })
   return data
 }
 
-export async function registerVisibilityTimeline(jwt, timelineId, userId) {
-  const request = axios.create({
-    baseURL: getEnv("VUE_APP_BACKEND_API"),
-    headers: {
-      "Content-Type": "application/json",
-      "debio-api-key": getEnv("VUE_APP_DEBIO_API_KEY"),
-      "JWT": jwt
-    },
-    auth: {
-      username: getEnv("VUE_APP_USERNAME"),
-      password: getEnv("VUE_APP_PASSWORD")
-    }
-  })
-
-  const { data } = request.post(`myriad/timeline/add-user`, {
-    params: { selectedUser: [userId], timelineId }
+export async function registerVisibilityTimeline(timelineId, userId) {  
+  const { data } = await apiClientRequest.post(`myriad/timeline/add-user`, {
+    selectedUser: [userId],
+    timelineId 
   })
 
   return data
@@ -78,7 +64,6 @@ export async function myriadPostCreate( jwt, info) {
     baseURL: getEnv("VUE_APP_BACKEND_API"),
     headers: {
       "Content-Type": "application/json",
-      "debio-api-key": getEnv("VUE_APP_DEBIO_API_KEY"),
       "JWT": jwt
     },
     auth: {
@@ -87,8 +72,6 @@ export async function myriadPostCreate( jwt, info) {
     }
   })
 
-  const { data } = request.post(`myriad/post/create`, {
-    params: { info }
-  })
+  const data = request.post(`myriad/post/create`, info)
   return data
 }
