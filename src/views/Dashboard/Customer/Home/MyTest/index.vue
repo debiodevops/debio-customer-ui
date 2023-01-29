@@ -90,7 +90,7 @@
                 span {{ item.orderDate }}
 
               template(v-slot:[`item.updatedAt`]="{ item }")
-                span {{ item.updatedAt }}
+                span {{ item.updatedAt }} 
 
               template(v-slot:[`item.orderStatus`]="{item}")
                 .customer-my-test__status
@@ -115,27 +115,20 @@
                     color="secondary"
                     @click="goToInstruction(item)"
                   ) Instruction
-                  // ui-debio-button.pa-4(
-                    v-if="item.orderStatus !== 'Registered'"
-                    v-show="item.orderStatus === 'ResultReady'"
-                    height="25px"
-                    width="50%"
-                    dark
-                    color="secondary"
-                    @click="handleSelectedBounty(item)"
-                  //) Add as Bounty
-                  v-tooltip(top)
-                    template(v-slot:activator="{ on, attrs }")
-                      ui-debio-button.pa-4(
-                      height="25px"
-                      width="50%"
-                      dark
-                      class='white--text' 
-                      color="#cacaca"
-                      :bind="attrs"
-                      :on="on"
-                      ) Add As Bounty
-                    span Coming Soon
+                  template(v-if="item.orderStatus === 'ResultReady'")
+                    v-tooltip(top)
+                      template(v-slot:activator="{ on, attrs }"
+                      )
+                        ui-debio-button.pa-4(
+                        height="25px"
+                        width="50%"
+                        dark
+                        class='white--text' 
+                        color="#cacaca"
+                        :bind="attrs"
+                        :on="on"
+                        ) Add As Bounty
+                      span Coming Soon
 
         v-tab-item
           .customer-my-test__table
