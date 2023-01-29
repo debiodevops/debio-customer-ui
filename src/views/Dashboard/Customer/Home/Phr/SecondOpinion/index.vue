@@ -29,13 +29,13 @@
 
         template(v-slot:[`item.grantedPHR`]="{ item }")
           .second-opinion__table-headers-PHR
-            .second-opinion__table-headers-PHR-content(v-for="(grantedPHR, idx) in item.info.geneticDataId")
+            .second-opinion__table-headers-PHR-content(v-for="(grantedPHR, idx) in item.info.geneticDataIds")
               v-alert.second-opinion__table-alert(color="#F9F5FF" )
                 span.second-opinion__table-alert-text {{ grantedPHR }}
             
         template(v-slot:[`item.opinionAvailable`]="{ item }")
           .d-flex.flex-column.second-opinion__table-headers-opinion
-          span {{ item.info.givenOpinion.length }}
+          span {{ item.info.opinionIds.length }}
 
         template(v-slot:[`item.action`]="{ item }")
           ui-debio-button.second-opinion__table-button(
@@ -68,10 +68,12 @@
 </template>
 
 <script>
+import { mapState } from "vuex"
 import SecondOpinionBanner from "./Banner"
 import { alertTriangleIcon } from "@debionetwork/ui-icons"
 import { isWeb3Injected } from "@polkadot/extension-dapp"
-import dummyData from "./dummyRequestedOpinionList"
+
+import { queryOpinionRequestorByOwner, queryOpinionRequestor } from "@/common/lib/polkadot-provider/query/opinion-requestor"
 
 export default {
   name: "SecondOpinion",
@@ -112,6 +114,13 @@ export default {
     isLoading: false
   }),
 
+  computed: {
+    ...mapState({
+      api: (state) => state.substrate.api,
+      wallet: (state) => state.substrate.wallet
+    })
+  },
+
   async mounted() {
     await this.fetchSecondOpinionData()
   },
@@ -130,7 +139,11 @@ export default {
     },
 
     async fetchSecondOpinionData() {
-      this.items = dummyData.data
+      const data = await queryOpinionRequestorByOwner(this.api, this.wallet.address)
+      for (let i = 0; i < data.length; i++) {
+        const item = await queryOpinionRequestor(this.api, data[i])
+        this.items.push(item)
+      }
     }
   }
 }
