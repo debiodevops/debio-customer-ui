@@ -76,8 +76,8 @@
                       .navbar__balance-content
                         .navbar__balance-type Balance
                         .navbar__balance-instruction(@click.prevent="openTutorialToken()")
-                            v-icon(size="10" type="button") mdi-open-in-new
-                            span.ml-2 How to add balance
+                          v-icon(size="10" type="button") mdi-open-in-new
+                          span.ml-2 How to add balance
 
                     v-divider.navbar__balance-divider
                     .navbar__balance-amount(v-for="wallet in polkadotWallets")
@@ -90,6 +90,12 @@
                       span {{ wallet.balance }} {{ wallet.currency }} 
 
                     v-divider.navbar__balance-divider-sec
+                    .navbar__balance-instruction-to-buy(@click.prevent="openBuyInst('buy')")
+                      v-icon(size="18" type="button" color="rgba(196, 0, 165, 1)") mdi-open-in-new
+                      span.ml-2 Buy $DBIO
+                    .navbar__balance-instruction-to-buy(@click.prevent="openBuyInst('bridge')")
+                      v-icon(size="18" type="button" color="rgba(196, 0, 165, 1)") mdi-open-in-new
+                      span.ml-2 Bridge $DBIO
 
               template(slot="footer" v-if="getActiveMenu.action")
                 v-btn.navbar__footer-button(outlined block color="#FE379E" dark @click="exportKeystoreAction()") Export Keystore
@@ -224,20 +230,20 @@ export default {
 
   created() {
     this.polkadotWallets.forEach(wallet => {
-      if(wallet.name ==="usdt") {
+      if (wallet.name === "usdt") {
         wallet.tokenId = getEnv("VUE_APP_DEBIO_USDT_TOKEN_ID")
       }
     })
   },
 
-  async mounted () {
+  async mounted() {
     await this.fetchWalletBalance()
     await this.getOctopusAssets()
   },
 
   watch: {
     lastEventData() {
-      if(this.lastEventData) {
+      if (this.lastEventData) {
         this.fetchWalletBalance()
         this.getOctopusAssets()
       }
@@ -262,6 +268,13 @@ export default {
         await setReadNotification(this.notifReads)
       }, 2000)
 
+    },
+    openBuyInst(link){
+      if(link === "buy"){
+        window.open("https://app.ref.finance/#near%7Cdbio.near", "__blank")
+      }else{
+        window.open("https://mainnet.oct.network/bridge", "__blank")
+      }
     },
 
     async handleCopy(text) {
@@ -291,8 +304,7 @@ export default {
 
       const calculateFinalPosition = this.$refs.menu.getBoundingClientRect().width + 207
 
-      this.arrowPosition = `${
-        e.target.getBoundingClientRect().left -
+      this.arrowPosition = `${e.target.getBoundingClientRect().left -
         this.$refs.menu.offsetLeft +
         calculateFinalPosition
       }px`
@@ -325,14 +337,14 @@ export default {
         const tokenId = assets[i][0].toHuman()[0]
         const id = assets[i][1].toHuman()
         const data = await queryGetAssetBalance(this.api, id, this.wallet.address)
-        const assetData = {id, data, name:  tokenId.split(".")[0], tokenId}
+        const assetData = { id, data, name: tokenId.split(".")[0], tokenId }
         this.octopusAsset.push(assetData)
       }
 
       await this.fetchPolkadotBallance()
     },
-    
-    async fetchPolkadotBallance() {  
+
+    async fetchPolkadotBallance() {
       this.polkadotWallets.forEach(async (wallet) => {
         if (wallet.name !== "debio") {
           const data = this.octopusAsset.find(a => a.name === wallet.name || a.tokenId === wallet.tokenId)
@@ -351,7 +363,7 @@ export default {
       if (type === "polkadot") this.signOut()
     },
 
-    signOut () {
+    signOut() {
       const accounts = Object.keys(window.localStorage).filter((v) =>
         /account:/.test(v)
       )
@@ -360,7 +372,7 @@ export default {
       })
 
       localStorage.clear()
-      this.$router.push({ name: "sign-in"})
+      this.$router.push({ name: "sign-in" })
       this.clearAuth()
       this.clearWallet()
       this.loginStatus = false
@@ -374,7 +386,7 @@ export default {
       try {
         const keystore = localStorage.getKeystore()
         const address = localStorage.getAddress()
-        const file = new Blob([keystore], {type: "text/json;charset=utf-8"})
+        const file = new Blob([keystore], { type: "text/json;charset=utf-8" })
         const downloadUrl = window.URL.createObjectURL(file)
         const downloadLink = document.createElement("a")
         downloadLink.href = downloadUrl
@@ -483,6 +495,13 @@ export default {
       color: #8F98AA
       @include tiny-reg
       cursor: pointer
+
+    &__balance-instruction-to-buy
+      color: #c400a5
+      font-size: 0.8rem
+      cursor: pointer
+      margin: 4px 0px
+      font-weight:500
     
     &__balance-divider-sec
       margin-top: 0.75rem
