@@ -18,7 +18,9 @@ export async function checkMyriadUsername(username) {
 }
 
 export async function myriadRegistration(info) {
+  console.log("info >", info)
   const { data } =  await apiClientRequest.post(`myriad/register`, info)
+  console.log("dataaaa ??", data)
   return data
 }
 

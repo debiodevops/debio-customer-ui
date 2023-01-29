@@ -115,19 +115,17 @@ export default {
       const isUsernameExisted = (await checkMyriadUsername(username)).status
       if (!isUsernameExisted) {
         try {
-          const data = await myriadRegistration({
+          await myriadRegistration({
             username,
             name,
             address: this.addressHex,
             role: "customer"
           })
-          return data
         } catch (err) {
           console.error(err)
         }
+        await this.myriadAuthentication() 
       }
-
-      await this.myriadAuthentication()
     },
 
     async myriadAuthentication() {
@@ -143,7 +141,8 @@ export default {
         networkType: "debio",
         role: "customer"
       })
-      await this.checkMyriadUser()
+
+      await this.checkMyriadUser(this.addressHex)
       return jwt
     },
 
@@ -181,6 +180,7 @@ export default {
         info,
         window.open(`${getEnv("VUE_APP_MYRIAD_URL")}/post/${data.id}`)
       )
+      this.$router.push({ name: "customer-dashboard" })
     }
   }
 }
