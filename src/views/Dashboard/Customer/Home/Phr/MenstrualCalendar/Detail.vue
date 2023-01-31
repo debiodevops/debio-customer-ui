@@ -48,6 +48,7 @@
               small
               color="grey darken-2"
               @click="prev"
+              :disabled="submitPreview"
             )
               v-icon(small) mdi-chevron-left
             span {{ selectedMonthText }}
@@ -58,6 +59,7 @@
               small
               color="grey darken-2"
               @click="next"
+              :disabled="submitPreview"
             )
               v-icon(small) mdi-chevron-right
 
@@ -250,6 +252,8 @@ export default {
 
   methods: {
     prev() {
+      if (this.submitPreview) return
+
       if (this.selectedMonth > 0) {
         this.selectedMonth--
       } else {
@@ -260,6 +264,8 @@ export default {
     },
 
     next() {
+      if (this.submitPreview) return
+      
       if (this.selectedMonth < 11) {
         this.selectedMonth++
       } else {

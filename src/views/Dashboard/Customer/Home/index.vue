@@ -93,6 +93,26 @@
                   stroke
                   @click="goToPaymentDetail(item)"
                 )
+  
+  v-dialog(:value="showPopupInfo" width="363" persistent rounded )
+    .customer-dashboard__content-modal
+      span.customer-dashboard__text-header-modal Welcome To DeBio Network
+
+      v-img(
+        alt="today"
+        src="@/assets/doctor_dashboard_modal.svg"
+        max-width="128px"
+        max-height="128px"
+      )
+
+      span.customer-dashboard__text-content-modal It is required to have DBIO tokens as a gas fee to utilize this platform. Kindly ensure that you have an adequate balance before initiating any transactions.
+      
+      v-btn(
+        depressed
+        color="secondary"
+        large
+        width="100%"
+        @click="showPopupInfo = false") Let’s get started
 </template>
 
 <script>
@@ -155,7 +175,8 @@ export default {
       }
     ],
     isLoadingPayments: false,
-    isLoadingTest: false
+    isLoadingTest: false,
+    showPopupInfo: false
   }),
 
   computed: {
@@ -174,6 +195,7 @@ export default {
   async created() {
     if (this.$route.query.currentTab === "recent order") this.tabs = 0
     if (this.$route.query.currentTab === "recent payments") this.tabs = 1
+    this.showPopupInfo = this.$route.params.openInfo === "open"
     await this.fetchOrders()
     await this.fetchRecentTest()
     await this.getDataPaymentHistory()
@@ -442,6 +464,29 @@ export default {
 
     &__order-service-sample-id
       color: #757274
+      
+    &__content-modal
+      display: flex
+      flex-direction: column
+      background-color: #FFFFFF
+      align-items: center
+      padding: 32px 24px
+      gap: 16px
+
+    &__text-header-modal
+      font-size: 20px
+      font-weight: 600
+      line-height: 36px
+      letter-spacing: 0em
+      text-align: center
+
+    &__text-content-modal
+      font-size: 14px
+      font-weight: 400
+      line-height: 21px
+      letter-spacing: 0.0075em
+      color: #000000
+      font-style: normal
 
   .degenics-datatable
     margin: 20px 0 0 0

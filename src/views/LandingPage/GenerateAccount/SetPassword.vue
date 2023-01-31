@@ -61,6 +61,7 @@ import { mapActions, mapState, mapMutations } from "vuex"
 import LandingPagePopUp from "@/views/LandingPage/LandingPagePopUp.vue"
 import errorMessage from "@/common/constants/error-messages"
 import getEnv from "@/common/lib/utils/env"
+import localStorage from "@/common/lib/local-storage"
 
 export default {
   name: "SetPassword",
@@ -130,6 +131,8 @@ export default {
     },
 
     async register() {
+      const dataAccountExist = localStorage.getKeystore() !== null;
+      
       try {
         const result = await this.registerMnemonic({
           mnemonic: this.$route.params.mnemonic,
@@ -138,7 +141,7 @@ export default {
         if (!result.success) {
           throw("Mnemonic registration failed!")
         }
-        this.$router.push({name: "registration-successful", params: { flag: "created" }})
+        this.$router.push({name: "registration-successful", params: { flag: "created", openInfo: dataAccountExist ? "close" : "open" }})
       } 
       catch (err) {
         console.error(err)

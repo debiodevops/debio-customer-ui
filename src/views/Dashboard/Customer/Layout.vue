@@ -14,7 +14,7 @@
       p.modal-error__subtitle An Internal error occured during your request! try again later!
 
     ui-debio-modal(
-      :show="showModalPassword"
+      :show="false"
       title="Unlock Wallet"
       :icon="checkCircleIcon"
       :showCta="!success"

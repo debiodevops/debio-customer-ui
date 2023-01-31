@@ -38,7 +38,7 @@ export default {
 
   methods: {
     onContinue() {
-      this.$router.push({ name: "customer-dashboard" })
+      this.$router.push({ name: "customer-dashboard", params: { openInfo: this.$route.params.openInfo } })
     }
   },
 
