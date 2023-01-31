@@ -158,7 +158,7 @@
                 @click="showAlertCancel = true"
                 color="error"
               ) Cancel
-              
+
               v-btn(
                 color="secondary"
                 elevation='0'
@@ -318,24 +318,24 @@ export default {
   },
 
   props: {
-    isUpdate: {type: Boolean, default: false}
+    isUpdate: { type: Boolean, default: false }
   },
 
   data: () => ({
     alertTriangleIcon, checkCircleIcon,
     monthList: [
-      {value: 0, text: "January"},
-      {value: 1, text: "February"},
-      {value: 2, text: "March"},
-      {value: 3, text: "April"},
-      {value: 4, text: "May"},
-      {value: 5, text: "June"},
-      {value: 6, text: "July"},
-      {value: 7, text: "August"},
-      {value: 8, text: "September"},
-      {value: 9, text: "October"},
-      {value: 10, text: "November"},
-      {value: 11, text: "December"}
+      { value: 0, text: "January" },
+      { value: 1, text: "February" },
+      { value: 2, text: "March" },
+      { value: 3, text: "April" },
+      { value: 4, text: "May" },
+      { value: 5, text: "June" },
+      { value: 6, text: "July" },
+      { value: 7, text: "August" },
+      { value: 8, text: "September" },
+      { value: 9, text: "October" },
+      { value: 10, text: "November" },
+      { value: 11, text: "December" }
     ],
     selectedMonthText: "",
     selectedMonth: new Date().getMonth(),
@@ -378,7 +378,7 @@ export default {
   },
 
   watch: {
-    
+
     async selectedMonthText(newMonth) {
       this.submitPreview = true
       this.selectedMonth = this.monthList.find((value) => value.text === newMonth).value
@@ -392,8 +392,8 @@ export default {
 
     selectedDates(newSelected) {
 
-      if(this.dateSelected.find(date => date.getTime() === newSelected.getTime())) {
-        this.dateSelected = this.dateSelected.filter(date => date.getTime() !== newSelected.getTime() )
+      if (this.dateSelected.find(date => date.getTime() === newSelected.getTime())) {
+        this.dateSelected = this.dateSelected.filter(date => date.getTime() !== newSelected.getTime())
         return
       }
 
@@ -435,7 +435,7 @@ export default {
       this.submitPreview = false
     },
 
-    next() { 
+    next() {
       this.submitPreview = true
       if (this.selectedMonth < 11) {
         this.selectedMonth++
@@ -454,7 +454,7 @@ export default {
       const cycle = []
 
       for (let i = 0; i < this.menstrualCalendarCycleLogIds.length; i++) {
-        const id =  this.menstrualCalendarCycleLogIds[i]
+        const id = this.menstrualCalendarCycleLogIds[i]
         const detail = await getMenstrualCycleLog(this.api, id)
         cycle.push(detail)
       }
@@ -480,19 +480,19 @@ export default {
       let date = startDate
       let indexDate = 0
 
-      while(date.getTime() < endDate.getTime()) {
+      while (date.getTime() < endDate.getTime()) {
         date = new Date(this.selectedYear, this.selectedMonth, (-(dayFirstDateCurrentMonth - 1) + indexDate))
         const log = cycle.filter(log => Number(log.date.replaceAll(",", "")) === date.getTime())
         const menstruation = log[0]
         const currentData = {
           date: date.getTime(),
-          menstruation: log.length && menstruation.menstruation ? 1: 0,
+          menstruation: log.length && menstruation.menstruation ? 1 : 0,
           symptoms: []
         }
 
         menstrualCalendarData.cycleLog.push(currentData)
         indexDate++
-      }  
+      }
 
       this.menstrualCalendarCycleDetail = menstrualCalendarData
       this.startDaySelectedAverage = Number(menstrualCalendarDetail.averageCycle)
@@ -507,7 +507,8 @@ export default {
           date: d.getTime(),
           symptoms: [],
           menstruation: true
-        })}
+        })
+      }
       )
 
       if (this.isUpdate) {
@@ -515,7 +516,7 @@ export default {
       } else {
         this.submitPreview = true
         this.nextStatus = true
-        
+
         await addMenstrualCalendar(
           this.api,
           this.pair,
@@ -546,7 +547,7 @@ export default {
     async onSubmitAverage() {
       this.startDaySelectedAverage = this.daySelectedAverage
       this.selectAverage = false
-      this.stepText = "by choosing your menstrual dates. we will estimate your menstruation date"
+      this.stepText = "By choosing your menstrual dates, we will estimate your menstruation date"
     },
 
     goToDetailMenstrual() {
@@ -586,12 +587,13 @@ export default {
       if (newDate.length) {
         const menstrualCalendarInfo = []
         this.dateSelected.forEach(detail => {
-          if(newDate.find(date => date === detail.getTime())) {
+          if (newDate.find(date => date === detail.getTime())) {
             menstrualCalendarInfo.push({
               date: detail.getTime(),
               symptoms: [],
               menstruation: true
-            })}
+            })
+          }
         })
 
         await addMenstrualCycleLog(
@@ -614,7 +616,7 @@ export default {
           menstUpdateData.push({
             id: data.id,
             menstrualCalendarId: data.menstrualCalendarId,
-            date: data.date.replaceAll(",",""),
+            date: data.date.replaceAll(",", ""),
             menstruation: data.menstruation ? false : true,
             symptoms: data.symptoms
           })

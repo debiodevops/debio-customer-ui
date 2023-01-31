@@ -97,9 +97,10 @@
             .menstrual-calendar__subscription-plan-header Select Subscription Plan
 
           template(v-if="paymentPreview")
-            v-btn.menstrual-calendar__subscription-payment-back(icon @click="toSubsPlan")
-              v-icon mdi-chevron-left
-            .menstrual-calendar__subscription-plan-header Select Payment Methods
+            .menstrual-calendar__subscription-payment-back-wrapper(style="display:flex; margin:1rem 0;")
+              v-btn.menstrual-calendar__subscription-payment-back(icon @click="toSubsPlan")
+                v-icon mdi-chevron-left
+              .menstrual-calendar__subscription-plan-header Select Payment Methods
 
           .menstrual-calendar__subscription-plan-breadcrumbs
             v-breadcrumbs(:items="breadcrumbs")
@@ -140,7 +141,7 @@
                 .menstrual-calendar__plan-payment-card-total-text {{ subscription.duration }}
                 .menstrual-calendar__plan-card-price Burn {{ subscription.price }} {{ subscription.currency }}/ {{ subscription.periode}}                  
                   .menstrual-calendar__plan-card-price-convert ({{ subscription.usd }} USD)
-              .menstrual-calendar__plan-payment-card-notes Any eligible subscription credit will be applied until it runs out. Your subscription will be renew for {{ subscription.price }} {{ subscription.currency }} / {{ subscription.periode }} on {{getExpiredDate( subscription.periode )}}. Have any questions? 
+              .menstrual-calendar__plan-payment-card-notes Any eligible subscription credit will be applied until it runs out. Your subscription will be renewed for {{ subscription.price }} {{ subscription.currency }} / {{ subscription.periode }} on {{getExpiredDate( subscription.periode )}}. Have any questions? 
                 a Contact our support team
 
 
@@ -386,6 +387,9 @@ export default {
   @import "@/common/styles/mixins.sass"
  
   .menstrual-calendar
+    &__subscription-payment-back-wrapper
+      display:flex
+
     &__wrapper
       height: 100%
 
