@@ -1,43 +1,43 @@
 <template lang="pug">
-  v-dialog.dialog-confirmation(:value="show" height="535" width="400" persistent)
-    v-card
-      v-app-bar(flat dense color="white")
-        v-spacer
-        v-btn(icon @click="closeDialog")
-          v-icon mdi-close
-      
-      .dialog-confirmation__card
-        .dialog-confirmation__title(align="center") {{ title }}
+v-dialog.dialog-confirmation(:value="show" height="535" width="400" persistent)
+  v-card
+    v-app-bar(flat dense color="white")
+      v-spacer
+      v-btn(icon @click="closeDialog")
+        v-icon mdi-close
 
-        .dialog-confirmation__icon
-          v-img(v-bind:src="require('@/assets/alert-triangle.png')" max-width="87.07")
+    .dialog-confirmation__card
+      .dialog-confirmation__title(align="center") {{ title }}
+
+      .dialog-confirmation__icon
+        v-img(v-bind:src="require('@/assets/alert-triangle.png')" max-width="87.07")
 
 
-        v-card-text.dialog-confirmation__description {{ message}}
+      v-card-text.dialog-confirmation__description {{ message}}
 
-        .dialog-confirmation__trans-weight 
-          .dialog-confirmation__trans-weight-text Estimated transaction weight
-            v-tooltip.visible(bottom )
-              template(v-slot:activator="{ on, attrs }")
-                v-icon.dialog-confirmation__trans-weight-icon(
-                  style="font-size: 12px;"
-                  color="primary"
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                ) mdi-alert-circle-outline 
-              span(style="font-size: 10px;") Total fee paid in DBIO to execute this transaction.
+      .dialog-confirmation__trans-weight 
+        .dialog-confirmation__trans-weight-text Estimated transaction weight
+          v-tooltip.visible(bottom )
+            template(v-slot:activator="{ on, attrs }")
+              v-icon.dialog-confirmation__trans-weight-icon(
+                style="font-size: 12px;"
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              ) mdi-alert-circle-outline 
+            span(style="font-size: 10px;") Total fee paid in DBIO to execute this transaction.
 
-          div( style="font-size: 12px;" ) {{ Number(txWeight).toFixed(4) }} DBIO
+        div( style="font-size: 12px;" ) {{ Number(txWeight).toFixed(4) }} DBIO
 
-        .dialog-confirmation__button
-          ui-debio-button(
-            :loading="loading"
-            color="secondary" 
-            width="280px"
-            height="35px"
-            @click="onSubmit"
-          ) {{ btnMessage }}
+      .dialog-confirmation__button
+        ui-debio-button(
+          :loading="loading"
+          color="secondary" 
+          width="280px"
+          height="35px"
+          @click="onSubmit"
+        ) {{ btnMessage }}
   
       
 </template>
@@ -49,9 +49,9 @@ export default {
 
   props: {
     show: Boolean,
-    message:String,
+    message: String,
     title: String,
-    loading:Boolean,
+    loading: Boolean,
     txWeight: String,
     btnMessage: String
   },

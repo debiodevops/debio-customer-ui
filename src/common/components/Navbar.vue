@@ -1,111 +1,122 @@
 <template lang="pug">
-  .navbar(@mouseleave.prevent="handleHideDropdown(computeMouseLeave)")
-    .navbar__wrapper
-      .navbar__breadcrumbs(@mouseenter.prevent="handleHideDropdown(computeMouseLeave)")
-        ui-debio-breadcrumbs(v-if="!error" base-router="customer")
+.navbar(@mouseleave.prevent="handleHideDropdown(computeMouseLeave)")
+  .navbar__wrapper
+    .navbar__breadcrumbs(@mouseenter.prevent="handleHideDropdown(computeMouseLeave)")
+      ui-debio-breadcrumbs(v-if="!error" base-router="customer")
 
-      .navbar__user-menu(ref="menu" :class="{ 'navbar__user-menu--settings': !!getActiveMenu && getActiveMenu.type === 'settings' }")
-        template(v-for="(menu, idx) in menus")
-          ui-debio-icon(
-            :key="menu.id"
-            :icon="menu.icon"
-            size="24"
-            :class="{ 'notification-dot': menu.type === 'notification' && notifications.some(v => v.read === false) }"
-            v-if="!menu.isAvatar"
-            role="button"
-            @click.prevent="handleHover($event, idx)"
-            @mouseenter.prevent="handleHover($event, idx)"
-            :color="menu.active ? '#C400A5' : '#5640A5'"
-            stroke
-          )
+    .navbar__user-menu(ref="menu" :class="{ 'navbar__user-menu--settings': !!getActiveMenu && getActiveMenu.type === 'settings' }")
+      template(v-for="(menu, idx) in menus")
+        ui-debio-icon(
+          :key="menu.id"
+          :icon="menu.icon"
+          size="24"
+          :class="{ 'notification-dot': menu.type === 'notification' && notifications.some(v => v.read === false) }"
+          v-if="!menu.isAvatar"
+          role="button"
+          @click.prevent="handleHover($event, idx)"
+          @mouseenter.prevent="handleHover($event, idx)"
+          :color="menu.active ? '#C400A5' : '#5640A5'"
+          stroke
+        )
 
-        transition(name="fade" mode="out-in")
-          .navbar__dropdown(v-if="!!getActiveMenu")
-            .navbar__triangle
-              .navbar__triangle-object(:class="{ 'navbar__triangle-object--active': !!getActiveMenu }" :style="{'--arrow-position': arrowPosition}")
+      transition(name="fade" mode="out-in")
+        .navbar__dropdown(v-if="!!getActiveMenu")
+          .navbar__triangle
+            .navbar__triangle-object(:class="{ 'navbar__triangle-object--active': !!getActiveMenu }" :style="{'--arrow-position': arrowPosition}")
 
-            ui-debio-card(:width="getActiveMenu.type === 'settings' ? '225' : '368'")
-              template(slot="header" v-if="getActiveMenu.title")
-                span {{ getActiveMenu.title }}
+          ui-debio-card(:width="getActiveMenu.type === 'settings' ? '225' : '368'")
+            template(slot="header" v-if="getActiveMenu.title")
+              span {{ getActiveMenu.title }}
 
-              template
-                section.navbar__dropdown-content(v-if="getActiveMenu.type === 'notification'")
-                  .navbar__notification
-                    .notification-item.text-center(v-if="!notifications.length") No notifications yet
-                    router-link.notification-item(
-                      role="button"
-                      v-for="(notif, idx) in notifications"
-                      :class="{ 'notification-item--new': !notif.read }"
-                      :key="idx"
-                      @click.native="handleNotificationRead(notif)"
-                      :to="{ name: notif.route, params: notif.params }"
-                    )
-                      .notification-item__wrapper
-                        .notification-item__title(:aria-label="notif.message")
-                          | {{ notif.message }}
+            template
+              section.navbar__dropdown-content(v-if="getActiveMenu.type === 'notification'")
+                .navbar__notification
+                  .notification-item.text-center(v-if="!notifications.length") No notifications yet
+                  router-link.notification-item(
+                    role="button"
+                    v-for="(notif, idx) in notifications"
+                    :class="{ 'notification-item--new': !notif.read }"
+                    :key="idx"
+                    @click.native="handleNotificationRead(notif)"
+                    :to="{ name: notif.route, params: notif.params }"
+                  )
+                    .notification-item__wrapper
+                      .notification-item__title(:aria-label="notif.message")
+                        | {{ notif.message }}
 
-                        .notification-item__description(
-                          :aria-label="compareDate(new Date(), new Date(parseInt(notif.timestamp)))"
-                        )
-                          | {{ compareDate(new Date(), new Date(parseInt(notif.timestamp))) }}
-
-                section.navbar__dropdown-content(v-if="getActiveMenu.type === 'polkadot'")
-                  .navbar__wallet-header(v-if="getActiveMenu.type === 'polkadot'")
-                    ui-debio-icon.mb-5(
-                      :icon="getActiveMenu.icon"
-                      size="24"
-                      :class="{ 'notification-dot': getActiveMenu.type === 'notification' && notifications.some(v => v.read === false) }"
-                      :color="getActiveMenu.active ? '#C400A5' : '#5640A5'"
-                      stroke
-                    )
-                    h4.ml-5 Polkadot
-
-                  ui-debio-input(label="Address" variant="small" :data-wallet="walletAddress" ref="polkadot" disabled :value="walletAddress" block)
-                    ui-debio-icon(
-                      slot="icon-append"
-                      :icon="copyIcon"
-                      view-box="0 0 40 40"
-                      stroke
-                      color="#5640A5"
-                      size="20"
-                      role="button"
-                      @click="handleCopy(walletAddress)"
-                    )
-                  .navbar__balance(v-if="getActiveMenu.type === 'polkadot'")
-                    .navbar__balance-wrapper
-                      .navbar__balance-content
-                        .navbar__balance-type Balance
-                        .navbar__balance-instruction(@click.prevent="openTutorialToken()")
-                          v-icon(size="10" type="button") mdi-open-in-new
-                          span.ml-2 How to add balance
-
-                    v-divider.navbar__balance-divider
-                    .navbar__balance-amount(v-for="wallet in polkadotWallets")
-                      v-img(
-                        alt="no-list-data"
-                        :src="require(`../../assets/${wallet.icon}.svg`)"
-                        max-width="24px"
-                        max-height="24px"
+                      .notification-item__description(
+                        :aria-label="compareDate(new Date(), new Date(parseInt(notif.timestamp)))"
                       )
-                      span {{ wallet.balance }} {{ wallet.currency }} 
+                        | {{ compareDate(new Date(), new Date(parseInt(notif.timestamp))) }}
 
-                    v-divider.navbar__balance-divider-sec
-                    .navbar__balance-instruction-to-buy(@click.prevent="openBuyInst('buy')")
-                      v-icon(size="18" type="button" color="rgba(196, 0, 165, 1)") mdi-open-in-new
-                      span.ml-2 Buy $DBIO
-                    .navbar__balance-instruction-to-buy(@click.prevent="openBuyInst('bridge')")
-                      v-icon(size="18" type="button" color="rgba(196, 0, 165, 1)") mdi-open-in-new
-                      span.ml-2 Bridge $DBIO
+              section.navbar__dropdown-content(v-if="getActiveMenu.type === 'polkadot'" style="margin-bottom:-0.8rem;")
+                .navbar__wallet-header(v-if="getActiveMenu.type === 'polkadot'")
+                  ui-debio-icon.mb-5(
+                    :icon="getActiveMenu.icon"
+                    size="24"
+                    :class="{ 'notification-dot': getActiveMenu.type === 'notification' && notifications.some(v => v.read === false) }"
+                    :color="getActiveMenu.active ? '#C400A5' : '#5640A5'"
+                    stroke
+                  )
+                  h4.ml-5 Polkadot
 
-              template(slot="footer" v-if="getActiveMenu.action")
-                v-btn.navbar__footer-button(outlined block color="#FE379E" dark @click="exportKeystoreAction()") Export Keystore
-                v-btn.navbar__footer-button(block color="#FE379E" dark @click="handleDropdownAction(getActiveMenu.type)") {{ getActiveMenu.action }}
+                ui-debio-input(label="Address" variant="small" :data-wallet="walletAddress" ref="polkadot" disabled :value="walletAddress" block)
+                  ui-debio-icon(
+                    slot="icon-append"
+                    :icon="copyIcon"
+                    view-box="0 0 40 40"
+                    stroke
+                    color="#5640A5"
+                    size="20"
+                    role="button"
+                    @click="handleCopy(walletAddress)"
+                  )
+                .navbar__balance(v-if="getActiveMenu.type === 'polkadot'")
+                  .navbar__balance-wrapper
+                    .navbar__balance-content
+                      .navbar__balance-type Balance
+                      .navbar__balance-instruction(@click.prevent="openTutorialToken()")
+                        v-icon(size="10" type="button") mdi-open-in-new
+                        span.ml-2 How to add balance
 
-    v-progress-linear.navbar__loading(
-      v-if="loading"
-      color="primary"
-      indeterminate
-    )
+                  v-divider.navbar__balance-divider
+                  .navbar__balance-amount(v-for="wallet in polkadotWallets")
+                    v-img(
+                      alt="no-list-data"
+                      :src="require(`../../assets/${wallet.icon}.svg`)"
+                      max-width="24px"
+                      max-height="24px"
+                    )
+                    span {{ wallet.balance }} {{ wallet.currency }} 
+
+                  v-divider.navbar__balance-divider-sec
+                  .navbar__balance-instruction-to-buy(@click.prevent="openBuyInst('buy')" style="margin-top:1rem;")
+                    v-icon(size="18" type="button" color="rgba(196, 0, 165, 1)") mdi-open-in-new
+                    span.ml-2 Buy $DBIO
+                    v-tooltip.visible(bottom style="z-index: 999;")
+                      template(v-slot:activator="{ on, attrs }")
+                        v-icon.navbar__trans-weight-icon(
+                          style="font-size: 12px; margin-left:10px;"
+                          color="primary"
+                          dark
+                          v-bind="attrs"
+                          v-on="on"
+                        ) mdi-alert-circle-outline
+                      span(style="font-size: 10px;") You will be redirected to a third-party site to purchase DBIO tokens. DeBio will not collect any personal information from you. 
+
+                  .navbar__balance-instruction-to-buy(@click.prevent="openBuyInst('bridge')")
+                    v-icon(size="18" type="button" color="rgba(196, 0, 165, 1)") mdi-open-in-new
+                    span.ml-2 Bridge $DBIO
+
+            template(slot="footer" v-if="getActiveMenu.action")
+              v-btn.navbar__footer-button(outlined block color="#FE379E" dark @click="exportKeystoreAction()") Export Keystore
+              v-btn.navbar__footer-button(block color="#FE379E" dark @click="handleDropdownAction(getActiveMenu.type)") {{ getActiveMenu.action }}
+
+  v-progress-linear.navbar__loading(
+    v-if="loading"
+    color="primary"
+    indeterminate
+  )
 </template>
 
 <script>
@@ -269,10 +280,10 @@ export default {
       }, 2000)
 
     },
-    openBuyInst(link){
-      if(link === "buy"){
+    openBuyInst(link) {
+      if (link === "buy") {
         window.open("https://app.ref.finance/#near%7Cdbio.near", "__blank")
-      }else{
+      } else {
         window.open("https://mainnet.oct.network/bridge", "__blank")
       }
     },
@@ -304,10 +315,7 @@ export default {
 
       const calculateFinalPosition = this.$refs.menu.getBoundingClientRect().width + 207
 
-      this.arrowPosition = `${e.target.getBoundingClientRect().left -
-        this.$refs.menu.offsetLeft +
-        calculateFinalPosition
-      }px`
+      this.arrowPosition = `${e.target.getBoundingClientRect().left - this.$refs.menu.offsetLeft + calculateFinalPosition}px`
     },
 
     handleHideDropdown(idx) {
@@ -500,7 +508,7 @@ export default {
       color: #c400a5
       font-size: 0.8rem
       cursor: pointer
-      margin: 4px 0px
+      margin:4px 0px
       font-weight:500
     
     &__balance-divider-sec

@@ -1,177 +1,177 @@
 <template lang="pug">
-  .menstrual-calendar-detail
-    .menstrual-calendar-detail__wrapper
-      MenstrualCalendarBanner
-      ui-debio-modal(
-        :show="showStart"
-        :show-title="false"
-        :show-cta="false"
-        disable-dismiss
+.menstrual-calendar-detail
+  .menstrual-calendar-detail__wrapper
+    MenstrualCalendarBanner
+    ui-debio-modal(
+      :show="showStart"
+      :show-title="false"
+      :show-cta="false"
+      disable-dismiss
+    )
+      .menstrual-calendar-detail__modal-title Your menstrual calendar has been set!
+      v-img(
+        block
+        alt="no-list-data"
+        src="@/assets/menstrual-calendar-dialog.svg"
+        height="160px"
       )
-        .menstrual-calendar-detail__modal-title Your menstrual calendar has been set!
-        v-img(
-          block
-          alt="no-list-data"
-          src="@/assets/menstrual-calendar-dialog.svg"
-          height="160px"
+
+      .menstrual-calendar-detail__modal-desc Choose date to perform action, select preffered action in the right of the calendar
+      ui-debio-button(
+        color="secondary"
+        width="336px"
+        style="font-size: 14px;"
+        @click="showStart = false"
+      ) Start Action
+
+    .menstrual-calendar-detail__details
+      ui-debio-card(width="740")
+        .menstrual-calendar-detail__head-text
+          .menstrual-calendar-detail__head-text-column
+            span.menstrual-calendar-detail__head-text-primary My Menstrual Calendar
+            span.menstrual-calendar-detail__head-text-secondary Choose date to perform action
+          .menstrual-calendar-detail__head-info-column
+            a.menstrual-calendar-detail__head-text-link
+              span View statistics
+              v-icon(small color="rgba(86, 64, 165, 1)") mdi-open-in-new
+            span.menstrual-calendar-detail__head-text-reminder
+              v-icon(small color="rgba(255, 143, 143, 1)") mdi-clock-outline 
+              span Your subscription will end in {{ reminder }}
+
+        v-divider.menstrual-calendar-detail__divider
+
+        .menstrual-calendar-detail__options
+          .menstrual-calendar-detail__month
+            v-btn( 
+              fab
+              text
+              small
+              color="grey darken-2"
+              @click="prev"
+            )
+              v-icon(small) mdi-chevron-left
+            span {{ selectedMonthText }}
+
+            v-btn( 
+              fab
+              text
+              small
+              color="grey darken-2"
+              @click="next"
+            )
+              v-icon(small) mdi-chevron-right
+
+          span.menstrual-calendar-detail__year {{ selectedYear }}
+
+        Calendar.menstrual-calendar-detail__calendar(
+          :year="selectedYear" 
+          :month="selectedMonth"
+          :isLoading="submitPreview"
+          v-model="selectedDates"
+          :menstrualData="menstrualCalendarData"
         )
 
-        .menstrual-calendar-detail__modal-desc Choose date to perform action, select preffered action in the right of the calendar
-        ui-debio-button(
-          color="secondary"
-          width="336px"
-          style="font-size: 14px;"
-          @click="showStart = false"
-        ) Start Action
+        .menstrual-calendar-detail__icons
+          .menstrual-calendar-detail__icon(v-for="description in descriptions")
+            v-img(
+              :alt="description.toLowerCase()"
+              :src="require(`../../../../../../assets/${description.toLowerCase()}.svg`)"
+              max-width="16px"
+              max-height="16px"
+            )
+            span {{ description}}
 
-      .menstrual-calendar-detail__details
-        ui-debio-card(width="740")
-          .menstrual-calendar-detail__head-text
-            .menstrual-calendar-detail__head-text-column
-              span.menstrual-calendar-detail__head-text-primary My Menstrual Calendar
-              span.menstrual-calendar-detail__head-text-secondary Choose date to perform action
-            .menstrual-calendar-detail__head-info-column
-              a.menstrual-calendar-detail__head-text-link
-                span View statistics
-                v-icon(small color="rgba(86, 64, 165, 1)") mdi-open-in-new
-              span.menstrual-calendar-detail__head-text-reminder
-                v-icon(small color="rgba(255, 143, 143, 1)") mdi-clock-outline 
-                span Your subscription will end in {{ reminder }}
-
-          v-divider.menstrual-calendar-detail__divider
-
-          .menstrual-calendar-detail__options
-            .menstrual-calendar-detail__month
-              v-btn( 
-                fab
-                text
-                small
-                color="grey darken-2"
-                @click="prev"
-              )
-                v-icon(small) mdi-chevron-left
-              span {{ selectedMonthText }}
-
-              v-btn( 
-                fab
-                text
-                small
-                color="grey darken-2"
-                @click="next"
-              )
-                v-icon(small) mdi-chevron-right
-
-            span.menstrual-calendar-detail__year {{ selectedYear }}
-
-          Calendar.menstrual-calendar-detail__calendar(
-            :year="selectedYear" 
-            :month="selectedMonth"
-            :isLoading="submitPreview"
-            v-model="selectedDates"
-            :menstrualData="menstrualCalendarData"
-          )
-
-          .menstrual-calendar-detail__icons
-            .menstrual-calendar-detail__icon(v-for="description in descriptions")
-              v-img(
-                :alt="description.toLowerCase()"
-                :src="require(`../../../../../../assets/${description.toLowerCase()}.svg`)"
-                max-width="16px"
-                max-height="16px"
-              )
-              span {{ description}}
-
-          .menstrual-calendar-detail__note
-            .menstrual-calendar-detail__note-text Note
-            span.menstrual-calendar-detail__note-desc your previous menstrual cycle does not guarantee your future menstrual cycle medically or diagnostically
+        .menstrual-calendar-detail__note
+          .menstrual-calendar-detail__note-text Note
+          span.menstrual-calendar-detail__note-desc your previous menstrual cycle does not guarantee your future menstrual cycle medically or diagnostically
 
 
-        .menstrual-calendar-detail__menu
-          ui-debio-card.menstrual-calendar-detail__summary(width="394")
-            .menstrual-calendar-detail__summary-header
-              v-img.menstrual-calendar-detail__summary-img(
-                alt="no-list-data"
-                src="@/assets/calendar.svg"
-                max-width="44px"
-                max-height="44px"
-              )
-              .menstrual-calendar-detail__summary-text
-                .menstrual-calendar-detail__summary-title Summary
-                .menstrual-calendar-detail__summary-desc Today Overview
+      .menstrual-calendar-detail__menu
+        ui-debio-card.menstrual-calendar-detail__summary(width="394")
+          .menstrual-calendar-detail__summary-header
+            v-img.menstrual-calendar-detail__summary-img(
+              alt="no-list-data"
+              src="@/assets/calendar.svg"
+              max-width="44px"
+              max-height="44px"
+            )
+            .menstrual-calendar-detail__summary-text
+              .menstrual-calendar-detail__summary-title Summary
+              .menstrual-calendar-detail__summary-desc Today Overview
 
-          ui-debio-card(width="394")
-            .menstrual-calendar-detail__text {{ getSummary() }}
+        ui-debio-card(width="394")
+          .menstrual-calendar-detail__text {{ getSummary() }}
 
 
-          ui-debio-card.menstrual-calendar-detail__setting(width="394")
-            .menstrual-calendar-detail__summary-header
-              v-img.menstrual-calendar-detail__summary-img(
-                alt="no-list-data"
-                src="@/assets/drink-coffee.svg"
-                max-width="44px"
-                max-height="44px"
-              )
+        ui-debio-card.menstrual-calendar-detail__setting(width="394")
+          .menstrual-calendar-detail__summary-header
+            v-img.menstrual-calendar-detail__summary-img(
+              alt="no-list-data"
+              src="@/assets/drink-coffee.svg"
+              max-width="44px"
+              max-height="44px"
+            )
 
-              .menstrual-calendar-detail__setting-text
-                .menstrual-calendar-detail__summary-title What is happening today ?
-                .menstrual-calendar-detail__summary-desc you can choose more than 1 emoticon
+            .menstrual-calendar-detail__setting-text
+              .menstrual-calendar-detail__summary-title What is happening today ?
+              .menstrual-calendar-detail__summary-desc you can choose more than 1 emoticon
 
-            v-divider.menstrual-calendar-detail__navigation
+          v-divider.menstrual-calendar-detail__navigation
 
-            ui-debio-button.menstrual-calendar-detail__button(
-              color="#F3F3F3" 
-              height="48"
-              width="100%"
-              @click="toMenstrualCalendarExpress()"
-            ) 
-              .menstrual-calendar-detail__button-text Express yourself
-              v-icon mdi-chevron-right
+          ui-debio-button.menstrual-calendar-detail__button(
+            color="#F3F3F3" 
+            height="48"
+            width="100%"
+            @click="toMenstrualCalendarExpress()"
+          ) 
+            .menstrual-calendar-detail__button-text Express yourself
+            v-icon mdi-chevron-right
 
-          ui-debio-card.menstrual-calendar-detail__setting(width="394")
-            .menstrual-calendar-detail__summary-header
-              v-img.menstrual-calendar-detail__summary-img(
-                alt="no-list-data"
-                src="@/assets/calendar.svg"
-                max-width="44px"
-                max-height="44px"
-              )
+        ui-debio-card.menstrual-calendar-detail__setting(width="394")
+          .menstrual-calendar-detail__summary-header
+            v-img.menstrual-calendar-detail__summary-img(
+              alt="no-list-data"
+              src="@/assets/calendar.svg"
+              max-width="44px"
+              max-height="44px"
+            )
 
-              .menstrual-calendar-detail__setting-text
-                .menstrual-calendar-detail__summary-title Menstrual Calendar Settings
-                .menstrual-calendar-detail__summary-desc Update menstruation day and subscription
+            .menstrual-calendar-detail__setting-text
+              .menstrual-calendar-detail__summary-title Menstrual Calendar Settings
+              .menstrual-calendar-detail__summary-desc Update menstruation day and subscription
 
-            v-divider.menstrual-calendar-detail__navigation
+          v-divider.menstrual-calendar-detail__navigation
 
-            ui-debio-button.menstrual-calendar-detail__button(
-              color="#F3F3F3" 
-              height="48"
-              width="100%"
-              @click="toMenstrualSelectionUpdate()"
-            ) 
-              .menstrual-calendar-detail__button-text Update Menstruation Day
-              v-icon mdi-chevron-right
+          ui-debio-button.menstrual-calendar-detail__button(
+            color="#F3F3F3" 
+            height="48"
+            width="100%"
+            @click="toMenstrualSelectionUpdate()"
+          ) 
+            .menstrual-calendar-detail__button-text Update Menstruation Day
+            v-icon mdi-chevron-right
 
-            ui-debio-button.menstrual-calendar-detail__button(
-              color="#F3F3F3" 
-              height="48"
-              width="100%"
-              @click="toSubscriptionSetting()"
-            ) 
-              .menstrual-calendar-detail__button-text Subscription Settings
+          ui-debio-button.menstrual-calendar-detail__button(
+            color="#F3F3F3" 
+            height="48"
+            width="100%"
+            @click="toSubscriptionSetting()"
+          ) 
+            .menstrual-calendar-detail__button-text Subscription Settings
 
-              v-icon mdi-chevron-right
+            v-icon mdi-chevron-right
 
-            ui-debio-button.menstrual-calendar-detail__button(
-              color="#F3F3F3" 
-              height="48"
-              width="100%"
-              disabled
-            ) 
-              .menstrual-calendar-detail__button-text Journaling
-              v-alert.menstrual-calendar-detail__alert(color="#FFE6E6" )
-                .menstrual-calendar-detail__alert-text Coming Soon
+          ui-debio-button.menstrual-calendar-detail__button(
+            color="#F3F3F3" 
+            height="48"
+            width="100%"
+            disabled
+          ) 
+            .menstrual-calendar-detail__button-text Journaling
+            v-alert.menstrual-calendar-detail__alert(color="#FFE6E6" )
+              .menstrual-calendar-detail__alert-text Coming Soon
 
-              v-icon mdi-chevron-right
+            v-icon mdi-chevron-right
 </template>
 
 <script>
