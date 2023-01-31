@@ -178,7 +178,7 @@ export default {
         this.api, 
         this.wallet, 
         info,
-        window.open(`${getEnv("VUE_APP_MYRIAD_URL")}login?redirect=${getEnv("VUE_APP_MYRIAD_URL")}%2Fpost%2F${data.id}`)
+        window.open(`${getEnv("VUE_APP_MYRIAD_URL")}/login?redirect=${getEnv("VUE_APP_MYRIAD_URL")}%2Fpost%2F${data.id}`)
       )
       this.$router.push({ name: "customer-dashboard" })
     }
