@@ -99,7 +99,7 @@
                 color="primary"
                 :bind="attrs"
                 :on="on"
-              ) Upload PHR
+              ) Upload Health Record
             span Upload Personal Health Records
 
           v-tooltip(bottom)
@@ -125,9 +125,9 @@
 </template>
 
 <script>
-import {mapState, mapActions} from "vuex"
+import { mapState, mapActions } from "vuex"
 import store from "@/store"
-import {validateForms} from "@/common/lib/validate"
+import { validateForms } from "@/common/lib/validate"
 import {
   gridIcon,
   boxIcon,
@@ -152,7 +152,7 @@ export default {
 
   mixins: [validateForms],
 
-  components: {NavigationDrawer, Navbar, maintenancePageLayout},
+  components: { NavigationDrawer, Navbar, maintenancePageLayout },
 
   data: () => ({
     checkCircleIcon,
@@ -171,13 +171,14 @@ export default {
     navs: [
       { text: "Dashboard", disabled: false, active: false, route: "customer-dashboard", icon: gridIcon },
       { text: "My Test", disabled: false, active: false, route: "my-test", icon: boxIcon },
-      { text: "My PHR", disabled: false, active: false, route: "customer-phr", icon: fileTextIcon, withSub: true, 
+      {
+        text: "My Health Record", disabled: false, active: false, route: "customer-phr", icon: fileTextIcon, withSub: true,
         subMenu: [
-          {text: "Menstrual Calendar", route: "menstrual-calendar", active: false},
-          {text: "Second Opinion", route: "second-opinion", active: false}
+          { text: "Menstrual Calendar", route: "menstrual-calendar", active: false },
+          { text: "Second Opinion", route: "second-opinion-maintenance", active: false }
         ]
       },
-      { text: "My Genetic Data", disabled: false, active: false, route: "customer-genetic-data", icon: geneticDnaIcon},
+      { text: "My Genetic Data", disabled: false, active: false, route: "customer-genetic-data", icon: geneticDnaIcon },
       { text: "Data Bounty", disabled: false, active: false, route: "customer-data-bounty-maintenance", icon: databaseIcon }, // TO ADJUST ONCE THE FEATURE IS READY
       { text: "Payment History", disabled: false, active: false, route: "customer-payment-history", icon: creditCardIcon }
     ]
@@ -202,7 +203,7 @@ export default {
         return this.$route.name === name || this.$route.meta.parent === name
       }
 
-      return this.navs.map((nav) => ({...nav, active: setActive(nav.route)}))
+      return this.navs.map((nav) => ({ ...nav, active: setActive(nav.route) }))
     },
 
     computeButtonActive() {
@@ -242,7 +243,7 @@ export default {
       this.pageError = error
     },
 
-    async getListNotification() {    
+    async getListNotification() {
       await this.$store.dispatch("substrate/getListNotification", {
         address: this.wallet.address,
         role: "customer",
@@ -251,20 +252,20 @@ export default {
     },
 
     goToRequestTestPage() {
-      this.$router.push({name: "customer-request-test"})
+      this.$router.push({ name: "customer-request-test" })
     },
 
     goToUploadPHR() {
-      this.$router.push({name: "customer-phr-create"})
+      this.$router.push({ name: "customer-phr-create" })
     },
 
     goToRequestAnalysis() {
-      this.$router.push({ name: "customer-request-analysis"})
+      this.$router.push({ name: "customer-request-analysis" })
     },
 
     goToDashboard() {
       this.showModalError = false
-      this.$router.push({ name: "customer-dashboard"})
+      this.$router.push({ name: "customer-dashboard" })
     },
 
     handleShowPassword() {
@@ -292,7 +293,7 @@ export default {
     },
 
     signOut() {
-      this.$router.push({name: "landing-page"})
+      this.$router.push({ name: "landing-page" })
       const accounts = Object.keys(window.localStorage).filter((v) =>
         /account:/.test(v)
       )

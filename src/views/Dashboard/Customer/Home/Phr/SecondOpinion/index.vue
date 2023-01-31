@@ -1,4 +1,4 @@
-.<template lang="pug">
+<template lang="pug">
   .second-opinion
     .second-opinion__wrapper
       SecondOpinionBanner
@@ -17,8 +17,8 @@
 
         template(slot="prepend")
           .second-opinion__table-title Requested Opinion
-          .second-opinion__table-description List of Requested Opinions
-      
+          .second-opinion__table-description List of My Personal Health Record
+
         template(v-slot:[`item.category`]="{ item }")
           .d-flex.flex-column.second-opinion__table-headers-category
             span {{ item.info.category }}
@@ -32,7 +32,7 @@
             .second-opinion__table-headers-PHR-content(v-for="(grantedPHR, idx) in item.info.geneticDataIds")
               v-alert.second-opinion__table-alert(color="#F9F5FF" )
                 span.second-opinion__table-alert-text {{ grantedPHR }}
-            
+
         template(v-slot:[`item.opinionAvailable`]="{ item }")
           .d-flex.flex-column.second-opinion__table-headers-opinion
           span {{ item.info.opinionIds.length }}
@@ -94,7 +94,7 @@ export default {
         sortable: true
       },
       {
-        text: "Granted PHR",
+        text: "Granted Health Record",
         value: "grantedPHR",
         sortable: true
       },
@@ -131,7 +131,7 @@ export default {
       this.isNotInstalled = !isWeb3Injected
 
       if (!this.isNotInstalled) {
-        this.$router.push({name: "second-opinion-request"})
+        this.$router.push({ name: "second-opinion-request" })
       }
     },
 

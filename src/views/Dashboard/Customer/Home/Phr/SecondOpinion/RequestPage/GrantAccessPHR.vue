@@ -72,7 +72,7 @@
       )
 
     .grant-access-card__title(v-if="!isAddNewPHR") Select the Personal Health Records you want to give access to the Health Professionals. (you can select more than one)
-    .grant-access-card__title(v-if="isAddNewPHR") Granted Access Personal Health Record
+    .grant-access-card__title(v-if="isAddNewPHR") Granted Access My Health Record
 
     v-divider.my-5
 
@@ -106,8 +106,8 @@
             span.grant-access-card__file-description(v-for="(file, idx) in item.files" :title="file.description") {{ file.description }}
 
       .grant-access-card__nav
-        span The PHR you are looking for is not on the list? 
-          a(@click="isAddNewPHR = true") +Add New PHR
+        span The Health Record you are looking for is not on the list? 
+          a(@click="isAddNewPHR = true") +Add New Health Record
 
       .grant-access-card__buttons
         ui-debio-button.grant-access-card__button(
@@ -129,14 +129,14 @@
       .grant-access-card__nav-button(@click="handleBack")
         v-icon.grant-access-card__nav-icon mdi-chevron-left
 
-      .grant-access-card__form-title Upload Personal Health Records
+      .grant-access-card__form-title Upload Health Records
       .grant-access-card__forms
         ui-debio-input(
           :rules="$options.rules.phr.title"
           variant="small"
-          label="PHR Title"
+          label="Health Record Title"
           :error="isDirty.phr && isDirty.phr.title"
-          placeholder="Type PHR Title"
+          placeholder="Type Health Record Title"
           v-model="phr.title"
           outlined
           block
@@ -149,8 +149,8 @@
           :error="isDirty.phr && isDirty.phr.category"
           :rules="$options.rules.phr.category"
           variant="small"
-          label="PHR Category"
-          placeholder="Select PHR Category"
+          label="Health Record Category"
+          placeholder="Select Category"
           v-model="phr.category"
           item-text="category"
           item-value="category"
@@ -181,14 +181,14 @@
             @click="showModal = true"
           )
             .grant-access-card__file-details.mt-0
-                .grant-access-card__file-details--left
-                  ui-debio-icon.grant-access-card__file-icon(
-                    :icon="fileTextIcon"
-                    size="28"
-                    color="#D3C9D1"
-                    fill
-                  )
-                  .grant-access-card__file-name No File uploaded, Please add file to upload
+              .grant-access-card__file-details--left
+                ui-debio-icon.grant-access-card__file-icon(
+                  :icon="fileTextIcon"
+                  size="28"
+                  color="#D3C9D1"
+                  fill
+                )
+                .grant-access-card__file-name No File uploaded, Please add file to upload
 
           template(v-else)
             .grant-access-card__file-item(v-for="(item, idx) in computeFiles" :key="item.createdAt")
@@ -210,7 +210,7 @@
                     color="secondary"
                     @click="onDelete(item.createdAt)"
                   ) Yes
-              
+
               .grant-access-card__file-title-add(:title="`Title: ${item.title}`") {{ item.title }}
                 .grant-access-card__file-description-add(:title="`Description: ${item.description}`") {{ item.description }}
                 .grant-access-card__file-details
@@ -270,7 +270,7 @@ import CryptoJS from "crypto-js"
 import cryptWorker from "@/common/lib/ipfs/crypt-worker"
 import { getEMRCategories } from "@/common/lib/api"
 import { registerElectronicMedicalRecord, registerElectronicMedicalRecordFee } from "@debionetwork/polkadot-provider"
-import { queryElectronicMedicalRecordByOwnerId,  queryElectronicMedicalRecordFileById } from "@debionetwork/polkadot-provider"
+import { queryElectronicMedicalRecordByOwnerId, queryElectronicMedicalRecordFileById } from "@debionetwork/polkadot-provider"
 import { generalDebounce } from "@/common/lib/utils"
 import errorMessage from "@/common/constants/error-messages"
 import { validateForms } from "@/common/lib/validate"
@@ -306,7 +306,7 @@ export default {
 
     headers: [
       {
-        text: "PHR Title",
+        text: "Health Record Title",
         value: "title",
         sortable: true
       },
@@ -407,14 +407,14 @@ export default {
   },
 
   rules: {
-    password: [ val => !!val || errorMessage.PASSWORD(8) ],
+    password: [val => !!val || errorMessage.PASSWORD(8)],
     phr: {
       title: [
         val => !!val || errorMessage.REQUIRED,
         val => val && val.length < 50 || errorMessage.MAX_CHARACTER(50),
         englishAlphabet
       ],
-      category: [ val => !!val || errorMessage.REQUIRED ]
+      category: [val => !!val || errorMessage.REQUIRED]
     },
     document: {
       title: [
@@ -468,7 +468,7 @@ export default {
       this.showModalConfirm = null
       this.phr.files = this.phr.files.filter(file => file.createdAt !== id)
     },
-    
+
     toSecondOpinion() {
       const ids = this.grantedAccess.map(data => data.id)
       this.setPHRIds(ids)
@@ -483,22 +483,22 @@ export default {
 
       const allAccounts = await web3Accounts()
       if (!allAccounts.length) await this.exportKeystoreAction()
-      
+
       const account = allAccounts.find(account => account.address === sender)
-      if(!account) await this.exportKeystoreAction()
+      if (!account) await this.exportKeystoreAction()
 
       const injector = await web3FromAddress(sender)
       if (injector) {
         this.showConnect = false
-        this.$router.push({ name: "connecting-page"})
+        this.$router.push({ name: "connecting-page" })
       }
     },
 
-    exportKeystoreAction(){
+    exportKeystoreAction() {
       try {
         const keystore = localStorage.getKeystore()
         const address = localStorage.getAddress()
-        const file = new Blob([keystore], {type: "text/json;charset=utf-8"})
+        const file = new Blob([keystore], { type: "text/json;charset=utf-8" })
         const downloadUrl = window.URL.createObjectURL(file)
         const downloadLink = document.createElement("a")
         downloadLink.href = downloadUrl
@@ -535,7 +535,7 @@ export default {
             documents.push(documentDetail)
           }
         }
- 
+
         this.phrList = documents
         this.isLoading = false
       } catch (error) {
@@ -634,7 +634,7 @@ export default {
       const fr = new FileReader()
       const { title, description, file } = this.document
 
-      fr.onload = async function() {
+      fr.onload = async function () {
         try {
           const encrypted = await context.encrypt({
             text: fr.result,
@@ -658,7 +658,7 @@ export default {
 
           context.phr.files.push(dataFile)
 
-        } catch(e) {
+        } catch (e) {
           this.error = e.message
         }
       }

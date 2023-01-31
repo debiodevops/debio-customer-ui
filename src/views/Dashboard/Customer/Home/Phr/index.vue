@@ -14,7 +14,7 @@
   )
     h2.mb-10 Delete
     ui-debio-icon.mb-8(:icon="alertTriangleIcon" stroke size="80")
-    p.modal-password__subtitle(v-if="selectedFile") You might not be retrieved back, are you sure you want to delete this PHR ?
+    p.modal-password__subtitle(v-if="selectedFile") You might not be retrieved back, are you sure you want to delete selected Health Record ?
 
     p.modal-password__tx-info.mb-0.d-flex
       span.modal-password__tx-text.mr-6.d-flex.align-center
@@ -40,8 +40,8 @@
       ) Delete
 
   ui-debio-banner(
-    title="My PHR"
-    subtitle="Upload a collection of your Personal Health Records that involved in your medical history (diagnoses, treatment plans, immunization, allergies, radiology and laboratory)."
+    title="My Health Record "
+    subtitle="A collection of your personal health records that includes your medical history, such as diagnoses, treatment plans, immunizations, allergies, radiology and laboratory results."
     gradient-color="primary"
     with-decoration
   )
@@ -65,7 +65,7 @@
     template(slot="prepend")
       .customer-phr__nav
         .customer-phr__nav-text
-          h2.customer-phr__title My PHR List
+          h2.customer-phr__title My Personal Health Record List
           p.customer-phr__subtitle.mb-0 List of My Personal Health Records
     template(v-slot:[`item.title`]="{ item }")
       .d-flex.flex-column
@@ -144,7 +144,7 @@ export default {
     secretKey: null,
     headers: [
       {
-        text: "PHR Title",
+        text: "Health Record Title",
         value: "title",
         sortable: true
       },
@@ -247,7 +247,7 @@ export default {
             documents.push(documentDetail)
           }
         }
-        
+
         this.phrDocuments = documents
         this.isLoading = false
       } catch (error) {
@@ -289,11 +289,11 @@ export default {
     },
 
     onEdit(phr) {
-      this.$router.push({ name: "customer-phr-edit", params: { id: phr.id }})
+      this.$router.push({ name: "customer-phr-edit", params: { id: phr.id } })
     },
 
     onDetails(phr) {
-      this.$router.push({ name: "customer-phr-details", params: { id: phr.id }})
+      this.$router.push({ name: "customer-phr-details", params: { id: phr.id } })
     },
 
     handleShowPassword() {
@@ -325,7 +325,7 @@ export default {
         this.error = null
         this.selectedFile = null
       } catch (e) {
-        const error = await(errorHandler(e.message))
+        const error = await (errorHandler(e.message))
         this.isLoading = false
         this.error = error
       }

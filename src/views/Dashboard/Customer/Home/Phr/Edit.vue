@@ -9,7 +9,7 @@
 
     ui-debio-modal(
       :show="showModal"
-      :title="isEdit ? 'Edit PHR File' : 'Add PHR File'"
+      :title="isEdit ? 'Edit Health Record File' : 'Add Health Record File'"
       cta-title="Submit"
       :cta-action="handleNewFile"
       :cta-outlined="false"
@@ -58,9 +58,9 @@
         ui-debio-input(
           :rules="$options.rules.phr.title"
           variant="small"
-          label="PHR Title"
+          label="Health Record Title"
           :error="isDirty.phr && isDirty.phr.title"
-          placeholder="Type PHR Title"
+          placeholder="Type Health Record Title"
           v-model="phr.title"
           outlined
           block
@@ -73,8 +73,8 @@
           :error="isDirty.phr && isDirty.phr.category"
           :rules="$options.rules.phr.category"
           variant="small"
-          label="PHR Category"
-          placeholder="Select PHR Category"
+          label="Health Record Category"
+          placeholder="Select Category"
           v-model="phr.category"
           item-text="category"
           item-value="category"
@@ -118,23 +118,36 @@
             template(v-else)
               .customer-create-phr__file-item(v-for="(item, idx) in computeFiles" :key="item.id")
                 ui-debio-modal.modal-confirm(
-                  :show="showModalConfirm === item.id"
-                  title="Do you want to delete ?"
-                  @onClose="showModalConfirm = null"
+                  :show="showModalConfirm"
+                  :show-title="false"
+                  @onClose="showModalConfirm = false"
                 )
-                  span.modal-confirm__title By deleting this file, your file will not be uploaded
-                  .modal-confirm__cta.d-flex.justify-space-between(slot="cta")
+                  h2.mb-10 Delete Health Record File
+                  ui-debio-icon.mb-8(:icon="alertTriangleIcon" stroke size="80")
+                  p.modal-password__subtitle By delete this Health Record File you might not be able to retreive it back
+
+                  p.modal-password__tx-info.mb-0.d-flex
+                    span.modal-password__tx-text.mr-6.d-flex.align-center
+                      | Estimated transaction weight
+                      ui-debio-icon.ml-1(
+                        :icon="alertIcon"
+                        size="14"
+                        stroke
+                        @mouseenter="handleShowTooltip"
+                      )
+                      span.modal-password__tooltip(
+                        @mouseleave="handleShowTooltip"
+                        :class="{ 'modal-password__tooltip--show': showTooltip }"
+                      ) Total fee paid in DBIO to execute this transaction.
+                    span.modal-password__tx-value {{ txWeight }}
+
+                  .modal-password__cta.d-flex(slot="cta")
                     ui-debio-button(
-                      outlined
-                      width="100"
+                      block
                       color="secondary"
-                      @click="showModalConfirm = null"
-                    ) No
-                    ui-debio-button(
-                      width="100"
-                      color="secondary"
+                      :loading="isLoading"
                       @click="onDelete(item.id)"
-                    ) Yes
+                    ) Delete
 
                 .customer-create-phr__file-title(:title="`Title: ${item.title}`") {{ item.title }}
                 .customer-create-phr__file-description(:title="`Description: ${item.description}`") {{ item.description }}
@@ -209,7 +222,7 @@ import { generalDebounce } from "@/common/lib/utils"
 import { validateForms } from "@/common/lib/validate"
 import { errorHandler } from "@/common/lib/error-handler"
 import errorMessage from "@/common/constants/error-messages"
-import { fileTextIcon, alertIcon, pencilIcon, trashIcon, eyeOffIcon, eyeIcon } from "@debionetwork/ui-icons"
+import { fileTextIcon, alertIcon, pencilIcon, trashIcon, eyeOffIcon, eyeIcon, alertTriangleIcon } from "@debionetwork/ui-icons"
 
 const englishAlphabet = val => (val && /^[A-Za-z0-9!@#$%^&*\\(\\)\-_=+:;"',.\\/? ]+$/.test(val)) || errorMessage.INPUT_CHARACTER("English alphabet")
 
@@ -226,11 +239,11 @@ export default {
     eyeOffIcon,
     alertIcon,
     eyeIcon,
-
+    alertTriangleIcon,
     isEdit: false,
     showModal: false,
     showPassword: false,
-    showModalConfirm: null,
+    showModalConfirm: false,
     error: null,
     isLoading: false,
     isDocumentLoading: false,
@@ -299,21 +312,21 @@ export default {
     phr: {
       deep: true,
       immediate: true,
-      handler: generalDebounce(async function() {
+      handler: generalDebounce(async function () {
         await this.calculateTxWeight()
       }, 500)
     }
   },
 
   rules: {
-    password: [ val => !!val || errorMessage.PASSWORD(8) ],
+    password: [val => !!val || errorMessage.PASSWORD(8)],
     phr: {
       title: [
         val => !!val || errorMessage.REQUIRED,
         val => val && val.length < 50 || errorMessage.MAX_CHARACTER(50),
         englishAlphabet
       ],
-      category: [ val => !!val || errorMessage.REQUIRED ]
+      category: [val => !!val || errorMessage.REQUIRED]
     },
     document: {
       title: [
@@ -388,8 +401,8 @@ export default {
 
           completeFiles.push({
             ...file,
-            file: new File([blobData], details.rows[0].metadata.name, {type: "application/pdf"}),
-            oldFile: new File([blobData], details.rows[0].metadata.name, {type: "application/pdf"}),
+            file: new File([blobData], details.rows[0].metadata.name, { type: "application/pdf" }),
+            oldFile: new File([blobData], details.rows[0].metadata.name, { type: "application/pdf" }),
             recordLink: file.recordLink
           })
         }
@@ -431,7 +444,7 @@ export default {
       const context = this
       const fr = new FileReader()
 
-      fr.onload = async function() {
+      fr.onload = async function () {
         try {
           const encrypted = await context.encrypt({
             text: fr.result,
@@ -465,7 +478,7 @@ export default {
             context.phr.files.push(dataFile)
           }
 
-        } catch(e) {
+        } catch (e) {
           this.error = e.message
         }
       }
@@ -497,7 +510,7 @@ export default {
     },
 
     onDelete(id) {
-      this.showModalConfirm = null
+      this.showModalConfirm = false
       this.phr.files = this.phr.files.filter(file => file.id !== id)
     },
 
@@ -825,8 +838,11 @@ export default {
     &__cta
       width: 250px
       margin: 0 auto
-
   .modal-password
+    &__subtitle
+      max-width: 20rem
+      font-weight:700
+      @include body-text-2-opensans
     &__cta
       gap: 20px
 

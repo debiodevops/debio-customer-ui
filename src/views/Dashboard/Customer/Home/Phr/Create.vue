@@ -9,7 +9,7 @@
 
     ui-debio-modal(
       :show="showModal"
-      :title="isEdit ? 'Edit PHR File' : 'Add PHR File'"
+      :title="isEdit ? 'Edit Health Record File' : 'Add Health Record File'"
       cta-title="Submit"
       :cta-action="handleNewFile"
       :cta-outlined="false"
@@ -20,7 +20,7 @@
         :rules="$options.rules.document.title"
         variant="small"
         label="Document Title"
-        placeholder="Add Title"
+        placeholder="Medical Receipt"
         v-model="document.title"
         outlined
         block
@@ -32,7 +32,7 @@
         :rules="$options.rules.document.description"
         variant="small"
         label="Description"
-        placeholder="Add Description"
+        placeholder="This is my first file in PDF Format. Lorem ipsum dolor sit amet,"
         v-model="document.description"
         validate-on-blur
         outlined
@@ -53,14 +53,14 @@
       )
 
     .customer-create-phr__wrapper
-      .customer-create-phr__title.mb-13 Upload Personal Health Records
+      .customer-create-phr__title.mb-13 Upload Health Records
       .customer-create-phr__forms
         ui-debio-input(
           :rules="$options.rules.phr.title"
           variant="small"
-          label="PHR Title"
+          label="Health Record Title"
           :error="isDirty.phr && isDirty.phr.title"
-          placeholder="Type PHR Title"
+          placeholder="Add Title"
           v-model="phr.title"
           outlined
           block
@@ -73,8 +73,8 @@
           :error="isDirty.phr && isDirty.phr.category"
           :rules="$options.rules.phr.category"
           variant="small"
-          label="PHR Category"
-          placeholder="Select PHR Category"
+          label="Health Record Category"
+          placeholder="Select Category"
           v-model="phr.category"
           item-text="category"
           item-value="category"
@@ -197,7 +197,8 @@ import cryptWorker from "@/common/lib/ipfs/crypt-worker"
 import { getEMRCategories } from "@/common/lib/api"
 import {
   registerElectronicMedicalRecord,
-  registerElectronicMedicalRecordFee } from "@debionetwork/polkadot-provider"
+  registerElectronicMedicalRecordFee
+} from "@debionetwork/polkadot-provider"
 import { u8aToHex } from "@polkadot/util"
 import { validateForms } from "@/common/lib/validate"
 import { errorHandler } from "@/common/lib/error-handler"
@@ -303,14 +304,14 @@ export default {
   },
 
   rules: {
-    password: [ val => !!val || errorMessage.PASSWORD(8) ],
+    password: [val => !!val || errorMessage.PASSWORD(8)],
     phr: {
       title: [
         val => !!val || errorMessage.REQUIRED,
         val => val && val.length < 50 || errorMessage.MAX_CHARACTER(50),
         englishAlphabet
       ],
-      category: [ val => !!val || errorMessage.REQUIRED ]
+      category: [val => !!val || errorMessage.REQUIRED]
     },
     document: {
       title: [
@@ -372,7 +373,7 @@ export default {
       const fr = new FileReader()
       const { createdAt, title, description, file } = this.document
 
-      fr.onload = async function() {
+      fr.onload = async function () {
         try {
           const encrypted = await context.encrypt({
             text: fr.result,
@@ -405,7 +406,7 @@ export default {
             context.phr.files.push(dataFile)
           }
 
-        } catch(e) {
+        } catch (e) {
           this.error = e.message
         }
       }

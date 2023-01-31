@@ -27,25 +27,25 @@ export default [
       {
         path: "phr",
         name: "customer-phr",
-        meta: { pageHeader: "My PHR" },
+        meta: { pageHeader: "My Health Record" },
         component: () => import(/* webpackChunkName */ "@/views/Dashboard/Customer/Home/Phr")
       },
       {
         path: "phr/upload",
         name: "customer-phr-create",
-        meta: { pageHeader: "Upload PHR" },
+        meta: { pageHeader: "Upload Health Record" },
         component: () => import(/* webpackChunkName */ "@/views/Dashboard/Customer/Home/Phr/Create")
       },
       {
         path: "phr/edit/:id?",
         name: "customer-phr-edit",
-        meta: { pageHeader: "Edit PHR", parent: "customer-phr" },
+        meta: { pageHeader: "Edit Health Record", parent: "customer-phr" },
         component: () => import(/* webpackChunkName */ "@/views/Dashboard/Customer/Home/Phr/Edit")
       },
       {
         path: "phr/details/:id?",
         name: "customer-phr-details",
-        meta: { pageHeader: "Details PHR", parent: "customer-phr" },
+        meta: { pageHeader: "Details Health Record", parent: "customer-phr" },
         component: () => import(/* webpackChunkName */ "@/views/Dashboard/Customer/Home/Phr/Details")
       },
       {
@@ -209,13 +209,13 @@ export default [
       {
         path: "genetic-analysis-detail/:id?",
         name: "customer-genetic-analysis-detail",
-        meta: { pageHeader: "Request Genetic Data"},
+        meta: { pageHeader: "Request Genetic Data" },
         component: () => import(/* webpackChunkName */ "@/views/Dashboard/Customer/Home/GeneticData/Details")
       },
       {
         path: "genetic-analysis-detail/:id?/result",
         name: "customer-genetic-analysis-result",
-        meta: { parent: "customer-genetic-analysis-detail", pageHeader: "Result"},
+        meta: { parent: "customer-genetic-analysis-detail", pageHeader: "Result" },
         component: () => import(/* webpackChunkName */ "@/views/Dashboard/Customer/Home/GeneticData/Result")
       },
       // Request Analysis
