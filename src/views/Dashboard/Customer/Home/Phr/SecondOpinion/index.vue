@@ -45,6 +45,7 @@
             width="120px"
             height="35"
             style="font-size: 6px;"
+            @click="toMyriad(item.info.myriadPostId)"
           ) Visit My Request
 
 
@@ -72,8 +73,8 @@ import { mapState } from "vuex"
 import SecondOpinionBanner from "./Banner"
 import { alertTriangleIcon } from "@debionetwork/ui-icons"
 import { isWeb3Injected } from "@polkadot/extension-dapp"
-
 import { queryOpinionRequestorByOwner, queryOpinionRequestor } from "@/common/lib/polkadot-provider/query/opinion-requestor"
+import getEnv from "@/common/lib/utils/env"
 
 export default {
   name: "SecondOpinion",
@@ -134,6 +135,10 @@ export default {
       }
     },
 
+    async toMyriad(id) {
+      window.open(`${getEnv("VUE_APP_MYRIAD_URL")}login?redirect=${getEnv("VUE_APP_MYRIAD_URL")}%2Fpost%2F${id}`)
+    },
+
     async toInstall() {
       window.open("https://polkadot.js.org/extension/", "_blank")
     },
@@ -144,6 +149,8 @@ export default {
         const item = await queryOpinionRequestor(this.api, data[i])
         this.items.push(item)
       }
+
+      console.log(this.items)
     }
   }
 }

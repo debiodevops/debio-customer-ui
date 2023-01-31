@@ -174,7 +174,7 @@ export default {
       { text: "My PHR", disabled: false, active: false, route: "customer-phr", icon: fileTextIcon, withSub: true, 
         subMenu: [
           {text: "Menstrual Calendar", route: "menstrual-calendar", active: false},
-          {text: "Second Opinion", route: "second-opinion-maintenance", active: false}
+          {text: "Second Opinion", route: "second-opinion", active: false}
         ]
       },
       { text: "My Genetic Data", disabled: false, active: false, route: "customer-genetic-data", icon: geneticDnaIcon},
