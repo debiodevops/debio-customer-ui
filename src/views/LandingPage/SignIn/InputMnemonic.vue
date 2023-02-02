@@ -36,7 +36,7 @@
 import { mnemonicValidate } from "@polkadot/util-crypto"
 import LandingPagePopUp from "@/views/LandingPage/LandingPagePopUp.vue"
 import errorMessage from "@/common/constants/error-messages"
-
+import localStorage from "@/common/lib/local-storage"
 
 export default {
   name: "InputMnemonic",
@@ -72,10 +72,12 @@ export default {
     },
 
     changePassword() {
+      const dataAccountExist = localStorage.getKeystore() !== null
       this.$router.push({
         name: "change-password",
         params: { 
-          mnemonic: this.mnemonic
+          mnemonic: this.mnemonic,
+          openInfo: dataAccountExist ? "close" : "open"
         }
       })
     }

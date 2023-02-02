@@ -131,7 +131,7 @@ export default {
     },
 
     async register() {
-      const dataAccountExist = localStorage.getKeystore() !== null;
+      const dataAccountExist = localStorage.getKeystore() !== null
       
       try {
         const result = await this.registerMnemonic({
