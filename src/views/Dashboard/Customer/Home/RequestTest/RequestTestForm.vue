@@ -29,7 +29,7 @@
         :items="states"
         item-text="name"
         item-value="state_code"
-        placeholder="Select State/Province"
+        placeholder="Any"
         :disabled="!country"
         @change="onStateChange"
         autocomplete="off"
@@ -49,7 +49,7 @@
         :items="cities"
         item-text="name"
         return-object
-        placeholder="Select City"
+        placeholder="Any"
         :disabled="!state"
         @change="onCityChange"
         autocomplete="off"
@@ -68,7 +68,7 @@
         item-text="service_categories"
         item-value="service_categories"
         menu-props="auto"
-        placeholder="Select Category"
+        placeholder="Any"
         :disabled="!city"
         @change="onCategoryChange"
         autocomplete="off"
@@ -114,11 +114,11 @@ export default {
     }),
 
     disable() {
-      const {country} = this
+      const { country } = this
       return !country
     }
   },
-  
+
   async mounted() {
     await this.getCountries()
     await this.getServiceCategory()
@@ -133,13 +133,13 @@ export default {
       const data = await getCategories()
       this.categories = data
     },
-      
+
     async getCountries() {
-      
+
       this.noState = false
       this.noCity = false
 
-      const { data : { data }} = await getLocations()
+      const { data: { data } } = await getLocations()
       this.countries = data
     },
 
@@ -149,7 +149,7 @@ export default {
       this.cities = []
 
       this.countryName = this.countries.filter((c) => c.iso2 === selectedCountry)[0].name
-      const { data : { data }} = await getStates(selectedCountry)
+      const { data: { data } } = await getStates(selectedCountry)
 
       if (data.length < 1) {
         this.states.push(this.countryName)
@@ -174,7 +174,7 @@ export default {
         return
       }
 
-      const { data : { data }} = await getCities(this.country, selectedState)
+      const { data: { data } } = await getCities(this.country, selectedState)
 
       if (data.length < 1) {
         this.noCity = true
@@ -183,11 +183,11 @@ export default {
       } else {
         this.cities = data
       }
-      
+
       this.state = selectedState
 
     },
-    
+
     async onCityChange(selectedCity) {
       if (this.noState || this.noCity) {
         this.city = selectedCity
@@ -208,8 +208,8 @@ export default {
       const category = this.category
       const status = "All"
       this.setCategory(category)
-      await this.$store.dispatch("lab/setCountryRegionCity", {country, region, city})
-      await this.$store.dispatch("lab/getServicesByCategory", {category, status})
+      await this.$store.dispatch("lab/setCountryRegionCity", { country, region, city })
+      await this.$store.dispatch("lab/getServicesByCategory", { category, status })
 
       this.$emit("click")
     }
