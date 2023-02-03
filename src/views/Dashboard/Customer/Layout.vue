@@ -125,9 +125,9 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex"
-import store from "@/store"
-import { validateForms } from "@/common/lib/validate"
+import { mapState, mapActions } from "vuex";
+import store from "@/store";
+import { validateForms } from "@/common/lib/validate";
 import {
   gridIcon,
   boxIcon,
@@ -139,13 +139,13 @@ import {
   creditCardIcon,
   geneticDnaIcon,
   cableErrorIcon
-} from "@debionetwork/ui-icons"
+} from "@debionetwork/ui-icons";
 
-import NavigationDrawer from "@/common/components/NavigationDrawer"
-import Navbar from "@/common/components/Navbar.vue"
-import maintenancePageLayout from "@/views/Dashboard/maintenancePageLayout"
-import errorMessage from "@/common/constants/error-messages"
-import localStorage from "@/common/lib/local-storage"
+import NavigationDrawer from "@/common/components/NavigationDrawer";
+import Navbar from "@/common/components/Navbar.vue";
+import maintenancePageLayout from "@/views/Dashboard/maintenancePageLayout";
+import errorMessage from "@/common/constants/error-messages";
+import localStorage from "@/common/lib/local-storage";
 
 export default {
   name: "MainPage",
@@ -169,18 +169,57 @@ export default {
     password: null,
 
     navs: [
-      { text: "Dashboard", disabled: false, active: false, route: "customer-dashboard", icon: gridIcon },
-      { text: "My Test", disabled: false, active: false, route: "my-test", icon: boxIcon },
       {
-        text: "My Health Record", disabled: false, active: false, route: "customer-phr", icon: fileTextIcon, withSub: true,
+        text: "Dashboard",
+        disabled: false,
+        active: false,
+        route: "customer-dashboard",
+        icon: gridIcon
+      },
+      {
+        text: "My Test",
+        disabled: false,
+        active: false,
+        route: "my-test",
+        icon: boxIcon
+      },
+      {
+        text: "My Health Record",
+        disabled: false,
+        active: false,
+        route: "customer-phr",
+        icon: fileTextIcon,
+        withSub: true,
         subMenu: [
-          { text: "Menstrual Calendar", route: "menstrual-calendar", active: false },
+          {
+            text: "Menstrual Calendar",
+            route: "menstrual-calendar",
+            active: false
+          },
           { text: "Second Opinion", route: "second-opinion", active: false }
         ]
       },
-      { text: "My Genetic Data", disabled: false, active: false, route: "customer-genetic-data", icon: geneticDnaIcon },
-      { text: "Data Bounty", disabled: false, active: false, route: "customer-data-bounty-maintenance", icon: databaseIcon }, // TO ADJUST ONCE THE FEATURE IS READY
-      { text: "Payment History", disabled: false, active: false, route: "customer-payment-history", icon: creditCardIcon }
+      {
+        text: "My Genetic Data",
+        disabled: false,
+        active: false,
+        route: "customer-genetic-data",
+        icon: geneticDnaIcon
+      },
+      {
+        text: "Data Bounty",
+        disabled: false,
+        active: false,
+        route: "customer-data-bounty-maintenance",
+        icon: databaseIcon
+      }, // TO ADJUST ONCE THE FEATURE IS READY
+      {
+        text: "Payment History",
+        disabled: false,
+        active: false,
+        route: "customer-payment-history",
+        icon: creditCardIcon
+      }
     ]
   }),
 
@@ -200,21 +239,21 @@ export default {
 
     computeNavs() {
       const setActive = (name) => {
-        return this.$route.name === name || this.$route.meta.parent === name
-      }
+        return this.$route.name === name || this.$route.meta.parent === name;
+      };
 
-      return this.navs.map((nav) => ({ ...nav, active: setActive(nav.route) }))
+      return this.navs.map((nav) => ({ ...nav, active: setActive(nav.route) }));
     },
 
     computeButtonActive() {
-      return !/(\/customer\/request-test)/.test(this.$route.path)
+      return !/(\/customer\/request-test)/.test(this.$route.path);
     }
   },
 
   watch: {
     $route(val) {
-      this.pageError = null
-      if (val?.query?.error) this.showModalError = true
+      this.pageError = null;
+      if (val?.query?.error) this.showModalError = true;
     },
 
     lastEventData(event) {
@@ -224,14 +263,14 @@ export default {
           event: event,
           block: this.lastBlockData,
           role: "customer" //TODO: move to global enum variable
-        })
+        });
       }
     }
   },
 
   async created() {
-    if (!this.mnemonicData) this.showModalPassword = true
-    await this.getListNotification()
+    if (!this.mnemonicData) this.showModalPassword = true;
+    await this.getListNotification();
   },
 
   rules: {
@@ -240,7 +279,7 @@ export default {
 
   methods: {
     handlePageError(error) {
-      this.pageError = error
+      this.pageError = error;
     },
 
     async getListNotification() {
@@ -248,65 +287,65 @@ export default {
         address: this.wallet.address,
         role: "customer",
         block: this.lastBlockData
-      })
+      });
     },
 
     goToRequestTestPage() {
-      this.$router.push({ name: "customer-request-test" })
+      this.$router.push({ name: "customer-request-test" });
     },
 
     goToUploadPHR() {
-      this.$router.push({ name: "customer-phr-create" })
+      this.$router.push({ name: "customer-phr-create" });
     },
 
     goToRequestAnalysis() {
-      this.$router.push({ name: "customer-request-analysis" })
+      this.$router.push({ name: "customer-request-analysis" });
     },
 
     goToDashboard() {
-      this.showModalError = false
-      this.$router.push({ name: "customer-dashboard" })
+      this.showModalError = false;
+      this.$router.push({ name: "customer-dashboard" });
     },
 
     handleShowPassword() {
-      this.showPassword = !this.showPassword
+      this.showPassword = !this.showPassword;
     },
 
     async handleSubmitPassword() {
       try {
-        await this.wallet.unlock(this.password)
+        await this.wallet.unlock(this.password);
         await store.dispatch("substrate/getEncryptedAccountData", {
           password: this.password
-        })
+        });
 
-        this.success = true
+        this.success = true;
 
         setTimeout(() => {
-          this.showModalPassword = false
-        }, 1300)
+          this.showModalPassword = false;
+        }, 1300);
       } catch (e) {
         if (e.message === "Unable to decode using the supplied passphrase") {
-          return this.error = errorMessage.INCORRECT("Password")
+          return (this.error = errorMessage.INCORRECT("Password"));
         }
-        this.error = e.message
+        this.error = e.message;
       }
     },
 
     signOut() {
-      this.$router.push({ name: "landing-page" })
+      this.$router.push({ name: "landing-page" });
       const accounts = Object.keys(window.localStorage).filter((v) =>
         /account:/.test(v)
-      )
+      );
       accounts.forEach((a) => {
-        window.localStorage.removeItem(a)
-      })
+        window.localStorage.removeItem(a);
+      });
 
-      localStorage.clear()
-      this.clearAuth()
-      this.clearWallet()
+      localStorage.clear();
+      this.clearAuth();
+      this.clearWallet();
     }
   }
-}
+};
 </script>
 
 <style lang="sass" scoped>
