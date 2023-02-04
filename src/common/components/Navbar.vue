@@ -106,7 +106,7 @@
 
                   .navbar__balance-instruction-to-buy(@click.prevent="openBuyInst('bridge')")
                     v-icon(size="18" type="button" color="rgba(196, 0, 165, 1)") mdi-open-in-new
-                    span.ml-2 Bridge $DBIO
+                    span.ml-2 Bridge $DBIO from $NEAR
 
             template(slot="footer" v-if="getActiveMenu.action")
               v-btn.navbar__footer-button(outlined block color="#FE379E" dark @click="exportKeystoreAction()") Export Keystore
@@ -120,8 +120,8 @@
 </template>
 
 <script>
-import { compareDate } from "@/common/lib/utils"
-import { mapActions, mapMutations, mapState } from "vuex"
+import { compareDate } from "@/common/lib/utils";
+import { mapActions, mapMutations, mapState } from "vuex";
 
 import {
   searchIcon,
@@ -134,16 +134,19 @@ import {
   logoutIcon,
   polkadotIcon,
   copyIcon
-} from "@debionetwork/ui-icons"
+} from "@debionetwork/ui-icons";
 
-import localStorage from "@/common/lib/local-storage"
-import { generalDebounce } from "@/common/lib/utils"
-import { queryAccountBalance } from "@debionetwork/polkadot-provider"
-import { setReadNotification } from "@/common/lib/api"
-import { queryGetAssetBalance, queryGetAllOctopusAssets } from "@/common/lib/polkadot-provider/query/octopus-assets"
-import getEnv from "@/common/lib/utils/env"
+import localStorage from "@/common/lib/local-storage";
+import { generalDebounce } from "@/common/lib/utils";
+import { queryAccountBalance } from "@debionetwork/polkadot-provider";
+import { setReadNotification } from "@/common/lib/api";
+import {
+  queryGetAssetBalance,
+  queryGetAllOctopusAssets
+} from "@/common/lib/polkadot-provider/query/octopus-assets";
+import getEnv from "@/common/lib/utils/env";
 
-let timeout
+let timeout;
 
 export default {
   name: "Navbar",
@@ -229,34 +232,32 @@ export default {
     }),
 
     getActiveMenu() {
-      return this.menus.find(menu => menu.active)
+      return this.menus.find((menu) => menu.active);
     },
 
     computeMouseLeave() {
-      return this.getActiveMenu
-        ? this.getActiveMenu.id - 1
-        : null
+      return this.getActiveMenu ? this.getActiveMenu.id - 1 : null;
     }
   },
 
   created() {
-    this.polkadotWallets.forEach(wallet => {
+    this.polkadotWallets.forEach((wallet) => {
       if (wallet.name === "usdt") {
-        wallet.tokenId = getEnv("VUE_APP_DEBIO_USDT_TOKEN_ID")
+        wallet.tokenId = getEnv("VUE_APP_DEBIO_USDT_TOKEN_ID");
       }
-    })
+    });
   },
 
   async mounted() {
-    await this.fetchWalletBalance()
-    await this.getOctopusAssets()
+    await this.fetchWalletBalance();
+    await this.getOctopusAssets();
   },
 
   watch: {
     lastEventData() {
       if (this.lastEventData) {
-        this.fetchWalletBalance()
-        this.getOctopusAssets()
+        this.fetchWalletBalance();
+        this.getOctopusAssets();
       }
     }
   },
@@ -269,59 +270,60 @@ export default {
     }),
 
     async handleNotificationRead(notif) {
+      clearTimeout(timeout);
+      if (notif.read) return;
 
-      clearTimeout(timeout)
-      if (notif.read) return
-
-      notif.read = true
-      this.notifReads.push(notif.id)
+      notif.read = true;
+      this.notifReads.push(notif.id);
       timeout = setTimeout(async () => {
-        await setReadNotification(this.notifReads)
-      }, 2000)
-
+        await setReadNotification(this.notifReads);
+      }, 2000);
     },
     openBuyInst(link) {
       if (link === "buy") {
-        window.open("https://app.ref.finance/#near%7Cdbio.near", "__blank")
+        window.open("https://app.ref.finance/#near%7Cdbio.near", "__blank");
       } else {
-        window.open("https://mainnet.oct.network/bridge", "__blank")
+        window.open("https://mainnet.oct.network/bridge", "__blank");
       }
     },
 
     async handleCopy(text) {
-      await navigator.clipboard.writeText(text)
+      await navigator.clipboard.writeText(text);
 
-      this.$refs.polkadot.$el.querySelector("input").value = "Address Copied!"
+      this.$refs.polkadot.$el.querySelector("input").value = "Address Copied!";
 
-      generalDebounce(
-        () => {
-          this.$refs.polkadot.$el.querySelector("input").value = this.$refs.polkadot.$attrs["data-wallet"]
-        },
-        1000
-      )
+      generalDebounce(() => {
+        this.$refs.polkadot.$el.querySelector(
+          "input"
+        ).value = this.$refs.polkadot.$attrs["data-wallet"];
+      }, 1000);
     },
 
     handleAvatar() {
-      this.handleHideDropdown(this.computeMouseLeave)
+      this.handleHideDropdown(this.computeMouseLeave);
     },
 
     async handleHover(e, idx) {
-      this.menus.forEach(menu => menu.active = false)
-      const selectedMenu = this.menus[idx]
+      this.menus.forEach((menu) => (menu.active = false));
+      const selectedMenu = this.menus[idx];
 
-      if (selectedMenu.type === "polkadot") this.walletAddress = this.wallet.address
+      if (selectedMenu.type === "polkadot")
+        this.walletAddress = this.wallet.address;
 
-      selectedMenu.active = true
+      selectedMenu.active = true;
 
-      const calculateFinalPosition = this.$refs.menu.getBoundingClientRect().width + 207
+      const calculateFinalPosition =
+        this.$refs.menu.getBoundingClientRect().width + 207;
 
-      this.arrowPosition = `${e.target.getBoundingClientRect().left - this.$refs.menu.offsetLeft + calculateFinalPosition}px`
+      this.arrowPosition = `${e.target.getBoundingClientRect().left -
+        this.$refs.menu.offsetLeft +
+        calculateFinalPosition}px`;
     },
 
     handleHideDropdown(idx) {
-      if (idx === null) return
+      if (idx === null) return;
 
-      this.menus[idx].active = false
+      this.menus[idx].active = false;
     },
 
     async fetchWalletBalance() {
@@ -329,349 +331,360 @@ export default {
         const balanceNumber = await queryAccountBalance(
           this.api,
           this.wallet.address
-        )
-        this.setWalletBalance(balanceNumber)
-        this.polkadotBalance = this.walletBalance
-        this.polkadotWallets[0].balance = this.walletBalance
+        );
+        this.setWalletBalance(balanceNumber);
+        this.polkadotBalance = this.walletBalance;
+        this.polkadotWallets[0].balance = this.walletBalance;
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
     },
 
     async getOctopusAssets() {
-      this.octopusAsset = []
-      const assets = await queryGetAllOctopusAssets(this.api)
+      this.octopusAsset = [];
+      const assets = await queryGetAllOctopusAssets(this.api);
       for (let i = 0; i < assets.length; i++) {
-        const tokenId = assets[i][0].toHuman()[0]
-        const id = assets[i][1].toHuman()
-        const data = await queryGetAssetBalance(this.api, id, this.wallet.address)
-        const assetData = { id, data, name: tokenId.split(".")[0], tokenId }
-        this.octopusAsset.push(assetData)
+        const tokenId = assets[i][0].toHuman()[0];
+        const id = assets[i][1].toHuman();
+        const data = await queryGetAssetBalance(
+          this.api,
+          id,
+          this.wallet.address
+        );
+        const assetData = { id, data, name: tokenId.split(".")[0], tokenId };
+        this.octopusAsset.push(assetData);
       }
 
-      await this.fetchPolkadotBallance()
+      await this.fetchPolkadotBallance();
     },
 
     async fetchPolkadotBallance() {
       this.polkadotWallets.forEach(async (wallet) => {
         if (wallet.name !== "debio") {
-          const data = this.octopusAsset.find(a => a.name === wallet.name || a.tokenId === wallet.tokenId)
-          wallet.id = data.id
-          if (!data) return
+          const data = this.octopusAsset.find(
+            (a) => a.name === wallet.name || a.tokenId === wallet.tokenId
+          );
+          wallet.id = data.id;
+          if (!data) return;
           if (data.data) {
-            wallet.balance = this.web3.utils.fromWei(data.data.balance.replaceAll(",", ""), wallet.unit)
-            if (wallet.name === "usdt") this.setUSDTBalance(wallet.balance)
+            wallet.balance = this.web3.utils.fromWei(
+              data.data.balance.replaceAll(",", ""),
+              wallet.unit
+            );
+            if (wallet.name === "usdt") this.setUSDTBalance(wallet.balance);
           }
         }
-      })
-      this.setPolkadotWallet(this.polkadotWallets)
+      });
+      this.setPolkadotWallet(this.polkadotWallets);
     },
 
     handleDropdownAction(type) {
-      if (type === "polkadot") this.signOut()
+      if (type === "polkadot") this.signOut();
     },
 
     signOut() {
       const accounts = Object.keys(window.localStorage).filter((v) =>
         /account:/.test(v)
-      )
+      );
       accounts.forEach((a) => {
-        window.localStorage.removeItem(a)
-      })
+        window.localStorage.removeItem(a);
+      });
 
-      localStorage.clear()
-      this.$router.push({ name: "sign-in" })
-      this.clearAuth()
-      this.clearWallet()
-      this.loginStatus = false
+      localStorage.clear();
+      this.$router.push({ name: "sign-in" });
+      this.clearAuth();
+      this.clearWallet();
+      this.loginStatus = false;
     },
 
     openTutorialToken() {
-      window.open("https://docs.debio.network/getting-started/how-to-bridge-your-usddbio-and-usdusdt-to-the-debio-network-appchain", "__blank")
+      window.open(
+        "https://docs.debio.network/getting-started/how-to-bridge-your-usddbio-and-usdusdt-to-the-debio-network-appchain",
+        "__blank"
+      );
     },
 
     exportKeystoreAction() {
       try {
-        const keystore = localStorage.getKeystore()
-        const address = localStorage.getAddress()
-        const file = new Blob([keystore], { type: "text/json;charset=utf-8" })
-        const downloadUrl = window.URL.createObjectURL(file)
-        const downloadLink = document.createElement("a")
-        downloadLink.href = downloadUrl
-        downloadLink.target = "_blank"
-        downloadLink.download = `${address}.json`
+        const keystore = localStorage.getKeystore();
+        const address = localStorage.getAddress();
+        const file = new Blob([keystore], { type: "text/json;charset=utf-8" });
+        const downloadUrl = window.URL.createObjectURL(file);
+        const downloadLink = document.createElement("a");
+        downloadLink.href = downloadUrl;
+        downloadLink.target = "_blank";
+        downloadLink.download = `${address}.json`;
 
-        downloadLink.click()
+        downloadLink.click();
 
-        window.URL.revokeObjectURL(downloadUrl)
+        window.URL.revokeObjectURL(downloadUrl);
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
     }
   }
-}
+};
 </script>
 
 <style lang="sass">
-  @import "@/common/styles/mixins.sass"
+@import "@/common/styles/mixins.sass"
 
-  .navbar
-    padding: 3rem
-    width: 100%
-    z-index: 100
+.navbar
+  padding: 3rem
+  width: 100%
+  z-index: 100
 
-    &__loading
-      margin-top: 10px
+  &__loading
+    margin-top: 10px
 
-    &__triangle
-      height: 1.25rem
-      overflow: hidden
+  &__triangle
+    height: 1.25rem
+    overflow: hidden
 
-    &__triangle-object
-      position: absolute
-      top: -0.313rem
-      z-index: -1
-      border-style: solid
-      border-width: 0 0.875rem 1.875rem 0.875rem
-      border-color: transparent transparent #FFFFFF transparent
-      opacity: 0
-      transform: translateX(var(--arrow-position))
-      filter: drop-shadow(0 0.125rem 0.625rem rgba(0, 0, 0, 0.15))
-      transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
-
-      &--active
-        opacity: 1
-
-    &__wrapper
-      display: flex
-      align-items: center
-      justify-content: space-between
-
-    &__user-menu
-      display: flex
-      align-items: center
-      position: relative
-      gap: 0 1.875rem
-
-    &__user-menu--settings
-      .ui-debio-card__body
-        padding-top: 0
-        padding-bottom: 0
-
-    &__connect
-      transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
-
-      &:hover
-        margin-left: calc(1.875rem * 3.3)
-        width: 2.75rem !important
-        height: 2.75rem !important
-
-        .navbar__connect-icon
-          svg
-            width: 1.563rem !important
-            height: 1.563rem !important
-            animation: animateMetamask .3s infinite alternate !important
-
-      &--logged:hover
-          margin-left: unset !important
-          width: 1.5rem !important
-          height: 1.5rem !important
-
-          .navbar__connect-icon
-            width: unset !important
-            height: unset !important
-            animation: unset !important
-      
-    &__dropdown
-      position: absolute
-      z-index: 9
-      top: 3.125rem
-      right: 0
-    
-    &__wallet-header
-      display: flex
-
-    &__balance
-      margin-top: 1.5625rem
-      display: flex
-      flex-direction: column
-
-    &__balance-type
-      @include body-text-medium-1
-    
-    &__balance-instruction
-      color: #8F98AA
-      @include tiny-reg
-      cursor: pointer
-
-    &__balance-instruction-to-buy
-      color: #c400a5
-      font-size: 0.8rem
-      cursor: pointer
-      margin:4px 0px
-      font-weight:500
-    
-    &__balance-divider-sec
-      margin-top: 0.75rem
-
-    &__balance-content
-      display: flex
-      justify-content: space-between
-
-    &__balance-amount
-      padding: 6px
-      display: flex
-      align-items: center
-      gap: 0.375rem
-
-    &__balance-usd
-      display: inherit
-      justify-content: flex-end
-
-    &__balance-desc
-      font-size: 0.625rem
-      font-weight: 400
-      line-height: 0.938rem
-
-    &__footer-button
-      margin-bottom: 0.938rem
-      
-    &__balance-divider
-      margin-top: 0.75rem
-      margin-bottom: 0.9rem
-
-    &__notification
-      max-height: 13.55rem
-      display: flex
-      flex-direction: column
-      overflow-y: scroll
-
-      &::-webkit-scrollbar-track
-        background-color: #FFFFFF
-
-      &::-webkit-scrollbar
-        width: 0.438rem
-
-      &::-webkit-scrollbar-thumb
-        border-radius: 0.625rem
-        background: #D3C9D1
-
-  .notification-item
-    color: #000000 !important
-    text-decoration: none
-
-    &--new
-      color: #5640A5 !important
-
-    &__wrapper
-      position: relative
-      padding: 0.688rem 1.438rem
-      transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
-
-      &::before
-        content: ""
-        display: block
-        position: absolute
-        opacity: 0
-        left: 0
-        width: 0.313rem
-        height: 90%
-        border-radius: 0 0.25rem 0.25rem 0
-        background: #C400A5
-        top: 50%
-        transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
-        transform: translateY(-50%)
-
-      &:hover
-        background: #F5F7F9
-
-        &::before
-          opacity: 1
-        
-        .notification-item__title
-          color: #C400A5
-      
-    &__title
-      font-size: 0.75rem
-      font-weight: 500
-      line-height: 0.875rem
-      margin-bottom: 0.313rem
-
-    &__description
-      font-size: 0.75rem
-      font-weight: 400
-      line-height: 0.875rem
-      color: #D3C9D1
-
-  .settings-item
-    &:not(:last-of-type)
-      border-bottom: solid 0.063rem #757274
-    
-    &__wrapper
-      position: relative
-      height: 3.75rem
-      display: flex
-      justify-content: space-between
-      align-items: center
-
-      &::before
-        content: ""
-        display: block
-        position: absolute
-        left: -1.563rem
-        width: 0.313rem
-        height: 2.063rem
-        opacity: 0
-        border-radius: 0 0.25rem 0.25rem 0
-        background: #C400A5
-        top: 50%
-        transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
-        transform: translateY(-50%)
-
-      &:hover
-
-        &::before
-          opacity: 1
-        
-        .settings-item__title
-          color: #5640A5
-
-    &__title
-      font-size: 0.938rem
-      line-height: 150%
-      color: #757274
-
-  .notification-dot
-    position: relative
+  &__triangle-object
+    position: absolute
+    top: -0.313rem
+    z-index: -1
+    border-style: solid
+    border-width: 0 0.875rem 1.875rem 0.875rem
+    border-color: transparent transparent #FFFFFF transparent
+    opacity: 0
+    transform: translateX(var(--arrow-position))
+    filter: drop-shadow(0 0.125rem 0.625rem rgba(0, 0, 0, 0.15))
     transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
 
-    &::after
+    &--active
+      opacity: 1
+
+  &__wrapper
+    display: flex
+    align-items: center
+    justify-content: space-between
+
+  &__user-menu
+    display: flex
+    align-items: center
+    position: relative
+    gap: 0 1.875rem
+
+  &__user-menu--settings
+    .ui-debio-card__body
+      padding-top: 0
+      padding-bottom: 0
+
+  &__connect
+    transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
+
+    &:hover
+      margin-left: calc(1.875rem * 3.3)
+      width: 2.75rem !important
+      height: 2.75rem !important
+
+      .navbar__connect-icon
+        svg
+          width: 1.563rem !important
+          height: 1.563rem !important
+          animation: animateMetamask .3s infinite alternate !important
+
+    &--logged:hover
+        margin-left: unset !important
+        width: 1.5rem !important
+        height: 1.5rem !important
+
+        .navbar__connect-icon
+          width: unset !important
+          height: unset !important
+          animation: unset !important
+
+  &__dropdown
+    position: absolute
+    z-index: 9
+    top: 3.125rem
+    right: 0
+
+  &__wallet-header
+    display: flex
+
+  &__balance
+    margin-top: 1.5625rem
+    display: flex
+    flex-direction: column
+
+  &__balance-type
+    @include body-text-medium-1
+
+  &__balance-instruction
+    color: #8F98AA
+    @include tiny-reg
+    cursor: pointer
+
+  &__balance-instruction-to-buy
+    color: #c400a5
+    font-size: 0.8rem
+    cursor: pointer
+    margin:4px 0px
+    font-weight:500
+
+  &__balance-divider-sec
+    margin-top: 0.75rem
+
+  &__balance-content
+    display: flex
+    justify-content: space-between
+
+  &__balance-amount
+    padding: 6px
+    display: flex
+    align-items: center
+    gap: 0.375rem
+
+  &__balance-usd
+    display: inherit
+    justify-content: flex-end
+
+  &__balance-desc
+    font-size: 0.625rem
+    font-weight: 400
+    line-height: 0.938rem
+
+  &__footer-button
+    margin-bottom: 0.938rem
+
+  &__balance-divider
+    margin-top: 0.75rem
+    margin-bottom: 0.9rem
+
+  &__notification
+    max-height: 13.55rem
+    display: flex
+    flex-direction: column
+    overflow-y: scroll
+
+    &::-webkit-scrollbar-track
+      background-color: #FFFFFF
+
+    &::-webkit-scrollbar
+      width: 0.438rem
+
+    &::-webkit-scrollbar-thumb
+      border-radius: 0.625rem
+      background: #D3C9D1
+
+.notification-item
+  color: #000000 !important
+  text-decoration: none
+
+  &--new
+    color: #5640A5 !important
+
+  &__wrapper
+    position: relative
+    padding: 0.688rem 1.438rem
+    transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
+
+    &::before
       content: ""
       display: block
-      width: 13px
-      height: 13px
       position: absolute
-      bottom: 2px
-      right: -1px
-      border-radius: 50%
-      background: #FF56E0
-      
-  .fade
-    &-enter-active,
-    &-leave-active
-      transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
-
-    &-enter,
-    &-leave-to
-      transform: translateY(1.563rem)
       opacity: 0
+      left: 0
+      width: 0.313rem
+      height: 90%
+      border-radius: 0 0.25rem 0.25rem 0
+      background: #C400A5
+      top: 50%
+      transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
+      transform: translateY(-50%)
 
-  @keyframes animateMetamask
-    0%
-      transform: rotate(-6deg)
-    50%
-      transform: translateY(0.063rem)
-    100%
-      transform: rotate(6deg)
-    
+    &:hover
+      background: #F5F7F9
+
+      &::before
+        opacity: 1
+
+      .notification-item__title
+        color: #C400A5
+
+  &__title
+    font-size: 0.75rem
+    font-weight: 500
+    line-height: 0.875rem
+    margin-bottom: 0.313rem
+
+  &__description
+    font-size: 0.75rem
+    font-weight: 400
+    line-height: 0.875rem
+    color: #D3C9D1
+
+.settings-item
+  &:not(:last-of-type)
+    border-bottom: solid 0.063rem #757274
+
+  &__wrapper
+    position: relative
+    height: 3.75rem
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+    &::before
+      content: ""
+      display: block
+      position: absolute
+      left: -1.563rem
+      width: 0.313rem
+      height: 2.063rem
+      opacity: 0
+      border-radius: 0 0.25rem 0.25rem 0
+      background: #C400A5
+      top: 50%
+      transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
+      transform: translateY(-50%)
+
+    &:hover
+
+      &::before
+        opacity: 1
+
+      .settings-item__title
+        color: #5640A5
+
+  &__title
+    font-size: 0.938rem
+    line-height: 150%
+    color: #757274
+
+.notification-dot
+  position: relative
+  transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
+
+  &::after
+    content: ""
+    display: block
+    width: 13px
+    height: 13px
+    position: absolute
+    bottom: 2px
+    right: -1px
+    border-radius: 50%
+    background: #FF56E0
+
+.fade
+  &-enter-active,
+  &-leave-active
+    transition: all cubic-bezier(.7, -0.04, .61, 1.14) .3s
+
+  &-enter,
+  &-leave-to
+    transform: translateY(1.563rem)
+    opacity: 0
+
+@keyframes animateMetamask
+  0%
+    transform: rotate(-6deg)
+  50%
+    transform: translateY(0.063rem)
+  100%
+    transform: rotate(6deg)
 </style>
