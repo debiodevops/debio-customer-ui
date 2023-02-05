@@ -517,6 +517,9 @@ export default {
         this.submitPreview = true
         this.nextStatus = true
 
+        await this.fetchData()
+        if (this.menstrualCalendarId.length) return await this.toUpdateMenstrual()
+
         await addMenstrualCalendar(
           this.api,
           this.pair,

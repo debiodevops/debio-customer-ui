@@ -29,11 +29,11 @@
             )
 
       template(
-        v-slot:[`item.service_info.prices_by_currency[0].total_price`]="{ item }"
+        v-slot:[`item.price`]="{ item }"
       )
         .payment-history__price-details
-          | {{ formatPrice(item.service_info.prices_by_currency[0].total_price.replaceAll(',', ''), item.service_info.prices_by_currency[0].currency) }}
-          | {{ formatUSDTE(item.service_info.prices_by_currency[0].currency) }}
+          | {{ formatPrice(item.price.replaceAll(',', ''), item.currency) }}
+          | {{ formatUSDTE(item.currency) }}
 
       template(v-slot:[`item.status`]="{ item }")
         span(:style="{ color: setButtonBackground(item.status) }") {{ item.status }}
@@ -55,6 +55,8 @@ import { searchIcon } from "@debionetwork/ui-icons"
 import { generalDebounce } from "@/common/lib/utils"
 import { getOrderList } from "@/common/lib/api"
 import { formatPrice, formatUSDTE } from "@/common/lib/price-format.js"
+import { getMenstrualSubscriptionPrices } from "@/common/lib/polkadot-provider/query/menstrual-subscription"
+
 
 export default {
   name: "CustomerPaymentHistory",
@@ -69,7 +71,7 @@ export default {
       { text: "Service Name", value: "service_info.name", sortable: true },
       { text: "Service Provider", value: "provider", sortable: true },
       { text: "Order Date", value: "created_at", sortable: true },
-      { text: "Price", value: "service_info.prices_by_currency[0].total_price", sortable: true },
+      { text: "Price", value: "price", sortable: true },
       { text: "Status", value: "status", align: "right", sortable: true },
       { text: "Actions", value: "actions", sortable: false, align: "center", width: "5%" }
     ],
@@ -78,6 +80,7 @@ export default {
 
   computed: {
     ...mapState({
+      api: (state) => state.substrate.api,
       web3: (state) => state.metamask.web3,
       lastEventData: (state) => state.substrate.lastEventData
     })
@@ -103,10 +106,21 @@ export default {
     onSearchInput: generalDebounce(async function (val) {
       try {
         this.isLoading = true
-        const { orders, ordersGA } = await getOrderList(val)
-        const results = [...orders.data, ...ordersGA.data]
+        const { orders, ordersGA, menstrualSubscription } = await getOrderList(val)
+        const menstrualSubscriptionPriceRequests = menstrualSubscription.data.map((subs) => {
+          const info = subs._source
+          return getMenstrualSubscriptionPrices(this.api, info.duration, info.currency )
+        })
 
-        this.payments = results.map((result) => {
+        const menstrualSubscriptionPrices = await Promise.all([...menstrualSubscriptionPriceRequests])
+
+        // Assign each menstrualSubscribtionPrices into menstrualSubscription by index
+        menstrualSubscription.data.map((data, index) => {
+          data.price = menstrualSubscriptionPrices[index]
+        })
+        const results = [...orders.data, ...ordersGA.data, ...menstrualSubscription.data]
+
+        results.map((result) => {
           const analystName = `
             ${result._source?.genetic_analyst_info?.first_name ?? ""}
             ${result?._source?.genetic_analyst_info?.last_name ?? ""}
@@ -116,18 +130,42 @@ export default {
             ? analystName
             : "Unknown Analyst Provider"
 
-          return {
-            ...result._source,
-            id: result._id,
-            provider: result._index === "orders"
-              ? result._source?.lab_info?.name ?? "Unknown Lab Provider"
-              : computeAnalystName,
-            timestamp: parseInt(result._source.created_at.replaceAll(",", "")),
-            created_at: new Date(parseInt(result._source.created_at.replaceAll(",", ""))).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "short",
-              year: "numeric"
-            })
+          const date = typeof(result._source.created_at) === "string" ? result._source.created_at.replaceAll(",", "") : result._source.created_at
+          if(result._index === "menstrual-subscription") {
+            this.payments.push({
+              service_info: {
+                name: `Menstrual Calendar ${result._source.duration} Subscription` 
+              },
+              id: result._id,
+              provider: "DeBio Network",
+              timestamp: parseInt(date),
+              created_at: new Date(parseInt(date)).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+              }),
+              price: result.price.amount,
+              currency: result.price.currency,
+              status: "Paid"
+            })          
+          } else {
+            this.payments.push(
+              {
+                ...result._source,
+                id: result._id,
+                provider: result._index === "orders"
+                  ? result._source?.lab_info?.name ?? "Unknown Lab Provider"
+                  : computeAnalystName,
+                timestamp: parseInt(date),
+                created_at: new Date(parseInt(date)).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric"
+                }),
+                price: result._source.service_info.prices_by_currency[0].total_price,
+                currency: result._source.currency
+              }
+            )
           }
         })
 
