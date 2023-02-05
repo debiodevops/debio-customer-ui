@@ -141,7 +141,7 @@
                 .menstrual-calendar__plan-payment-card-total-text {{ subscription.duration }}
                 .menstrual-calendar__plan-card-price Burn {{ subscription.price }} {{ subscription.currency }}/ {{ subscription.periode}}                  
                   .menstrual-calendar__plan-card-price-convert ({{ subscription.usd }} USD)
-              .menstrual-calendar__plan-payment-card-notes Any eligible subscription credit will be applied until it runs out. Your subscription will be renewed for {{ subscription.price }} {{ subscription.currency }} / {{ subscription.periode }} on {{getExpiredDate( subscription.periode )}}. Have any questions? 
+              .menstrual-calendar__plan-payment-card-notes Any eligible subscription credit will be applied until it runs out. Your subscription will be renewed for {{ subscription.price }} {{ subscription.currency }} / {{ subscription.periode }} on {{getExpiredDate( subscription.periode )}}. Have any questions?
                 a Contact our support team
 
 
@@ -169,25 +169,64 @@
 </template>
 
 <script>
-import { alertTriangleIcon, checkCircleIcon } from "@debionetwork/ui-icons"
-import MenstrualCalendarBanner from "./Banner"
-import { mapState } from "vuex"
-import { getMenstrualSubscriptionPrices, getActiveSubscriptionByOwner } from "@/common/lib/polkadot-provider/query/menstrual-subscription"
-import { getLastMenstrualCalendarByOwner } from "@/common/lib/polkadot-provider/query/menstrual-calendar"
-import { addMenstrualSubscriptionFee, addMenstrualSubscription, setMenstrualSubscriptionPaid } from "@/common/lib/polkadot-provider/command/menstrual-subscription"
-import { formatPrice } from "@/common/lib/price-format"
-import { generalDebounce } from "@/common/lib/utils"
-import { getConversion } from "@/common/lib/api"
+import { alertTriangleIcon, checkCircleIcon } from "@debionetwork/ui-icons";
+import MenstrualCalendarBanner from "./Banner";
+import { mapState } from "vuex";
+import {
+  getMenstrualSubscriptionPrices,
+  getActiveSubscriptionByOwner
+} from "@/common/lib/polkadot-provider/query/menstrual-subscription";
+import { getLastMenstrualCalendarByOwner } from "@/common/lib/polkadot-provider/query/menstrual-calendar";
+import {
+  addMenstrualSubscriptionFee,
+  addMenstrualSubscription,
+  setMenstrualSubscriptionPaid
+} from "@/common/lib/polkadot-provider/command/menstrual-subscription";
+import { formatPrice } from "@/common/lib/price-format";
+import { generalDebounce } from "@/common/lib/utils";
+import { getConversion } from "@/common/lib/api";
 
 export default {
   name: "MenstrualCalendar",
 
   data: () => ({
-    alertTriangleIcon, checkCircleIcon,
+    alertTriangleIcon,
+    checkCircleIcon,
     plans: [
-      { label: "Monthly", duration: "Monthly", description: "For users on a budget who want to try out menstrual calendar", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "Month", promoPrice: 0 },
-      { label: "Quarterly", duration: "Quarterly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 10%", periode: "3 Months", promoPrice: 0 },
-      { label: "Annualy", duration: "Yearly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 50%", periode: "Year", promoPrice: 0 }
+      {
+        label: "Monthly",
+        duration: "Monthly",
+        description:
+          "For users on a budget who want to try out menstrual calendar",
+        price: 0,
+        currency: "DBIO",
+        usd: 0,
+        promo: "",
+        periode: "Month",
+        promoPrice: 0
+      },
+      {
+        label: "Quarterly",
+        duration: "Quarterly",
+        description: "Get full benefits on a discounted price",
+        price: 0,
+        currency: "DBIO",
+        usd: 0,
+        promo: "Save 10%",
+        periode: "3 Months",
+        promoPrice: 0
+      },
+      {
+        label: "Annualy",
+        duration: "Yearly",
+        description: "Get full benefits on a discounted price",
+        price: 0,
+        currency: "DBIO",
+        usd: 0,
+        promo: "Save 50%",
+        periode: "Year",
+        promoPrice: 0
+      }
     ],
     subscription: null,
     paymentPreview: false,
@@ -213,7 +252,6 @@ export default {
   }),
 
   computed: {
-
     ...mapState({
       api: (state) => state.substrate.api,
       wallet: (state) => state.substrate.wallet,
@@ -226,16 +264,16 @@ export default {
   watch: {
     lastEventData(e) {
       if (e !== null) {
-        const dataEvent = JSON.parse(e.data.toString())
+        const dataEvent = JSON.parse(e.data.toString());
         if (dataEvent[1] === this.wallet.address) {
           if (e.method === "MenstrualSubscriptionAdded") {
-            this.toPayment(dataEvent[0].id)
+            this.toPayment(dataEvent[0].id);
           }
 
           if (e.method === "MenstrualSubscriptionPaid") {
-            this.showAlert = false
-            this.isSuccess = true
-            this.loading = false
+            this.showAlert = false;
+            this.isSuccess = true;
+            this.loading = false;
           }
         }
       }
@@ -244,20 +282,20 @@ export default {
     subscription: {
       deep: true,
       immediate: true,
-      handler: generalDebounce(async function () {
-        await this.getTxWeight()
+      handler: generalDebounce(async function() {
+        await this.getTxWeight();
       }, 500)
     }
   },
 
   async created() {
-    await this.getSubscriptionPrices()
-    await this.getTxWeight()
-    await this.getActiveSubscription()
+    await this.getSubscriptionPrices();
+    await this.getTxWeight();
+    await this.getActiveSubscription();
   },
 
   async mounted() {
-    await this.getActiveSubscription()
+    await this.getActiveSubscription();
   },
 
   components: {
@@ -265,71 +303,86 @@ export default {
   },
 
   methods: {
-
     async getRate() {
-      const rate = await getConversion()
-      return rate.dbioToUsd
+      const rate = await getConversion();
+      return rate.dbioToUsd;
     },
 
     getExpiredDate(period) {
-      const today = new Date()
-      let newDate
+      const today = new Date();
+      let newDate;
 
       if (period === "Month") {
-        newDate = new Date(today.setMonth(today.getMonth() + 1))
+        newDate = new Date(today.setMonth(today.getMonth() + 1));
       }
 
       if (period === "3 Months") {
-        newDate = new Date(today.setMonth(today.getMonth() + 3))
+        newDate = new Date(today.setMonth(today.getMonth() + 3));
       }
 
       if (period === "Year") {
-        newDate = new Date(today.setMonth(today.getMonth() + 12))
+        newDate = new Date(today.setMonth(today.getMonth() + 12));
       }
 
-      let day = newDate.getDate() - 1
-      let month = newDate.toLocaleString("default", { month: "short" })
-      let year = newDate.getFullYear()
-      return `${day} ${month} ${year}`
+      let day = newDate.getDate() - 1;
+      let month = newDate.toLocaleString("default", { month: "short" });
+      let year = newDate.getFullYear();
+      return `${day} ${month} ${year}`;
     },
 
     async toSusbsribe() {
-      this.loading = true
+      this.loading = true;
 
-      const price = Number(String(this.subscription.price).split(",").join(""))
+      const price = Number(
+        String(this.subscription.price)
+          .split(",")
+          .join("")
+      );
       if (this.walletBalance < price) {
         this.error = {
           title: "Insufficient Balance",
-          message: "Your transaction cannot succeed due to insufficient balance, check your account balance"
-        }
-        this.showAlert = false
-        this.loading = false
-        return
+          message:
+            "Your transaction cannot succeed due to insufficient balance, check your account balance"
+        };
+        this.showAlert = false;
+        this.loading = false;
+        return;
       }
 
-      await addMenstrualSubscription(this.api, this.wallet, this.subscription.duration, this.subscription.currency)
+      await addMenstrualSubscription(
+        this.api,
+        this.wallet,
+        this.subscription.duration,
+        this.subscription.currency
+      );
     },
 
     async toPayment(id) {
-      await setMenstrualSubscriptionPaid(this.api, this.wallet, id)
+      await setMenstrualSubscriptionPaid(this.api, this.wallet, id);
     },
 
     async getActiveSubscription() {
-      const activeSubs = await getActiveSubscriptionByOwner(this.api, this.wallet.address)
-      const menstrualCalendar = await getLastMenstrualCalendarByOwner(this.api, this.wallet.address)
+      const activeSubs = await getActiveSubscriptionByOwner(
+        this.api,
+        this.wallet.address
+      );
+      const menstrualCalendar = await getLastMenstrualCalendarByOwner(
+        this.api,
+        this.wallet.address
+      );
 
       if (activeSubs) {
         if (!menstrualCalendar) {
-          this.$router.push({ name: "menstrual-calendar-selection" })
-          return
+          this.$router.push({ name: "menstrual-calendar-selection" });
+          return;
         }
 
-        this.$router.push({ name: "menstrual-calendar-detail" })
+        this.$router.push({ name: "menstrual-calendar-detail" });
       }
     },
 
     async getSubscriptionPrices() {
-      let monthlyPrice
+      let monthlyPrice;
       this.plans.forEach(async (plan) => {
         getMenstrualSubscriptionPrices(
           this.api,
@@ -338,15 +391,17 @@ export default {
         ).then((data) => {
           this.getRate().then((rate) => {
             plan.price = formatPrice(data.amount, plan.currency);
-            plan.usd = (Number(plan.price.split(",").join("")) * rate).toFixed(8);
+            plan.usd = (Number(plan.price.split(",").join("")) * rate).toFixed(
+              8
+            );
             if (plan.duration === "Monthly") {
-              monthlyPrice = plan.price
+              monthlyPrice = plan.price;
             }
             if (plan.duration === "Quarterly") {
-              plan.promoPrice = (Number(monthlyPrice.split(",").join("")) * 3);
+              plan.promoPrice = Number(monthlyPrice.split(",").join("")) * 3;
             }
             if (plan.duration === "Yearly") {
-              plan.promoPrice = (Number(monthlyPrice.split(",").join("")) * 12);
+              plan.promoPrice = Number(monthlyPrice.split(",").join("")) * 12;
             }
           });
         });
@@ -354,194 +409,200 @@ export default {
     },
 
     async getTxWeight() {
-      const txWeight = await addMenstrualSubscriptionFee(this.api, this.wallet, this.subscription.duration, this.subscription.currency)
-      this.txWeight = `${Number(this.web3.utils.fromWei(String(txWeight.partialFee), "ether")).toFixed(8)} DBIO`
+      const txWeight = await addMenstrualSubscriptionFee(
+        this.api,
+        this.wallet,
+        this.subscription.duration,
+        this.subscription.currency
+      );
+      this.txWeight = `${Number(
+        this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
+      ).toFixed(8)} DBIO`;
     },
 
     setActive(currency) {
-      return currency === this.subscription.currency ? "secondary" : ""
+      return currency === this.subscription.currency ? "secondary" : "";
     },
 
     toPaymentPreview() {
-      this.paymentPreview = true
-      this.breadcrumbs[0].disabled = true
-      this.breadcrumbs[1].disabled = false
+      this.paymentPreview = true;
+      this.breadcrumbs[0].disabled = true;
+      this.breadcrumbs[1].disabled = false;
     },
 
     toSubsPlan() {
-      this.paymentPreview = false
-      this.breadcrumbs[0].disabled = false
-      this.breadcrumbs[1].disabled = true
+      this.paymentPreview = false;
+      this.breadcrumbs[0].disabled = false;
+      this.breadcrumbs[1].disabled = true;
     },
 
     toMenstrualCalendar() {
-      this.showAlert = false
-      this.isSuccess = false
-      this.$router.push({ name: "menstrual-calendar-selection" })
+      this.showAlert = false;
+      this.isSuccess = false;
+      this.$router.push({ name: "menstrual-calendar-selection" });
     }
   }
-}
+};
 </script>
 
 <style lang="sass" scoped>
-  @import "@/common/styles/mixins.sass"
- 
-  .menstrual-calendar
-    &__subscription-payment-back-wrapper
-      display:flex
+@import "@/common/styles/mixins.sass"
 
-    &__wrapper
-      height: 100%
+.menstrual-calendar
+  &__subscription-payment-back-wrapper
+    display:flex
 
-    &__subscription
-      margin-top: 16px
-      display: flex
-      gap: 16px
-      height: 593px
+  &__wrapper
+    height: 100%
 
-    &__subscription-text
-      height: 593px
+  &__subscription
+    margin-top: 16px
+    display: flex
+    gap: 16px
+    height: 593px
 
-    &__subscription-text-span
-      color: #FF8FCD
-      @include button-2
+  &__subscription-text
+    height: 593px
 
-    &__subscription-text-header
-      @include h4-opensans
+  &__subscription-text-span
+    color: #FF8FCD
+    @include button-2
 
-    &__subscription-plan-header
-      @include h6-opensans
+  &__subscription-text-header
+    @include h4-opensans
 
-    &__plan-card-wrapper
-      display: flex
-      justify-content: space-between
+  &__subscription-plan-header
+    @include h6-opensans
 
-    &__plan-card-desc
-      color: #757274
-      overflow:auto
-      width:55%
-      @include body-text-3
+  &__plan-card-wrapper
+    display: flex
+    justify-content: space-between
 
-    &__subscription-plan-breadcrumbs
-      margin: -22px
+  &__plan-card-desc
+    color: #757274
+    overflow:auto
+    width:55%
+    @include body-text-3
 
-    &__plan-card-price
-      justify-content:end
-      text-align:right
-      @include button-2
+  &__subscription-plan-breadcrumbs
+    margin: -22px
 
-    &__plan-card-price-scratch
-      text-align: right
-      justify-content:end
-      opacity: 0.6
-      text-decoration: line-through
-      @include body-text-4
+  &__plan-card-price
+    justify-content:end
+    text-align:right
+    @include button-2
 
-    &__plan-card-price-convert
-      text-align: right
-      justify-content:end
-      color: #FF56E0
-      @include body-text-5
-    
-    &__plan-card-alert
-      height: 24px
-      margin-left: -40px
-      background: #E0FFE1
-      padding: 4px 12px
+  &__plan-card-price-scratch
+    text-align: right
+    justify-content:end
+    opacity: 0.6
+    text-decoration: line-through
+    @include body-text-4
 
-    &__plan-card-alert-text
-      color: #32D47D
-      font-size: 12px
+  &__plan-card-price-convert
+    text-align: right
+    justify-content:end
+    color: #FF56E0
+    @include body-text-5
 
-    &__subscription-payment
-      display: flex
+  &__plan-card-alert
+    height: 24px
+    margin-left: -40px
+    background: #E0FFE1
+    padding: 4px 12px
 
-    &__plan-payment-card
-      margin-top: 20px
+  &__plan-card-alert-text
+    color: #32D47D
+    font-size: 12px
 
-    &__plan-payment-card-title
-      padding: 16px
-      margin-bottom: -16px
-      @include button-1
+  &__subscription-payment
+    display: flex
 
-    &__plan-payment-card-detail
-      display: flex
-      justify-content: space-between
-      margin: 2px 16px
-      
+  &__plan-payment-card
+    margin-top: 20px
 
-    &__plan-payment-card-desc
-      @include new-body-text-2
+  &__plan-payment-card-title
+    padding: 16px
+    margin-bottom: -16px
+    @include button-1
 
-    &__plan-payment-card-total
-      display: flex
-      justify-content: space-between
-      margin: 2px 16px
-      @include button-1
-    
-    &__plan-payment-card-total-price
-      color: #FF56E0
+  &__plan-payment-card-detail
+    display: flex
+    justify-content: space-between
+    margin: 2px 16px
 
-    &__plan-payment-card-notes
-      padding: 24px 16px
-      @include body-text-3-opensans
 
-    &__plan-payment-card-chips
-      margin-top: -10px
-      margin-left: 16px
+  &__plan-payment-card-desc
+    @include new-body-text-2
 
-    &__trans-weight
-      padding: 24px 16px
-      display: flex
-      justify-content: space-between
+  &__plan-payment-card-total
+    display: flex
+    justify-content: space-between
+    margin: 2px 16px
+    @include button-1
 
-    &__trans-weight-text
-      margin-right: 5px
-      color: #595959
-      letter-spacing: -0.004em
-      display: flex
-      align-items: center
-      @include body-text-3-opensans
+  &__plan-payment-card-total-price
+    color: #FF56E0
 
-    &__modal
-      display: flex
-      align-items: center
-      justify-content: center
+  &__plan-payment-card-notes
+    padding: 24px 16px
+    @include body-text-3-opensans
 
-    &__modal-desc
-      text-align: center
-      max-width: 264px
+  &__plan-payment-card-chips
+    margin-top: -10px
+    margin-left: 16px
 
-    &__modal-title
-      text-align: center
-      max-width: 264px
-      @include h3-opensans
-    
-    &__modal-buttons
-      display: flex
-      justify-content: space-between
-      gap: 20px
+  &__trans-weight
+    padding: 24px 16px
+    display: flex
+    justify-content: space-between
 
-    &__alert
-      height: auto
-      padding: 2px
-      margin-bottom: 1px
+  &__trans-weight-text
+    margin-right: 5px
+    color: #595959
+    letter-spacing: -0.004em
+    display: flex
+    align-items: center
+    @include body-text-3-opensans
 
-    &__alert-text
-      color: #FF8F8F
-      font-size: 12px
-      text-transform: none !important
+  &__modal
+    display: flex
+    align-items: center
+    justify-content: center
 
-    &__list
-      display: flex
-      flex-direction: column
-      margin-top: 20px !important
-      gap: 20px
+  &__modal-desc
+    text-align: center
+    max-width: 264px
 
-    &__content-list
-      margin-top: 8px !important
-      display: flex
-      widows: 100%
-      gap: 10px
+  &__modal-title
+    text-align: center
+    max-width: 264px
+    @include h3-opensans
 
+  &__modal-buttons
+    display: flex
+    justify-content: space-between
+    gap: 20px
+
+  &__alert
+    height: auto
+    padding: 2px
+    margin-bottom: 1px
+
+  &__alert-text
+    color: #FF8F8F
+    font-size: 12px
+    text-transform: none !important
+
+  &__list
+    display: flex
+    flex-direction: column
+    margin-top: 20px !important
+    gap: 20px
+
+  &__content-list
+    margin-top: 8px !important
+    display: flex
+    widows: 100%
+    gap: 10px
 </style>

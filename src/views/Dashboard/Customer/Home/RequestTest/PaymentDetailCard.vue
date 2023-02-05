@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container.container-card
+v-container.container-card
     v-skeleton-loader(
       v-if="fetching"
       type="card"
@@ -85,7 +85,7 @@
             height="35"
             @click="toInstruction(dataService.dnaCollectionProcess)"
             style="font-size: 9px;"
-            ) View Instruction
+            ) Obtain Kit Here
 
         div(v-if="$route.name === 'customer-request-test-checkout'" class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
           ui-debio-button(
@@ -133,31 +133,42 @@
         :message="errorMsg"
         @close="showError = false"
       )
+
+      LoadingDialog(
+          :show="loadingPayment"
+          desc="Please wait while we are processing your payment."
+        )
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex"
-import CryptoJS from "crypto-js"
-import Kilt from "@kiltprotocol/sdk-js"
-import { u8aToHex } from "@polkadot/util"
-import CancelDialog from "@/common/components/Dialog/CancelDialog"
-import { cancelOrder } from "@debionetwork/polkadot-provider"
-import { queryLastOrderHashByCustomer, queryOrderDetailByOrderID } from "@debionetwork/polkadot-provider"
-import { setOrderPaidFee, setOrderPaid } from "@/common/lib/polkadot-provider/command/order"
-import { getConversion, getOrderDetail } from "@/common/lib/api"
-import { getDNACollectionProcess } from "@/common/lib/api"
-import { errorHandler } from "@/common/lib/error-handler"
-import { createOrder } from "@/common/lib/polkadot-provider/command/order"
-import { formatUSDTE } from "@/common/lib/price-format.js"
-import { processRequest } from "@/common/lib/polkadot-provider/command/service-request"
-
-
+import { mapState, mapMutations } from "vuex";
+import CryptoJS from "crypto-js";
+import Kilt from "@kiltprotocol/sdk-js";
+import { u8aToHex } from "@polkadot/util";
+import CancelDialog from "@/common/components/Dialog/CancelDialog";
+import { cancelOrder } from "@debionetwork/polkadot-provider";
+import {
+  queryLastOrderHashByCustomer,
+  queryOrderDetailByOrderID
+} from "@debionetwork/polkadot-provider";
+import {
+  setOrderPaidFee,
+  setOrderPaid
+} from "@/common/lib/polkadot-provider/command/order";
+import { getConversion, getOrderDetail } from "@/common/lib/api";
+import { getDNACollectionProcess } from "@/common/lib/api";
+import LoadingDialog from "@/common/components/Dialog/LoadingDialog.vue";
+import { errorHandler } from "@/common/lib/error-handler";
+import { createOrder } from "@/common/lib/polkadot-provider/command/order";
+import { formatUSDTE } from "@/common/lib/price-format.js";
+import { processRequest } from "@/common/lib/polkadot-provider/command/service-request";
 
 export default {
   name: "PaymentDetailCard",
 
   components: {
-    CancelDialog
+    CancelDialog,
+    LoadingDialog
   },
 
   data: () => ({
@@ -185,34 +196,37 @@ export default {
   }),
 
   async mounted() {
-    if (this.$route.name === "customer-request-test-checkout" && !this.dataService) {
-      this.toDashboard()
-      return
+    if (
+      this.$route.name === "customer-request-test-checkout" &&
+      !this.dataService
+    ) {
+      this.toDashboard();
+      return;
     }
 
     if (this.$route.name === "customer-request-test-success") {
-      this.success = true
+      this.success = true;
     }
 
     if (this.$route.params.id) {
-      this.isCreated = true
-      const orderId = this.$route.params.id
+      this.isCreated = true;
+      const orderId = this.$route.params.id;
 
       this.lastOrder = await queryLastOrderHashByCustomer(
         this.api,
         this.wallet.address
-      )
+      );
 
       if (this.lastOrder) {
-        const detailOrder = await queryOrderDetailByOrderID(this.api, orderId)
-        this.detailOrder = detailOrder
-        this.orderId = this.detailOrder.id
-        this.status = this.detailOrder.status
+        const detailOrder = await queryOrderDetailByOrderID(this.api, orderId);
+        this.detailOrder = detailOrder;
+        this.orderId = this.detailOrder.id;
+        this.status = this.detailOrder.status;
       }
     }
 
-    await this.getUsdRate()
-    await this.calculateTxWeight()
+    await this.getUsdRate();
+    await this.calculateTxWeight();
   },
 
   computed: {
@@ -232,47 +246,48 @@ export default {
 
   watch: {
     async lastEventData(event) {
-      const dataEvent = JSON.parse(event.data.toString())
-      const orderId = dataEvent[0].id
-      this.status = dataEvent.status
+      const dataEvent = JSON.parse(event.data.toString());
+      const orderId = dataEvent[0].id;
+      this.status = dataEvent.status;
 
-      if (!event) return
+      if (!event) return;
       if (event.method === "OrderCancelled" && this.isCancelled) {
-        this.loading = false
+        this.loading = false;
         this.$router.push({
           name: "customer-request-test-canceled",
           params: {
             hash: this.$route.params.id || this.$route.params.hash
           }
-        })
+        });
       }
 
       if (event.method === "OrderCreated") {
-        await this.setPaid(orderId)
+        await this.setPaid(orderId);
       }
 
       if (event.method === "OrderPaid") {
         if (dataEvent[0].orderFlow === "RequestTest") {
-          this.loadingPayment = false
-          this.success = true
+          this.loadingPayment = false;
+          this.success = true;
 
           this.$router.push({
             name: "customer-request-test-success",
             params: {
               id: dataEvent[0].id
             }
-          })
-          return
+          });
+          return;
         }
 
-        await this.processRequestService(dataEvent[0])
+        await this.processRequestService(dataEvent[0]);
       }
 
-      if (event.method === "ServiceRequestUpdated") this.$router.push({ name: "customer-request-test-success" })
+      if (event.method === "ServiceRequestUpdated")
+        this.$router.push({ name: "customer-request-test-success" });
     },
 
     dataService(val) {
-      if (val) this.getUsdRate()
+      if (val) this.getUsdRate();
     }
   },
 
@@ -282,19 +297,22 @@ export default {
     }),
 
     async calculateTxWeight() {
-      this.txWeight = "Calculating..."
+      this.txWeight = "Calculating...";
 
       this.lastOrder = await queryLastOrderHashByCustomer(
         this.api,
         this.wallet.address
-      )
+      );
 
       const txWeight = await setOrderPaidFee(
         this.api,
         this.wallet,
         this.dataService.serviceId
-      )
-      this.txWeight = this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
+      );
+      this.txWeight = this.web3.utils.fromWei(
+        String(txWeight.partialFee),
+        "ether"
+      );
     },
 
     async processRequestService(event) {
@@ -303,71 +321,78 @@ export default {
         this.wallet,
         this.stakingData.hash,
         event.id
-      )
+      );
     },
 
     async getUsdRate() {
-      this.fetching = true
-      let totalPrice
+      this.fetching = true;
+      let totalPrice;
 
       if (this.$route.params.id) {
-        totalPrice = this.dataService.totalPrice
+        totalPrice = this.dataService.totalPrice;
       } else {
-        totalPrice = this.dataService.totalPrice.split(",").join("")
+        totalPrice = this.dataService.totalPrice.split(",").join("");
       }
 
-      this.rate = await getConversion(this.dataService.currency, "USD")
-      this.usdRate = Number(this.rate.conversion * totalPrice).toFixed(4)
-      this.fetching = false
+      this.rate = await getConversion(this.dataService.currency, "USD");
+      this.usdRate = Number(this.rate.conversion * totalPrice).toFixed(4);
+      this.fetching = false;
     },
 
     toPaymentHistory() {
-      this.$router.push({ name: "customer-payment-history" })
+      this.$router.push({ name: "customer-payment-history" });
     },
 
     async onSubmit() {
-      this.loadingPayment = true
+      this.loadingPayment = true;
 
       try {
-        const balance = this.usdtBalance
-        if (Number(balance) - 0.1 <= Number(this.dataService.totalPrice.replaceAll(",", ""))) {
-          this.loadingPayment = false
-          this.showError = true
-          const error = await errorHandler("Insufficient Balance")
-          this.error = error.message
-          this.errorTitle = error.title
-          this.errorMsg = error.message
-          return
+        const balance = this.usdtBalance;
+        if (
+          Number(balance) - 0.1 <=
+          Number(this.dataService.totalPrice.replaceAll(",", ""))
+        ) {
+          this.loadingPayment = false;
+          this.showError = true;
+          const error = await errorHandler("Insufficient Balance");
+          this.error = error.message;
+          this.errorTitle = error.title;
+          this.errorMsg = error.message;
+          return;
         }
 
         if (this.isCreated) {
           this.lastOrder = await queryLastOrderHashByCustomer(
             this.api,
             this.wallet.address
-          )
+          );
 
-          await setOrderPaid(this.api, this.wallet, this.lastOrder)
-          return
+          await setOrderPaid(this.api, this.wallet, this.lastOrder);
+          return;
         }
 
-        await this.createOrder()
+        await this.createOrder();
       } catch (err) {
-        this.loadingPayment = false
-        const error = await errorHandler(err.message)
-        this.showError = true
-        this.errorTitle = error.title
-        this.errorMsg = error.message
+        this.loadingPayment = false;
+        const error = await errorHandler(err.message);
+        this.showError = true;
+        this.errorTitle = error.title;
+        this.errorMsg = error.message;
       }
     },
 
     async setPaid(id) {
-      await setOrderPaid(this.api, this.wallet, id)
+      await setOrderPaid(this.api, this.wallet, id);
     },
 
     async createOrder() {
-      const assetId = await this.getAssetId(this.dataService.currency === "USDTE" ? "USDT.e" : this.dataService.currency)
-      const customerBoxPublicKey = await this.getCustomerPublicKey()
-      const indexPrice = 0
+      const assetId = await this.getAssetId(
+        this.dataService.currency === "USDTE"
+          ? "USDT.e"
+          : this.dataService.currency
+      );
+      const customerBoxPublicKey = await this.getCustomerPublicKey();
+      const indexPrice = 0;
       await createOrder(
         this.api,
         this.wallet,
@@ -376,67 +401,67 @@ export default {
         customerBoxPublicKey,
         this.dataService.serviceFlow,
         assetId
-      )
+      );
     },
 
     async getAssetId(currency) {
-      let assetId = 0
-      const wallet = this.polkadotWallet.find(wallet => wallet?.currency?.toUpperCase() === currency?.toUpperCase())
-      assetId = wallet.id
-      return assetId
+      let assetId = 0;
+      const wallet = this.polkadotWallet.find(
+        (wallet) => wallet?.currency?.toUpperCase() === currency?.toUpperCase()
+      );
+      assetId = wallet.id;
+      return assetId;
     },
 
     getCustomerPublicKey() {
-      const identity = Kilt.Identity.buildFromMnemonic(this.mnemonicData.toString(CryptoJS.enc.Utf8))
-      this.publicKey = u8aToHex(identity.boxKeyPair.publicKey)
-      this.secretKey = u8aToHex(identity.boxKeyPair.secretKey)
-      return u8aToHex(identity.boxKeyPair.publicKey)
+      const identity = Kilt.Identity.buildFromMnemonic(
+        this.mnemonicData.toString(CryptoJS.enc.Utf8)
+      );
+      this.publicKey = u8aToHex(identity.boxKeyPair.publicKey);
+      this.secretKey = u8aToHex(identity.boxKeyPair.secretKey);
+      return u8aToHex(identity.boxKeyPair.publicKey);
     },
 
     async toInstruction(val) {
-
-      const description = this.dataService.longDescription.split("||")
+      const description = this.dataService.longDescription.split("||");
 
       if (description.length > 1) {
-        window.open(description[1], "_blank")
-        return
+        window.open(description[1], "_blank");
+        return;
       }
 
-      const dnaCollectionProcess = await getDNACollectionProcess()
-      const link = dnaCollectionProcess.filter(e => e.collectionProcess === val)[0].link
-      window.open(link, "_blank")
+      const dnaCollectionProcess = await getDNACollectionProcess();
+      const link = dnaCollectionProcess.filter(
+        (e) => e.collectionProcess === val
+      )[0].link;
+      window.open(link, "_blank");
     },
 
     showCancelConfirmation() {
       if (!this.isCreated) {
-        this.toDashboard()
-        return
+        this.toDashboard();
+        return;
       }
 
-      this.cancelDialog = true
+      this.cancelDialog = true;
     },
 
     async setCancelled() {
-      this.loading = true
-      this.isCancelled = true
+      this.loading = true;
+      this.isCancelled = true;
 
-      await cancelOrder(
-        this.api,
-        this.wallet,
-        this.$route.params.id
-      )
-
+      await cancelOrder(this.api, this.wallet, this.$route.params.id);
     },
 
     toDashboard() {
-      this.$router.push({ name: "customer-dashboard" })
+      this.$router.push({ name: "customer-dashboard" });
     },
 
     async getDataService() {
-      const data = await getOrderDetail(this.$route.params.id)
+      const data = await getOrderDetail(this.$route.params.id);
 
       if (data.status !== "Unpaid") {
-        this.$router.push({ name: "customer-payment-history" })
+        this.$router.push({ name: "customer-payment-history" });
       }
 
       const service = {
@@ -451,7 +476,10 @@ export default {
         labImage: data.lab_info.profile_image,
         labRate: 0,
         labAddress: data.lab_info.address,
-        price: (data.service_info.prices_by_currency[0].total_price).replaceAll(",", ""),
+        price: data.service_info.prices_by_currency[0].total_price.replaceAll(
+          ",",
+          ""
+        ),
         detailPrice: data.service_info.prices_by_currency[0],
         currency: data.service_info.prices_by_currency[0].currency,
         city: data.lab_info.city,
@@ -464,81 +492,79 @@ export default {
         verificationStatus: "Verified",
         indexPrice: 0,
         dnaCollectionProcess: data.service_info.dna_collection_process
-      }
+      };
 
-      this.setProductsToRequest(service)
-
+      this.setProductsToRequest(service);
     }
   }
-}
+};
 </script>
 
 <style lang="sass" scoped>
-  @import "@/common/styles/mixins.sass"
+@import "@/common/styles/mixins.sass"
 
-  .container-card
-    width: 360px
-    height: 328px
-    border-radius: 8px
+.container-card
+  width: 360px
+  height: 328px
+  border-radius: 8px
 
-  .menu-card
-    border-radius: 8px
-    padding: 2px
-    height: 320px
+.menu-card
+  border-radius: 8px
+  padding: 2px
+  height: 320px
 
-    &__title
-      margin-top: 30px
-      margin-bottom: 25px
-      justify-content: center
-      display: flex
-      @include h6-opensans
+  &__title
+    margin-top: 30px
+    margin-bottom: 25px
+    justify-content: center
+    display: flex
+    @include h6-opensans
 
-    &__sub-title
-      margin-left: 38px
-      @include body-text-3-opensans
+  &__sub-title
+    margin-left: 38px
+    @include body-text-3-opensans
 
-    &__sub-title-medium
-      margin-left: 38px
-      @include body-text-3-opensans-medium
+  &__sub-title-medium
+    margin-left: 38px
+    @include body-text-3-opensans-medium
 
-    &__price
-      margin-right: 38px
-      @include body-text-3-opensans
+  &__price
+    margin-right: 38px
+    @include body-text-3-opensans
 
-    &__price-medium
-      margin-right: 38px
-      @include body-text-3-opensans-medium
+  &__price-medium
+    margin-right: 38px
+    @include body-text-3-opensans-medium
 
-    &__line
-      margin: 1px 24px
+  &__line
+    margin: 1px 24px
 
-    &__details
-      display: flex
-      justify-content: space-between
+  &__details
+    display: flex
+    justify-content: space-between
 
-    &__rate
-      display: flex
-      align-items: center
-      justify-content: flex-end
-      margin-right: 38px
-      @include tiny-reg
+  &__rate
+    display: flex
+    align-items: center
+    justify-content: flex-end
+    margin-right: 38px
+    @include tiny-reg
 
-    &__operation
-      margin-right: 24px
-      display: flex
-      justify-content: flex-end
-      @include body-text-3-opensans-medium
+  &__operation
+    margin-right: 24px
+    display: flex
+    justify-content: flex-end
+    @include body-text-3-opensans-medium
 
-    &__trans-weight
-      margin-left: 38px
-      @include tiny-reg
+  &__trans-weight
+    margin-left: 38px
+    @include tiny-reg
 
-    &__trans-weight-amount
-      margin-right: 38px
-      @include tiny-reg
+  &__trans-weight-amount
+    margin-right: 38px
+    @include tiny-reg
 
-    &__icon
-      margin-left: 5px
-      @include body-text-3-opensans-medium
-
+  &__icon
+    margin-left: 5px
+    @include body-text-3-opensans-medium
 </style>
