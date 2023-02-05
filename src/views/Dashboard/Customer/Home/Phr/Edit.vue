@@ -53,7 +53,7 @@
       )
 
     .customer-create-phr__wrapper
-      .customer-create-phr__title.mb-13 Edit Health Records
+      .customer-create-phr__title.mb-13 Edit Health Record
       .customer-create-phr__forms
         ui-debio-input(
           :rules="$options.rules.phr.title"

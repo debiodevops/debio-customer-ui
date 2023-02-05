@@ -100,7 +100,7 @@
                 :bind="attrs"
                 :on="on"
               ) Upload Health Record
-            span Upload Personal Health Records
+            span Upload Health Record
 
           v-tooltip(bottom)
             template(v-slot:activator="{ on, attrs }")

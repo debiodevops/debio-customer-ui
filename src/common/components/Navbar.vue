@@ -283,7 +283,10 @@ export default {
       if (link === "buy") {
         window.open("https://app.ref.finance/#near%7Cdbio.near", "__blank");
       } else {
-        window.open("https://mainnet.oct.network/bridge", "__blank");
+        window.open(
+          "https://mainnet.oct.network/bridge/near/debionetwork",
+          "__blank"
+        );
       }
     },
 
