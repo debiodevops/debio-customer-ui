@@ -2,6 +2,14 @@
 .subscription-setting
   .subscription-setting__wrapper
     MenstrualCalendarBanner
+
+    ui-debio-error-dialog(
+      :show="!!error"
+      :title="error ? error.title : ''"
+      :message="error ? error.message : ''"
+      @close="error = null"
+    )
+
     ui-debio-modal.subscription-setting__modal(
       :show="showAlert",
       :show-title="false",
@@ -20,6 +28,7 @@
 
       .subscription-setting__modal-buttons.justify-space-between.align-center.pa-10
         ui-debio-button(
+          :disabled="loading"
           color="secondary",
           width="100px",
           height="35",
@@ -29,11 +38,12 @@
         ) No
 
         ui-debio-button(
+          :loading="loading"
           color="secondary",
           width="100px",
           height="35",
           style="font-size: 10px",
-          @click="toPayment()"
+          @click="toSusbsribe"
         ) Yes
 
     ui-debio-modal.subscription-setting__modal-success(
@@ -219,7 +229,9 @@ export default {
       { label: "Monthly", duration: "Monthly", description: "For users on a budget who want to try out menstrual calendar", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "Month", promoPrice: 0 },
       { label: "Quarterly", duration: "Quarterly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 10%", periode: "3 Months", promoPrice: 0 },
       { label: "Annualy", duration: "Yearly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 50%", periode: "Year", promoPrice: 0 }
-    ]
+    ],
+    loading: false,
+    error: null
   }),
   computed: {
     ...mapState({
@@ -392,7 +404,6 @@ export default {
         this.loading = false;
         return;
       }
-
       await addMenstrualSubscription(
         this.api,
         this.wallet,
