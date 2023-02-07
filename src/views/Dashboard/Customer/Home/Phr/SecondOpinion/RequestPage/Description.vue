@@ -16,7 +16,7 @@
     ui-debio-textarea.request-second-opinion-card__text-area(
       variant="large"
       label="Describe your symptoms"
-      placeholder="Describe how you feels..."
+      placeholder="Describe how you feel..."
       v-model="symptoms"
       validate-on-blur
       outlined
@@ -42,7 +42,7 @@ export default {
   name: "Description",
 
   data: () => ({
-    category: null,
+    category: "Physical Health",
     symptoms: null
   }),
 
@@ -55,7 +55,7 @@ export default {
 
   methods: {
     onSubmit() {
-      this.$emit("click", {category: this.category, symptoms:this.symptoms})
+      this.$emit("click", { category: this.category, symptoms: this.symptoms })
     }
   }
 

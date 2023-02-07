@@ -151,10 +151,9 @@
             @close="showDialog=false"
           )
 
-        LoadingDialog(
-          :show="loadingDialog"
-          desc="Please wait while we are processing your payment."
-        )
+          PaymentDialog(
+            :show="loadingDialog"
+          )
 
         ui-debio-error-dialog(
           :show="!!error"
@@ -175,11 +174,11 @@ import localStorage from "@/common/lib/local-storage"
 import { u8aToHex } from "@polkadot/util"
 import { syncDecryptedFromIPFS } from "@/common/lib/ipfs"
 import ConfirmationDialog from "@/common/components/Dialog/ConfirmationDialog"
-import LoadingDialog from "@/common/components/Dialog/LoadingDialog.vue"
 import { createSyncEvent, getCategories, getOrderList } from "@/common/lib/api"
 import { queryDnaSamples, queryDnaTestResults, unstakeRequest, unstakeRequestFee } from "@debionetwork/polkadot-provider"
 import { getDNACollectionProcess } from "@/common/lib/api"
 import { ORDER_STATUS_DETAIL } from "@/common/constants/status"
+import PaymentDialog from "@/common/components/Dialog/PaymentDialog"
 
 export default {
   name: "MyTest",
@@ -188,7 +187,7 @@ export default {
     StakingServiceTab,
     modalBounty,
     ConfirmationDialog,
-    LoadingDialog
+    PaymentDialog
   },
 
   data: () => ({
@@ -593,4 +592,5 @@ export default {
   .tab-section
     text-transform: unset !important
     @include button-1
+
 </style>

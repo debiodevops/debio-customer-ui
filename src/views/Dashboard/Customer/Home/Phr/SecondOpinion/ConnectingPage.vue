@@ -30,7 +30,6 @@ import {
   myriadRegistration, 
   getNonce, 
   myriadAuth,
-  registerVisibilityTimeline,
   myriadPostCreate,
   getMyriadListByRole } from "@/common/lib/api"
 import { generateUsername } from "@/common/lib/username-generator.js"
@@ -90,8 +89,6 @@ export default {
     async checkMyriadUser(address) {
       try {
         const data = await myriadCheckUser(address)
-        const timelineId = this.category === "Physical Health" ? getEnv("VUE_APP_PHYSICAL_HEALTH_TIMELINE_ID") : getEnv("VUE_APP_MENTAL_HEALTH_TIMELINE_ID")
-        await registerVisibilityTimeline(timelineId, data.user_id)
         const userIds = await getMyriadListByRole(this.category)
         const userIdList = userIds.data.map((user) => user.user_id)
         

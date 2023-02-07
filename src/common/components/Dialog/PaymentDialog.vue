@@ -15,12 +15,20 @@
 
           .dialog-uploading__message
             b Please wait, do not close this tab. 
-          .dialog-uploading__border-text It may take a while, 
+          .dialog-uploading__border-text(style="font-weight:600; font-size:14px") It may take a while, 
             a.link(
               target="_blank"
               href="https://docs.debio.network/complete-guidelines/user-guideline/upload-and-encrypt-data"
               @click.stop
             ) here’s why
+
+          .dialog-uploading__contact-service(style="margin-top:2rem;") Facing any difficulties?
+          .dialog-uploading__contact-service(style="margin-bottom:2rem;") Contact our customer service
+            a.link(
+              target="_blank"
+              href="https://t.me/debionetwork"
+              @click.stop
+            ) here
 
 </template>
 
@@ -50,6 +58,11 @@ export default {
   @import "@/common/styles/mixins.sass"
 
   .dialog-uploading
+    &__contact-service
+      display: flex
+      justify-content: center
+      align-items: center
+
     &__title
       display: flex
       justify-content: center
@@ -81,15 +94,15 @@ export default {
 
     &__border-text
       display: flex
-      padding: 12px 16px
       justify-content: center
       letter-spacing: -0.004em
-      @include body-text-3-opensans
+      font-family: "Open Sans", sans-serif
 
     &__card-loading
       padding: 50px 0 50px 105px
 
   .link
     margin-left: 3px
+    color: #5640a5
 
 </style>

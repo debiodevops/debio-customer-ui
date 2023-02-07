@@ -468,6 +468,12 @@ export default {
       this.breadcrumbs[0].disabled = false;
       this.breadcrumbs[1].disabled = true;
     },
+    async paymentSuccessAction() {
+      this.isSuccess = false
+      this.submitPreview = true
+      this.nextStatus = true
+      this.$router.push({ name: "menstrual-calendar-detail" })
+    },
 
     toMenstrualCalendar() {
       this.showAlert = false;

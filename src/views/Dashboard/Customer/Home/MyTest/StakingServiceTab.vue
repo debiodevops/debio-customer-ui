@@ -30,7 +30,7 @@
           span(:style="{color: setButtonBackground(item.request.status)}") {{ getStatusName(item.request.status) }} 
 
       template(v-slot:[`item.amount`]="{ item }")
-      
+
         span(:style="setButtonBackground(item.request.status)") {{ setAmount(item.request.staking_amount) }}
 
       template(v-slot:[`item.actions`]="{ item }")
@@ -163,7 +163,7 @@ export default {
   watch: {
     async lastEventData(event) {
       if (!event) return
-      if(event.method === "ServiceRequestUpdated") await this.fetchData()
+      if (event.method === "ServiceRequestUpdated") await this.fetchData()
     }
   },
 
@@ -178,9 +178,9 @@ export default {
     })
   },
 
-  async mounted () {
+  async mounted() {
     await this.getCountries()
-    await this.fetchData ()
+    await this.fetchData()
   },
 
   methods: {
@@ -191,7 +191,7 @@ export default {
       setProductsToRequest: "testRequest/SET_PRODUCTS"
     }),
 
-    async fetchData () {
+    async fetchData() {
       try {
         this.isLoadingData = true
         const { data } = await getServiceRequestByCustomer(this.pair.address)
@@ -200,16 +200,16 @@ export default {
           const dateA = (a.request.created_at).replace(/,/g, "")
           const dateB = (b.request.created_at).replace(/,/g, "")
 
-          if(new Date(parseInt(dateA)) < new Date(parseInt(dateB))) {
+          if (new Date(parseInt(dateA)) < new Date(parseInt(dateB))) {
             return 1
-          } 
-          
+          }
+
           if (new Date(parseInt(dateA)) > new Date(parseInt(dateB))) {
             return -1
-          } 
-          
+          }
+
           return 0
-          
+
         })
       } catch (error) {
         console.log(error)
@@ -224,11 +224,11 @@ export default {
     },
 
     async getCountries() {
-      const { data : { data }} = await getLocations()
+      const { data: { data } } = await getLocations()
       this.countries = data
     },
 
-    country (country) {
+    country(country) {
       return this.countries.filter((c) => c.iso2 === country)[0].name
     },
 
@@ -248,7 +248,7 @@ export default {
       if (lastOrder) {
         const detailOrder = await queryOrderDetailByOrderID(this.api, lastOrder)
         const status = detailOrder.status
-        if (status === "Unpaid") {  
+        if (status === "Unpaid") {
           this.showAlert = true
           return
         }
@@ -283,11 +283,11 @@ export default {
         region: labDetail.info.region
       })
 
-      await this.toCheckout()
-      
+      await this.toCheckout(lastOrder)
+
       this.$emit("loading")
     },
-    
+
     toPaymentHistory() {
       this.$router.push({ name: "customer-payment-history" })
     },
@@ -312,12 +312,12 @@ export default {
       })
       return formattedDate
     },
-    
+
     formatId(id) {
       return fmtReferenceFromHex(id)
     },
 
-    async getLastOrderId () {
+    async getLastOrderId() {
       const lastOrderId = await queryLastOrderHashByCustomer(
         this.api,
         this.pair.address
@@ -326,9 +326,10 @@ export default {
       return lastOrderId
     },
 
-    async toCheckout() {      
-      this.$router.push({ 
-        name: "customer-request-test-checkout"
+    async toCheckout(orderId) {
+      this.$router.push({
+        name: "customer-request-test-checkout",
+        params: { id: orderId }
       })
       this.$emit("closeLoading")
     }

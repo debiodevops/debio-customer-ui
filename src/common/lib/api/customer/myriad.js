@@ -35,15 +35,6 @@ export async function myriadAuth(info) {
   return data
 }
 
-export async function registerVisibilityTimeline(timelineId, userId) {  
-  const { data } = await apiClientRequest.post(`myriad/timeline/add-user`, {
-    selectedUser: [userId],
-    timelineId 
-  })
-
-  return data
-}
-
 export async function getMyriadListByRole(category) {
   let role
   if (category === "Physical Health") {

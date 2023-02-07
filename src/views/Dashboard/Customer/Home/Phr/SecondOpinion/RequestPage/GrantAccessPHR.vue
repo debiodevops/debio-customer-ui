@@ -71,7 +71,7 @@
         validate-on-blur
       )
 
-    .grant-access-card__title(v-if="!isAddNewPHR") Select the Personal Health Records you want to give access to the Health Professionals. (you can select more than one)
+    .grant-access-card__title(v-if="!isAddNewPHR") Select the Personal Health Records you want to give access to. (you can select more than one)
     .grant-access-card__title(v-if="isAddNewPHR") Granted Access My Health Record
 
     v-divider.my-5

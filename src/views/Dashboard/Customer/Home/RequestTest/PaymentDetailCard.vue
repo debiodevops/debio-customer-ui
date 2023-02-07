@@ -1,143 +1,142 @@
 <template lang="pug">
 v-container.container-card
-    v-skeleton-loader(
-      v-if="fetching"
-      type="card"
-      width="300"
+  v-skeleton-loader(
+    v-if="fetching"
+    type="card"
+    width="300"
+  )
+
+  v-card.menu-card(v-if=!fetching)
+    .menu-card__title Order Summary
+
+    .menu-card__sub-title-medium Details
+
+    hr.menu-card__line
+
+    .menu-card__details
+      .menu-card__sub-title Service Price
+      .menu-card__price 
+        | {{ dataService.servicePrice }}
+        | {{ formatUSDTE(dataService.currency) }}
+
+    .menu-card__details
+      .menu-card__sub-title Quality Control Price
+      .menu-card__price 
+        | {{ dataService.qcPrice }} 
+        | {{ formatUSDTE(dataService.currency) }}
+
+    .menu-card__operation +
+    hr.menu-card__line
+
+    .menu-card__details
+      .menu-card__sub-title-medium Total Price
+      .menu-card__price-medium
+        | {{ dataService.totalPrice }} 
+        | {{ formatUSDTE(dataService.currency)}}
+
+    .menu-card__rate ( {{ this.usdRate }} USD )
+
+    .menu-card__details.mt-5(v-if="$route.name === 'customer-request-test-checkout'")
+      .menu-card__trans-weight Estimated Transaction Weight
+        v-tooltip.visible(bottom)
+          template(v-slot:activator="{ on, attrs }")
+            v-icon.menu-card__icon(
+              color="primary"
+              dark
+              v-bind="attrs"
+              v-on="on"
+            ) mdi-alert-circle-outline 
+          span(style="font-size: 10px;") Total fee paid in DBIO to execute this transaction.
+      .menu-card__trans-weight-amount {{ Number(txWeight).toFixed(4) }} DBIO
+
+    div(class="text-center" v-if="$route.name === 'customer-request-test-checkout' && status === 'Cancelled'")
+      div(class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
+        ui-debio-button(
+          color="secondary"
+          width="49%"
+          height="35"
+          @click="toDashboard"
+          style="font-size: 10px;"
+          outlined 
+          ) Go to Dashboard
+
+        ui-debio-button(
+          color="secondary"
+          width="49%"
+          height="35"
+          style="font-size: 9px;"
+          @click="toPaymentHistory"
+          ) Go To Payment History
+
+    div(class="text-center" v-else)
+      div(v-if="status === 'Paid'" class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
+        ui-debio-button(
+          color="secondary"
+          width="50%"
+          height="35"
+          style="font-size: 9px;"
+          @click="toPaymentHistory"
+          outlined
+          ) Go To Payment History
+
+        ui-debio-button(
+          color="secondary"
+          width="42%"
+          height="35"
+          @click="toInstruction(dataService.dnaCollectionProcess)"
+          style="font-size: 9px;"
+          ) Obtain Kit Here
+
+      div(v-if="$route.name === 'customer-request-test-checkout'" class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
+        ui-debio-button(
+          color="primary"
+          width="46%"
+          height="35"
+          @click="showCancelConfirmation"
+          style="font-size: 10px;"
+          outlined 
+          :loading="loading"
+          :disabled="loadingPayment"
+          ) Cancel Order
+
+        ui-debio-button(
+          color="secondary"
+          width="46%"
+          height="35"
+          style="font-size: 10px;"
+          @click="onSubmit"
+          :disabled="loading"
+          :loading="loadingPayment"
+          ) Pay
+
+    CancelDialog(
+      :show="cancelDialog"
+      :orderId="orderId"
+      @cancel="setCancelled"
+      @close="cancelDialog = false"
     )
 
-    v-card.menu-card(v-if=!fetching)
-      .menu-card__title Order Summary
+    ui-debio-alert-dialog(
+      :show="showAlert"
+      :width="289"
+      title="Unpaid Order"
+      message="Complete your unpaid order first before requesting a new one. "
+      imgPath="alert-circle-primary.png"
+      btn-message="Go to My Payment"
+      @close="showAlert = false"
+      @click="toPaymentHistory"
+    )
 
-      .menu-card__sub-title-medium Details
+    ui-debio-error-dialog(
+      :show="showError"
+      :title="errorTitle"
+      :message="errorMsg"
+      @close="showError = false"
+    )
 
-      hr.menu-card__line
-
-      .menu-card__details
-        .menu-card__sub-title Service Price
-        .menu-card__price 
-          | {{ dataService.servicePrice }}
-          | {{ formatUSDTE(dataService.currency) }}
-
-      .menu-card__details
-        .menu-card__sub-title Quality Control Price
-        .menu-card__price 
-          | {{ dataService.qcPrice }} 
-          | {{ formatUSDTE(dataService.currency) }}
-
-      .menu-card__operation +
-      hr.menu-card__line
-
-      .menu-card__details
-        .menu-card__sub-title-medium Total Price
-        .menu-card__price-medium
-          | {{ dataService.totalPrice }} 
-          | {{ formatUSDTE(dataService.currency)}}
-
-      .menu-card__rate ( {{ this.usdRate }} USD )
-
-      .menu-card__details.mt-5(v-if="$route.name === 'customer-request-test-checkout'")
-        .menu-card__trans-weight Estimated Transaction Weight
-          v-tooltip.visible(bottom)
-            template(v-slot:activator="{ on, attrs }")
-              v-icon.menu-card__icon(
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              ) mdi-alert-circle-outline 
-            span(style="font-size: 10px;") Total fee paid in DBIO to execute this transaction.
-        .menu-card__trans-weight-amount {{ Number(txWeight).toFixed(4) }} DBIO
-
-      div(class="text-center" v-if="$route.name === 'customer-request-test-checkout' && status === 'Cancelled'")
-        div(class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
-          ui-debio-button(
-            color="secondary"
-            width="49%"
-            height="35"
-            @click="toDashboard"
-            style="font-size: 10px;"
-            outlined 
-            ) Go to Dashboard
-
-          ui-debio-button(
-            color="secondary"
-            width="49%"
-            height="35"
-            style="font-size: 9px;"
-            @click="toPaymentHistory"
-            ) Go To Payment History
-
-      div(class="text-center" v-else)
-        div(v-if="status === 'Paid'" class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
-          ui-debio-button(
-            color="secondary"
-            width="50%"
-            height="35"
-            style="font-size: 9px;"
-            @click="toPaymentHistory"
-            outlined
-            ) Go To Payment History
-
-          ui-debio-button(
-            color="secondary"
-            width="42%"
-            height="35"
-            @click="toInstruction(dataService.dnaCollectionProcess)"
-            style="font-size: 9px;"
-            ) Obtain Kit Here
-
-        div(v-if="$route.name === 'customer-request-test-checkout'" class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
-          ui-debio-button(
-            color="primary"
-            width="46%"
-            height="35"
-            @click="showCancelConfirmation"
-            style="font-size: 10px;"
-            outlined 
-            :loading="loading"
-            :disabled="loadingPayment"
-            ) Cancel Order
-
-          ui-debio-button(
-            color="secondary"
-            width="46%"
-            height="35"
-            style="font-size: 10px;"
-            @click="onSubmit"
-            :disabled="loading"
-            :loading="loadingPayment"
-            ) Pay
-
-      CancelDialog(
-        :show="cancelDialog"
-        :orderId="orderId"
-        @cancel="setCancelled"
-        @close="cancelDialog = false"
+    PaymentDialog(
+      :show="loadingPayment"
       )
-
-      ui-debio-alert-dialog(
-        :show="showAlert"
-        :width="289"
-        title="Unpaid Order"
-        message="Complete your unpaid order first before requesting a new one. "
-        imgPath="alert-circle-primary.png"
-        btn-message="Go to My Payment"
-        @close="showAlert = false"
-        @click="toPaymentHistory"
-      )
-
-      ui-debio-error-dialog(
-        :show="showError"
-        :title="errorTitle"
-        :message="errorMsg"
-        @close="showError = false"
-      )
-
-      LoadingDialog(
-          :show="loadingPayment"
-          desc="Please wait while we are processing your payment."
-        )
 </template>
 
 <script>
@@ -157,18 +156,17 @@ import {
 } from "@/common/lib/polkadot-provider/command/order";
 import { getConversion, getOrderDetail } from "@/common/lib/api";
 import { getDNACollectionProcess } from "@/common/lib/api";
-import LoadingDialog from "@/common/components/Dialog/LoadingDialog.vue";
 import { errorHandler } from "@/common/lib/error-handler";
 import { createOrder } from "@/common/lib/polkadot-provider/command/order";
 import { formatUSDTE } from "@/common/lib/price-format.js";
 import { processRequest } from "@/common/lib/polkadot-provider/command/service-request";
-
+import PaymentDialog from "@/common/components/Dialog/PaymentDialog"
 export default {
   name: "PaymentDetailCard",
 
   components: {
     CancelDialog,
-    LoadingDialog
+    PaymentDialog
   },
 
   data: () => ({
