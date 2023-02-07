@@ -17,7 +17,7 @@
               .order-detail
                 span.order-detail__label Order ID
                 .d-flex.align-baseline
-                  p.order-detail__value(:title="payment.id") {{ payment.formated_id }}
+                  p.order-detail__value {{ payment.formated_id }}
                   ui-debio-icon.ml-2.mt-1(
                     role="button"
                     :icon="copyIcon"
@@ -38,6 +38,10 @@
                 p.order-detail__value(
                   :class="payment.status_class"
                 ) {{ payment.status }}
+
+              .order-detail(v-if="payment.section === 'menstrual-subscription'")
+                span.order-detail__label Payment status
+                p.order-detail__value {{ payment.duration}}
               .order-detail
                 span.order-detail__label Test Status
                 p.order-detail__value(:class="payment.test_status_class") {{ payment.test_status || "-" }}
@@ -58,9 +62,10 @@
                 .price__block
                   .price__label Paid Amount
                   .price__value.success--text
-                    | {{ computeTotalPrices }}
+                    | {{ payment.section === "menstrual-subscription" ? payment.price :computeTotalPrices }}
                     | {{ formatUSDTE(payment.currency) }}
-                .price__block
+                  
+                .price__block(v-if="payment.section !== 'menstrual-subscription'")
                   .price__label Service Price
                   .price__value
                     | {{ formatPrice(payment.prices[0].value, payment.currency) }}
@@ -73,7 +78,7 @@
 
                 hr.mb-4
 
-                .price__block
+                .price__block(v-if="payment.section !== 'menstrual-subscription'")
                   .price__label Refund Amount
                   .price__value.primary--text
                     | {{ computeRefundedValue }}
@@ -100,6 +105,7 @@ import {
 import { mapState } from "vuex"
 import getEnv from "@/common/lib/utils/env"
 import { formatUSDTE } from "@/common/lib/price-format.js"
+import { getMenstrualSubscriptionById, getMenstrualSubscriptionPrices} from "@/common/lib/polkadot-provider/query/menstrual-subscription";
 
 
 // NOTE: Use anchor tag with "noreferrer noopener nofollow" for security
@@ -129,9 +135,13 @@ export default {
     }),
 
     computeProviderName() {
-      return this.payment.section === "order"
-        ? this.payment?.lab_info?.name ?? "Unknown Provider"
-        : this.payment?.genetic_analyst_info?.name ?? "Unknown Provider"
+      if (this.payment.section === "order") {
+        return this.payment?.lab_info?.name ?? "Unknown Provider"
+      } else if (this.payment.section === "menstrual-subscription") {
+        return "DeBio Network"
+      }
+
+      return this.payment?.genetic_analyst_info?.name ?? "Unknown Provider"
     },
 
     computeDetailsTitle() {
@@ -161,7 +171,9 @@ export default {
   },
 
   async created() {
-    await this.fetchDetails()
+    const menstrualSubscription = await getMenstrualSubscriptionById(this.api, this.$route.params.id)
+    await this.fetchMensSubscriptionDetails(menstrualSubscription)
+    if (!menstrualSubscription) await this.fetchDetails()
   },
 
   watch: {
@@ -259,6 +271,30 @@ export default {
           this.messageError = "Oh no! We can't find your selected order. Please select another one"
 
         else this.messageError = "Something went wrong. Please try again later"
+      }
+    },
+
+    async fetchMensSubscriptionDetails(detail) {
+      const parseDate = (date) => {
+        return new Date(parseInt(date.replaceAll(",", ""))).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric"
+        })
+      }
+      this.payment = {
+        id: detail.id,
+        status: detail.paymentStatus.toUpperCase(),
+        formated_id: `${detail.id.substr(0, 3)}...${detail.id.substr(detail.id.length - 4)}`,
+        section: "menstrual-subscription",
+        service_info: {
+          name: `Menstrual Calendar ${detail.duration} Subscription`
+        },
+        created_at: parseDate(detail.createdAt),
+        status_class: "success--text",
+        duration: detail.duration,
+        currency: detail.currency,
+        price: this.formatPrice((await getMenstrualSubscriptionPrices(this.api, detail.duration, detail.currency)).amount)
       }
     },
 
