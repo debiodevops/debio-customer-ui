@@ -106,8 +106,8 @@ export default {
   }),
 
   mounted() {
-    if (this.$route.name === "menstrual-calendar-selection-update") {
-      this.isUpdate = true      
+    if (this.$route.name === "menstrual-calendar-selection-update" || this.$route.name === "menstrual-calendar-selection") {
+      this.isUpdate = true
     }
   },
 

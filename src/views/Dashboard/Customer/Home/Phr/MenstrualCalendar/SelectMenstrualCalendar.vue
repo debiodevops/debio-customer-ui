@@ -383,10 +383,8 @@ export default {
       this.submitPreview = true
       this.selectedMonth = this.monthList.find((value) => value.text === newMonth).value
 
-      if (this.isUpdate) {
-        await this.fetchData()
-      }
-
+      if (this.menstrualCalendarId?.length) this.isUpdate = true
+      if (this.isUpdate) await this.fetchData()
       this.submitPreview = false
     },
 
@@ -413,9 +411,10 @@ export default {
   },
 
   async beforeMount() {
-    if (this.isUpdate) {
-      await this.fetchData()
-    }
+    this.menstrualCalendarId = await getLastMenstrualCalendarByOwner(this.api, this.pair.address)
+
+    if (this.menstrualCalendarId?.length) this.isUpdate = true
+    if (this.isUpdate) await this.fetchData()
   },
 
   methods: {
@@ -449,7 +448,6 @@ export default {
 
     async fetchData() {
       this.submitPreview = true
-      this.menstrualCalendarId = await getLastMenstrualCalendarByOwner(this.api, this.pair.address)
       this.menstrualCalendarCycleLogIds = await getLastMenstrualCalendarCycleLogByOwner(this.api, this.menstrualCalendarId.at(-1))
       const cycle = []
 
@@ -517,16 +515,12 @@ export default {
         this.submitPreview = true
         this.nextStatus = true
 
-        await this.fetchData()
-        if (this.menstrualCalendarId.length) return await this.toUpdateMenstrual()
-
         await addMenstrualCalendar(
           this.api,
           this.pair,
           this.daySelectedAverage,
           async () => {
             const idMenstrualCalendar = (await getLastMenstrualCalendarByOwner(this.api, this.pair.address)).at(-1)
-
             await addMenstrualCycleLog(
               this.api,
               this.pair,
