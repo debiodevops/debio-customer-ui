@@ -166,7 +166,7 @@ export default {
       const info = {
         category: this.category,
         description: this.text,
-        geneticDataIds: this.phrIds,
+        electronicMedicalRecordIds: this.phrIds,
         opinionIds: [],
         myriadPostId: data.id
       }

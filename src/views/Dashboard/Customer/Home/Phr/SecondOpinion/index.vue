@@ -29,9 +29,9 @@
 
         template(v-slot:[`item.grantedPHR`]="{ item }")
           .second-opinion__table-headers-PHR
-            .second-opinion__table-headers-PHR-content(v-for="(grantedPHR, idx) in item.info.geneticDataIds")
+            .second-opinion__table-headers-PHR-content(v-for="(grantedPHR, idx) in item.electronicMedicalRecordDetails")
               v-alert.second-opinion__table-alert(color="#F9F5FF" )
-                span.second-opinion__table-alert-text {{ grantedPHR }}
+                span.second-opinion__table-alert-text {{ grantedPHR.title }}
 
         template(v-slot:[`item.opinionAvailable`]="{ item }")
           .d-flex.flex-column.second-opinion__table-headers-opinion
@@ -74,6 +74,7 @@ import SecondOpinionBanner from "./Banner"
 import { alertTriangleIcon } from "@debionetwork/ui-icons"
 import { isWeb3Injected } from "@polkadot/extension-dapp"
 import { queryOpinionRequestorByOwner, queryOpinionRequestor } from "@/common/lib/polkadot-provider/query/opinion-requestor"
+import { queryElectronicMedicalRecordById } from "@debionetwork/polkadot-provider"
 import getEnv from "@/common/lib/utils/env"
 
 export default {
@@ -147,10 +148,14 @@ export default {
       const data = await queryOpinionRequestorByOwner(this.api, this.wallet.address)
       for (let i = 0; i < data.length; i++) {
         const item = await queryOpinionRequestor(this.api, data[i])
-        this.items.push(item)
+        const electronicMedicalRecordDetails = [] 
+        const electronicMedicalRecordIds = item.electronicMedicalRecordIds
+        for (let j = 0; j < electronicMedicalRecordIds.length; j++) {
+          const detail = await queryElectronicMedicalRecordById(this.api, electronicMedicalRecordIds[j])
+          electronicMedicalRecordDetails.push(detail)
+        }
+        this.items.push({...item, electronicMedicalRecordDetails})
       }
-
-      console.log(this.items)
     }
   }
 }
@@ -194,7 +199,7 @@ export default {
 
 
     &__table-headers-PHR-content
-      max-width: 90px
+      max-width: 120px
 
     &__table-alert
       padding: 2px 8px
