@@ -26,7 +26,7 @@
             :category="service.serviceCategory"
             @click="getDetailService(service)"
           )
-      
+
       template
         ServiceDetailDialog(
           :show="showServiceDetailDialog"
@@ -95,14 +95,14 @@ export default {
     })
   },
 
-  async mounted () {
+  async mounted() {
     this.services = null
     this.serviceList = []
     this.services = this.dataServices
     await this.getServices()
 
     if (!this.country) {
-      this.$router.push({ name: "customer-request-test"})
+      this.$router.push({ name: "customer-request-test" })
     }
 
   },
@@ -114,7 +114,7 @@ export default {
       setProductsToRequest: "testRequest/SET_PRODUCTS"
     }),
 
-    async getServices () {
+    async getServices() {
 
       for (let i = 0; i < this.services.length; i++) {
         let {
@@ -149,7 +149,7 @@ export default {
           },
           country_name: countryName,
           region_name: regionName,
-          verification_status:  verificationStatus,
+          verification_status: verificationStatus,
           stake_status: stakeStatus,
           service_flow: serviceFlow
         } = this.services[i]
@@ -163,7 +163,7 @@ export default {
         const detailPrice = this.services[i].info.prices_by_currency[0]
         const totalPrice = formatPrice(detailPrice.total_price.replaceAll(",", ""), currency)
         const servicePrice = formatPrice(detailPrice.price_components[0].value.replaceAll(",", ""), currency)
-        const qcPrice =  formatPrice(detailPrice.additional_prices[0].value.replaceAll(",", ""), currency)
+        const qcPrice = formatPrice(detailPrice.additional_prices[0].value.replaceAll(",", ""), currency)
 
         const service = {
           serviceId,
@@ -219,7 +219,7 @@ export default {
       await this.getServices()
       this.showNoLab = false
     },
-    
+
     async getDetailService(service) {
       this.lastOrder = await queryLastOrderHashByCustomer(
         this.api,
@@ -233,7 +233,7 @@ export default {
           return
         }
       }
-      console.log("service", service)
+
       this.setProductsToRequest(service)
       this.showServiceDetailDialog = true
     },
@@ -242,7 +242,7 @@ export default {
       this.showAlert = false
     },
 
-    toPaymentHistory () {
+    toPaymentHistory() {
       this.$router.push({ name: "customer-payment-history" })
     }
   }

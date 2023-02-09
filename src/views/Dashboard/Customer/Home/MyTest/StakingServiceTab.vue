@@ -253,7 +253,6 @@ export default {
           return
         }
       }
-
       const request = req.request
       const serviceRequest = await queryGetServiceOfferById(this.api, request.hash)
       const service = await queryServiceById(this.api, serviceRequest.serviceId)
@@ -261,7 +260,7 @@ export default {
 
       this.setProductsToRequest({
         serviceName: service.info.name,
-        serviceImage: service.image,
+        serviceImage: service.info.image,
         serviceId: serviceRequest.serviceId,
         serviceFlow: service.serviceFlow,
         totalPrice: formatPrice(service.info.pricesByCurrency[0].totalPrice.replaceAll(",", ""), service.info.pricesByCurrency[0].currency.toUpperCase()),
@@ -277,13 +276,16 @@ export default {
         labAddress: labDetail.info.address,
         labRate: 0,
         countRateLab: 0,
-        labImage: labDetail.info.image,
+        labImage: labDetail.info.profileImage,
         city: labDetail.info.city,
         country: labDetail.info.country,
-        region: labDetail.info.region
+        region: labDetail.info.region,
+        status: serviceRequest.status,
+        dnaCollectionProcess: service.info.dnaCollectionProcess,
+        longDescription: service.info.longDescription
       })
 
-      await this.toCheckout(lastOrder)
+      await this.toCheckout()
 
       this.$emit("loading")
     },
@@ -326,10 +328,9 @@ export default {
       return lastOrderId
     },
 
-    async toCheckout(orderId) {
+    async toCheckout() {
       this.$router.push({
-        name: "customer-request-test-checkout",
-        params: { id: orderId }
+        name: "customer-request-test-success"
       })
       this.$emit("closeLoading")
     }

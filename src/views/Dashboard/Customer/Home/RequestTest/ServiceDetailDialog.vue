@@ -14,7 +14,7 @@
 
       div.dialog-service__service-image
         ui-debio-avatar( :src="computeAvatar" size="120" rounded)
-        
+
       div.dialog-service__service-name
         .dialog-service__title {{ selectedService.serviceName }}
 
@@ -27,22 +27,22 @@
           .dialog-service__sub-title Expected Duration
           .dialog-service__description          
             div {{ selectedService.duration }} {{ selectedService.durationType}}
-      
+
       .dialog-service__lab-detail
         .dialog-service__lab-picture
           ui-debio-avatar.dialog-service__lab-image(:src="selectedService.labImage" size="75" rounded)
-        
+
         .dialog-service__lab-detail-v-info
           .dialog-service__lab-detail-h-info
             .dialog-service__sub-title {{ selectedService.labName }}
             ui-debio-rating(:rating="selectedService.labRate" :total-reviews="selectedService.countRateLab" size="10")
-          
+
           .dialog-service__address          
             span {{ selectedService.labAddress }}, {{ selectedService.city }}, {{ country(selectedService.country) }}
           .dialog-service__link(v-if="selectedService.labWebsite") 
             b Website: 
             a.dialog-service__link-text(:href="selectedService.labWebsite" target="_blank") {{ selectedService.labWebsite }}
-       
+
       .dialog-service__button
         ui-debio-button.dialog-service__button-text(
           color="secondary" 
@@ -76,7 +76,7 @@ import { createOrder } from "@/common/lib/polkadot-provider/command/order.js"
 
 export default {
   name: "ServiceDetailDialog",
-  
+
   data: () => ({
     countries: [],
     publicKey: "",
@@ -85,7 +85,7 @@ export default {
     error: null
   }),
 
-  async mounted () {
+  async mounted() {
     await this.getCountries()
   },
 
@@ -111,13 +111,13 @@ export default {
       return this.selectedService.serviceImage ? this.selectedService.serviceImage : require("@/assets/debio-logo.png")
     },
 
-    computeLongDescription () {
+    computeLongDescription() {
       if (this.selectedService.longDescription) {
         const description = this.selectedService.longDescription.split("||")[0]
         if (this.web3.utils.isHex(description)) {
-          return this.web3.utils.hexToUtf8(description) 
+          return this.web3.utils.hexToUtf8(description)
         }
-        return description  
+        return description
       }
       return ""
     }
@@ -126,14 +126,14 @@ export default {
   watch: {
     lastEventData(event) {
       if (!event) return
-      
+
       if (event.method === "OrderCreated") this.toCheckout()
     }
   },
 
   methods: {
     async getCountries() {
-      const { data : { data }} = await getLocations()
+      const { data: { data } } = await getLocations()
       this.countries = data
     },
 
@@ -142,8 +142,8 @@ export default {
         this.api,
         this.wallet.address
       )
-      
-      this.$router.push({ 
+
+      this.$router.push({
         name: "customer-request-test-checkout", params: { id: lastOrder }
       })
       this.loading = false
@@ -165,13 +165,12 @@ export default {
       currency === "USDTE" ? "USDT.e" : currency
       let assetId = 0
       const wallet = this.polkadotWallet.find(wallet => wallet?.currency?.toUpperCase() === currency?.toUpperCase())
-      console.log(wallet)
 
       assetId = wallet.id
       return assetId
     },
 
-    async onSelect () {
+    async onSelect() {
       this.loading = true
       const balance = this.usdtBalance
       if (Number(this.selectedService.totalPrice) >= balance - 0.1) {
@@ -179,11 +178,11 @@ export default {
           title: "Insufficient Balance",
           message: "Your transaction cannot succeed due to insufficient balance or do not meet minimum deposit amount, check your account balance"
         }
-        this.loading = false 
+        this.loading = false
         return
       }
 
-      const customerBoxPublicKey = await this.getCustomerPublicKey()        
+      const customerBoxPublicKey = await this.getCustomerPublicKey()
       const assetId = await this.getAssetId(this.selectedService.currency === "USDTE" ? "USDT.e" : this.selectedService.currency)
 
       await createOrder(
@@ -197,13 +196,13 @@ export default {
       )
     },
 
-    country (country) {
+    country(country) {
       if (country) {
         return this.countries.filter((c) => c.iso2 === country)[0].name
       }
     },
 
-    downloadFile () {
+    downloadFile() {
       window.open(this.selectedService.resultSample)
     }
   }

@@ -293,13 +293,13 @@ export default {
       const subsPrices = await Promise.all(subsIds.map(subsId => getMenstrualSubscriptionPrices(this.api, subsId.duration, subsId.currency)));
       const rate = await this.getRate();
       this.subscriptionList = subsIds.filter(subsId => subsId.status !== "Inactive").map((subsId, index) => {
-        const period = subsId.duration === "Monthly" ? "Month" : (subsId.duration === "Quaterly" ? "3 Months" : "Year")
+        const period = subsId.duration === "Monthly" ? "Month" : (subsId.duration === "Quarterly" ? "3 Months" : "Year")
         const price = formatPrice(subsPrices[index].amount, subsId.currency)
         return {
           statusNumber: subsId.status === "Active" ? 1 : subsId.status === "InQueue" ? 2 : null,
           status: subsId.status,
           name: `Menstrual Date ${subsId.duration}`,
-          textStatus: `${this.getExpiredDateSubsList(period, subsId.createdAt, subsId.status)}`,
+          textStatus: `${this.getExpiredDateSubsList(period, subsId.updatedAt ? subsId.updatedAt : subsId.createdAt, subsId.status)}`,
           price: price,
           usd: (parseFloat(price.split(",").join("")) * rate).toFixed(8)
         }
@@ -313,6 +313,7 @@ export default {
       let newDate;
 
       let createdDate = today.toLocaleString("en-US", { day: "numeric", month: "long", year: "numeric" })
+      console.log(createdDate)
 
       if (period === "Month") {
         newDate = new Date(today.setMonth(today.getMonth() + 1));
