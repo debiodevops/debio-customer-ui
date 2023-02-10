@@ -330,7 +330,7 @@ export default {
 
     async toCheckout() {
       this.$router.push({
-        name: "customer-request-test-success"
+        name: "customer-request-test-checkout"
       })
       this.$emit("closeLoading")
     }
