@@ -35,14 +35,22 @@ import {
 import { generateUsername } from "@/common/lib/username-generator.js"
 import { postRequestOpinion } from "@/common/lib/polkadot-provider/command/second-opinion"
 import { u8aToHex } from "@polkadot/util"
+import {
+  queryElectronicMedicalRecordById,
+  queryElectronicMedicalRecordFileById
+} from "@debionetwork/polkadot-provider"
 import getEnv from "@/common/lib/utils/env"
+import { downloadFile, decryptFile, uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
+
 
 export default {
   name: "ConnectingPage",
 
   data: () => ({
     isConnected: false,
-    addressHex: ""
+    addressHex: "",
+    publicKey: null,
+    secretKey: null
   }),
 
   computed: {
@@ -82,8 +90,14 @@ export default {
   methods: {
     async getInitialData() {
       const cred = Kilt.Identity.buildFromMnemonic(this.mnemonicData.toString(CryptoJS.enc.Utf8))
-      this.addressHex =  cred.signPublicKeyAsHex
-      await this.checkMyriadUser(this.addressHex)
+      if (cred) {
+        this.publicKey = u8aToHex(cred.boxKeyPair.publicKey)
+        this.secretKey = u8aToHex(cred.boxKeyPair.secretKey)
+
+        this.addressHex =  cred.signPublicKeyAsHex
+        await this.checkMyriadUser(this.addressHex)
+      }
+
     },
 
     async checkMyriadUser(address) {
@@ -163,9 +177,12 @@ export default {
     },
 
     async postToSubstrate(data) {
+      const links = await this.prepareData()
+      const description = this.text + " - " + links.toString()
+
       const info = {
         category: this.category,
-        description: this.text,
+        description,
         electronicMedicalRecordIds: this.phrIds,
         opinionIds: [],
         myriadPostId: data.id
@@ -178,6 +195,45 @@ export default {
         window.open(`${getEnv("VUE_APP_MYRIAD_URL")}/login?redirect=${getEnv("VUE_APP_MYRIAD_URL")}%2Fpost%2F${data.id}`)
       )
       this.$router.push({ name: "customer-dashboard" })
+    },
+
+    async prepareData() {
+      const ids = this.phrIds
+      let files = []
+
+      for (const id of ids) {
+        const data = await queryElectronicMedicalRecordById(this.api, id)
+        const phrDocument = data
+
+        for (const file of phrDocument.files) {
+          const dataFile = await queryElectronicMedicalRecordFileById(this.api, file)
+          files.push(dataFile)
+        }
+      }
+
+      const links = files.map(file => file.recordLink)
+      try {        
+        const newLinks = []
+        for (const link of links) {
+          const pair = { publicKey: this.publicKey, secretKey: this.secretKey }
+          const dataFile = await downloadFile(link, true)
+          const decryptedFile = decryptFile(dataFile.data, pair, dataFile.type)
+          const data = JSON.stringify(decryptedFile)
+          const blob = new Blob([data], { type: dataFile.type })
+
+          const result = await uploadFile({
+            title: dataFile.name,
+            type: dataFile.type,
+            size: blob.size,
+            file: blob
+          })
+          const newLink = await getFileUrl(result.IpfsHash)
+          newLinks.push(newLink)
+        }
+        return newLinks
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 }
