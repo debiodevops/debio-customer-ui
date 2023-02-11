@@ -158,12 +158,21 @@ export default {
     },
 
     async createMyriadPost(userJwt, userId, phIds) {
+      const links = await this.prepareData()
+      const text = [{
+        "type": "p",
+        "children": [{
+          "text": this.text
+        }]
+      }]
+      text.push(links)
+
       const info = {
         createdBy: userId,
         isNSFW: false,
         mentions: [],
         rawText: this.text,
-        text: this.text,
+        text: JSON.stringify(text),
         status: "published",
         tag: [this.category],
         selectedUserIds: phIds,
@@ -172,14 +181,11 @@ export default {
       }
 
       const res = await myriadPostCreate(userJwt, info)      
-      await this.postToSubstrate(res.data)
+      await this.postToSubstrate(res.data, text)
       return res
     },
 
-    async postToSubstrate(data) {
-      const links = await this.prepareData()
-      const description = this.text + " - " + links.toString()
-
+    async postToSubstrate(data, description) {
       const info = {
         category: this.category,
         description,
@@ -199,41 +205,72 @@ export default {
 
     async prepareData() {
       const ids = this.phrIds
-      let files = []
+      const text = { type: "ol", children: [] }
 
       for (const id of ids) {
         const data = await queryElectronicMedicalRecordById(this.api, id)
-        const phrDocument = data
+        data.fileDetails = []
+        data.newLinks = []
+        text.children.push({
+          type: "li",
+          children: [{
+            type: "lic",
+            children: [{
+              bold: true,
+              text: data.title
+            },
+            {
+              type: "ul",
+              children: []              
+            }]
+          }]
+        })
 
-        for (const file of phrDocument.files) {
-          const dataFile = await queryElectronicMedicalRecordFileById(this.api, file)
-          files.push(dataFile)
+        for (const file of data.files) {
+          const detailFile = await queryElectronicMedicalRecordFileById(this.api, file)
+          data.fileDetails.push(detailFile)
+
+          const innerText = {
+            type: "li",
+            children: [{
+              type: "lic",
+              children: [
+                { text: detailFile.title + " - "}
+              ]
+            }]
+          }
+
+          try {    
+            const pair = { publicKey: this.publicKey, secretKey: this.secretKey }
+            const dataFile = await downloadFile(detailFile.recordLink, true)
+            const decryptedFile = decryptFile(dataFile.data, pair, dataFile.type)
+            const data = JSON.stringify(decryptedFile)
+            const blob = new Blob([data], { type: dataFile.type })
+
+            const result = await uploadFile({
+              title: dataFile.name,
+              type: dataFile.type,
+              size: blob.size,
+              file: blob
+            })
+            const newLink = await getFileUrl(result.IpfsHash)
+            innerText.children[0].children.push({
+              "type": "a",
+              "url": newLink,
+              "children": [{
+                "text": newLink
+              }]
+            })
+            data.newLinks.push(newLink)
+          } catch (error) {
+            console.error(error)
+          }
+          const _text = text.children[text.children.length-1]
+          const __text = _text.children[_text.children.length-1]
+          __text.children[__text.children.length-1].children.push(innerText)
         }
       }
-
-      const links = files.map(file => file.recordLink)
-      try {        
-        const newLinks = []
-        for (const link of links) {
-          const pair = { publicKey: this.publicKey, secretKey: this.secretKey }
-          const dataFile = await downloadFile(link, true)
-          const decryptedFile = decryptFile(dataFile.data, pair, dataFile.type)
-          const data = JSON.stringify(decryptedFile)
-          const blob = new Blob([data], { type: dataFile.type })
-
-          const result = await uploadFile({
-            title: dataFile.name,
-            type: dataFile.type,
-            size: blob.size,
-            file: blob
-          })
-          const newLink = await getFileUrl(result.IpfsHash)
-          newLinks.push(newLink)
-        }
-        return newLinks
-      } catch (error) {
-        console.error(error)
-      }
+      return text
     }
   }
 }
