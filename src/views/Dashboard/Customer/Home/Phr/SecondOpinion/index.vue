@@ -17,7 +17,7 @@
 
         template(slot="prepend")
           .second-opinion__table-title Requested Opinion
-          .second-opinion__table-description List of My Personal Health Record
+          .second-opinion__table-description List of My Requested Opinion(s)
 
         template(v-slot:[`item.category`]="{ item }")
           .d-flex.flex-column.second-opinion__table-headers-category
@@ -149,7 +149,7 @@ export default {
       for (let i = 0; i < data.length; i++) {
         const item = await queryOpinionRequestor(this.api, data[i])
         const electronicMedicalRecordDetails = [] 
-        const electronicMedicalRecordIds = item.electronicMedicalRecordIds
+        const electronicMedicalRecordIds = item.info.electronicMedicalRecordIds
         for (let j = 0; j < electronicMedicalRecordIds.length; j++) {
           const detail = await queryElectronicMedicalRecordById(this.api, electronicMedicalRecordIds[j])
           electronicMedicalRecordDetails.push(detail)

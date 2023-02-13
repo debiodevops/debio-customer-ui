@@ -244,14 +244,14 @@ export default {
             const pair = { publicKey: this.publicKey, secretKey: this.secretKey }
             const dataFile = await downloadFile(detailFile.recordLink, true)
             const decryptedFile = decryptFile(dataFile.data, pair, dataFile.type)
-            const data = JSON.stringify(decryptedFile)
-            const blob = new Blob([data], { type: dataFile.type })
+            const blob = new Blob([decryptedFile], { type: dataFile.type })
+            const fileBlob = new File([blob], dataFile.name)
 
             const result = await uploadFile({
               title: dataFile.name,
               type: dataFile.type,
               size: blob.size,
-              file: blob
+              file: fileBlob
             })
             const newLink = await getFileUrl(result.IpfsHash)
             innerText.children[0].children.push({
