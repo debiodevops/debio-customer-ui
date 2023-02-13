@@ -286,34 +286,35 @@ export default {
     backButton() {
       this.$router.push({ name: "menstrual-calendar-detail" })
     },
-
     async getSubscriptonByOwner() {
       const subscriptions = await getMenstrualSubscriptionByOwner(this.api, this.wallet.address);
       const subsIds = await Promise.all(subscriptions.map(subs => getMenstrualSubscriptionById(this.api, subs)));
       const subsPrices = await Promise.all(subsIds.map(subsId => getMenstrualSubscriptionPrices(this.api, subsId.duration, subsId.currency)));
       const rate = await this.getRate();
+      let activeDate;
       this.subscriptionList = subsIds.filter(subsId => subsId.status !== "Inactive").map((subsId, index) => {
         const period = subsId.duration === "Monthly" ? "Month" : (subsId.duration === "Quarterly" ? "3 Months" : "Year")
         const price = formatPrice(subsPrices[index].amount, subsId.currency)
+        if (subsId.status === "Active") {
+          activeDate = this.getExpiredDateSubsList(period, subsId.updatedAt)
+        }
+        const inQueueDate = subsId.status === "InQueue" ? this.getInQueueDate(period, activeDate ? activeDate.createdDate : subsId.updatedAt) : null
         return {
           statusNumber: subsId.status === "Active" ? 1 : subsId.status === "InQueue" ? 2 : null,
           status: subsId.status,
           name: `Menstrual Date ${subsId.duration}`,
-          textStatus: `${this.getExpiredDateSubsList(period, subsId.updatedAt ? subsId.updatedAt : subsId.createdAt, subsId.status)}`,
+          textStatus: subsId.status === "Active" ? `Active until ${activeDate.day} ${activeDate.month} ${activeDate.year}` : `Start on ${activeDate.day + 1} ${activeDate.month} ${activeDate.year} until ${inQueueDate.day} ${inQueueDate.month} ${inQueueDate.year}`,
           price: price,
           usd: (parseFloat(price.split(",").join("")) * rate).toFixed(8)
         }
       });
     },
 
-    getExpiredDateSubsList(period, startDate, status) {
+    getExpiredDateSubsList(period, startDate) {
       startDate = startDate.replace(/,/g, "")
       let timestamp = parseInt(startDate);
       const today = new Date(timestamp);
       let newDate;
-
-      let createdDate = today.toLocaleString("en-US", { day: "numeric", month: "long", year: "numeric" })
-      console.log(createdDate)
 
       if (period === "Month") {
         newDate = new Date(today.setMonth(today.getMonth() + 1));
@@ -331,11 +332,61 @@ export default {
       let month = newDate.toLocaleString("default", { month: "long" });
       let year = newDate.getFullYear();
 
-      if (status === "Active") {
-        return `Active until ${day} ${month} ${year}`;
-      } else {
-        return `Start on ${createdDate} until ${day} ${month} ${year}`
+      return {
+        day: day,
+        month: month,
+        year: year,
+        createdDate: newDate
       }
+    },
+    getInQueueDate(period, startDate) {
+      let timestamp = new Date(startDate).getTime();
+      const today = new Date(timestamp);
+      let newDate;
+
+      let createdDate = today.toLocaleString("en-US", { day: "numeric", month: "long", year: "numeric" })
+
+      if (period === "Month") {
+        newDate = new Date(today.setMonth(today.getMonth() + 1));
+      }
+
+      if (period === "3 Months") {
+        newDate = new Date(today.setMonth(today.getMonth() + 3));
+      }
+
+      if (period === "Year") {
+        newDate = new Date(today.setMonth(today.getMonth() + 12));
+      }
+
+      let day = newDate.getDate();
+      newDate.setDate(day);
+      let month = newDate.toLocaleString("default", { month: "long" });
+      let year = newDate.getFullYear();
+
+      return {
+        day: day,
+        month: month,
+        year: year,
+        createdDate: createdDate
+      }
+    },
+
+    getMonthNumber(month) {
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ];
+      return months.indexOf(month);
     },
 
     async getActiveSubscription() {

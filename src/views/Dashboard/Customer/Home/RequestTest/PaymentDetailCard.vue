@@ -87,24 +87,6 @@ v-container.container-card
           style="font-size: 9px;"
           ) Obtain Kit Here
 
-      div(v-if="dataService.status === 'Claimed'" class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
-        ui-debio-button(
-          color="secondary"
-          width="50%"
-          height="35"
-          style="font-size: 9px;"
-          @click="toPaymentHistory"
-          outlined
-          ) Go To Payment History
-
-        ui-debio-button(
-          color="secondary"
-          width="42%"
-          height="35"
-          @click="toInstruction(dataService.dnaCollectionProcess)"
-          style="font-size: 9px;"
-          ) Obtain Kit Here
-
       div(v-if="$route.name === 'customer-request-test-checkout'" class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
         ui-debio-button(
           color="primary"
