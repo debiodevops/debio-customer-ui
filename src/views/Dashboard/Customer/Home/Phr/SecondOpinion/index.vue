@@ -154,7 +154,7 @@ export default {
           const detail = await queryElectronicMedicalRecordById(this.api, electronicMedicalRecordIds[j])
           electronicMedicalRecordDetails.push(detail)
         }
-        this.items.push({...item, electronicMedicalRecordDetails})
+        this.items.unshift({...item, electronicMedicalRecordDetails})
       }
     }
   }

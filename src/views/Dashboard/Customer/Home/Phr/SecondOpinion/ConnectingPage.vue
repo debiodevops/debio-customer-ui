@@ -181,7 +181,7 @@ export default {
       }
 
       const res = await myriadPostCreate(userJwt, info)      
-      await this.postToSubstrate(res.data, text)
+      await this.postToSubstrate(res.data, this.text)
       return res
     },
 
