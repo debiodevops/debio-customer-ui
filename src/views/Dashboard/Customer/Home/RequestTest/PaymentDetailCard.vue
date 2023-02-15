@@ -86,6 +86,23 @@ v-container.container-card
           @click="toInstruction(dataService.dnaCollectionProcess)"
           style="font-size: 9px;"
           ) Obtain Kit Here
+      div(v-if="this.dataService.status === 'Claimed' && this.success === true" class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
+        ui-debio-button(
+          color="secondary"
+          width="50%"
+          height="35"
+          style="font-size: 9px;"
+          @click="toPaymentHistory"
+          outlined
+          ) Go To Payment History
+
+        ui-debio-button(
+          color="secondary"
+          width="42%"
+          height="35"
+          @click="toInstruction(dataService.dnaCollectionProcess)"
+          style="font-size: 9px;"
+          ) Obtain Kit Here
 
       div(v-if="$route.name === 'customer-request-test-checkout'" class="d-flex justify-space-between align-center pa-4 ms-3 me-3")
         ui-debio-button(
@@ -209,7 +226,6 @@ export default {
     if (this.$route.params.id) {
       this.isCreated = true;
       const orderId = this.$route.params.id;
-
       this.lastOrder = await queryLastOrderHashByCustomer(
         this.api,
         this.wallet.address
