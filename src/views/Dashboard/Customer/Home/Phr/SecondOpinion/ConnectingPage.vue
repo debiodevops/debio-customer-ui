@@ -142,7 +142,8 @@ export default {
     async myriadAuthentication() {
       const nonce = await getNonce(this.addressHex)
       if(!nonce) return
-      const formatedNonce = "0x" + nonce.toString(16)
+      const hexNonce = nonce.toString(16)
+      const formatedNonce =  hexNonce.length > 7 ? "0x" + nonce.toString(16) : "0x0" + nonce.toString(16)
       const signature = this.wallet.sign(formatedNonce)
       const jwt = await myriadAuth({
         nonce,
