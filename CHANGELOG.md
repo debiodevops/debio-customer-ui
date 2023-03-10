@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.1](https://github.com/debionetwork/debio-customer-ui/compare/2.4.0...2.4.1) (2023-02-27)
+
+
+### Bug Fixes
+
+* handle nonce ([#815](https://github.com/debionetwork/debio-customer-ui/issues/815)) ([f15d742](https://github.com/debionetwork/debio-customer-ui/commit/f15d742483f5d33b9b98d4c4a60a7ba1935d6ae9))
+
 ## [2.4.0](https://github.com/debionetwork/debio-customer-ui/compare/2.3.0...2.4.0) (2023-02-17)
 
 

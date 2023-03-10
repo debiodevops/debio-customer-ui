@@ -62,7 +62,7 @@ jobs:
         with:
           install: true
       - name: Cache Docker Layers
-        uses: actions/cache@69d9d449aced6a2ede0bc19182fadc3a0a42d2b0
+        uses: actions/cache@940f3d7cf195ba83374c77632d1e2cbb2f24ae68
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
@@ -102,7 +102,7 @@ jobs:
           fetch-depth: 0
       - name: Release
         id: release
-        uses: google-github-actions/release-please-action@d3c71f9a0a55385580de793de58da057b3560862
+        uses: google-github-actions/release-please-action@e0b9d1885d92e9a93d5ce8656de60e3b806e542c
         with:
           token: ${{ secrets.PAT }}
           fork: true
