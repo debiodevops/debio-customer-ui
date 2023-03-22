@@ -178,7 +178,8 @@ export default {
         tag: [this.category],
         selectedUserIds: phIds,
         visibility: "selected_user",
-        postType:this.category.toUpperCase().split(" ").join("_")
+        postType:this.category.toUpperCase().split(" ").join("_"),
+        selectedTimelineIds: []
       }
 
       const res = await myriadPostCreate(userJwt, info)      
