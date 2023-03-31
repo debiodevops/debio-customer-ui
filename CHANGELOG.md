@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.2](https://github.com/debionetwork/debio-customer-ui/compare/2.4.1...2.4.2) (2023-03-30)
+
+
+### Bug Fixes
+
+* add new field on endpoint create myriad post ([#827](https://github.com/debionetwork/debio-customer-ui/issues/827)) ([bbd01ec](https://github.com/debionetwork/debio-customer-ui/commit/bbd01ec124630448e8c8b91962c56155f4891f61))
+* update dependencies and adjust some changes in polkadot ([#820](https://github.com/debionetwork/debio-customer-ui/issues/820)) ([9debfa4](https://github.com/debionetwork/debio-customer-ui/commit/9debfa4e192f218368cc7aa8776f3bccd22e09e1))
+
 ## [2.4.1](https://github.com/debionetwork/debio-customer-ui/compare/2.4.0...2.4.1) (2023-02-27)
 
 

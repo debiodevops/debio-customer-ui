@@ -453,7 +453,7 @@ export default {
           date: Number(filter[0].date.split(",").join("")),
           menstruation: filter[0].menstruation,
           symptoms: emoji,
-          createdAt: filter[0].createdAt,
+          createdAt: filter[0].createdAt.replaceAll(",", ""),
           updatedAt: new Date().getTime()
         }
 
