@@ -163,7 +163,7 @@ export default {
       const text = [{
         "type": "p",
         "children": [{
-          "text": this.text
+          "text": this.text.replace(/\n/g, "")
         }]
       }]
       text.push(links)
@@ -172,7 +172,7 @@ export default {
         createdBy: userId,
         isNSFW: false,
         mentions: [],
-        rawText: this.text,
+        rawText: this.text.replace(/\n/g, ""),
         text: JSON.stringify(text),
         status: "published",
         tag: [this.category],

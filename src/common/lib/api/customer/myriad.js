@@ -51,7 +51,7 @@ export async function getMyriadListByRole(category) {
   return data
 }
 
-export async function myriadPostCreate( jwt, info) {
+export async function myriadPostCreate( jwt, info) {  
   const request = axios.create({
     baseURL: getEnv("VUE_APP_BACKEND_API"),
     headers: {
