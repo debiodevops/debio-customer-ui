@@ -67,7 +67,7 @@
               span(style="font-size: 10px;") Total fee paid in DBIO to execute this transaction.
 
           span( style="font-size: 12px;" ) {{ txWeight }} 
-          
+
         ui-debio-button(
           :disabled="!disable"
           block
@@ -113,12 +113,13 @@ import { u8aToHex } from "@polkadot/util"
 import Kilt from "@kiltprotocol/sdk-js"
 import CryptoJS from "crypto-js"
 import cryptWorker from "@/common/lib/ipfs/crypt-worker"
-import { 
+import {
   queryGeneticDataById,
-  addGeneticData, 
-  updateGeneticData, 
-  addGeneticDataFee, 
-  updateGeneticDataFee } from "@debionetwork/polkadot-provider"
+  addGeneticData,
+  updateGeneticData,
+  addGeneticDataFee,
+  updateGeneticDataFee
+} from "@debionetwork/polkadot-provider"
 import rulesHandler from "@/common/constants/rules"
 import { validateForms } from "@/common/lib/validate"
 import { generalDebounce } from "@/common/lib/utils"
@@ -126,13 +127,13 @@ import { checkCircleIcon } from "@debionetwork/ui-icons"
 import SuccessDialog from "@/common/components/Dialog/SuccessDialog"
 import { errorHandler } from "@/common/lib/error-handler"
 import UploadingDialog from "@/common/components/Dialog/UploadingDialog"
-import {downloadFile, uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
+import { downloadFile, uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
 
 
 
 export default {
   name: "AddGeneticData",
-  
+
   components: { SuccessDialog, UploadingDialog },
 
   mixins: [validateForms],
@@ -189,7 +190,7 @@ export default {
       ],
       file: [
         rulesHandler.FIELD_REQUIRED,
-        rulesHandler.FILE_SIZE(200000000)
+        rulesHandler.FILE_SIZE(211000000)
       ]
     }
   },
@@ -199,7 +200,7 @@ export default {
     if (this.mnemonicData) this.initialDataKey()
   },
 
-  async mounted () {
+  async mounted() {
     if (this.$route.params.id) {
       this.isEdit = true
       this.dataId = this.$route.params.id
@@ -235,7 +236,7 @@ export default {
     document: {
       deep: true,
       immediate: true,
-      handler: generalDebounce(async function() {
+      handler: generalDebounce(async function () {
         await this.getTxWeight()
         if (this.document.file) {
           this.loadingData = false
@@ -312,7 +313,7 @@ export default {
             arrChunks.push(event.data)
             context.encryptProgress = (arrChunks.length / chunksAmount) * 100
 
-            if (arrChunks.length === chunksAmount ) {
+            if (arrChunks.length === chunksAmount) {
               res({
                 fileName,
                 fileType,
@@ -368,8 +369,8 @@ export default {
 
     async upload({ encryptedFileChunks, fileType, fileName, fileSize }) {
       for (let i = 0; i < encryptedFileChunks.length; i++) {
-        const data = JSON.stringify(encryptedFileChunks[i]) // not working if the size is large
-        const blob = new Blob([data], { type: fileType })
+        const blob = new Blob([encryptedFileChunks[i]], { type: fileType });
+
         // UPLOAD TO PINATA API
         const result = await uploadFile({
           title: fileName,
@@ -402,7 +403,7 @@ export default {
         return
       }
 
-      try{
+      try {
         if (!this.document.file) return
         this.isLoading = true
 
@@ -443,8 +444,8 @@ export default {
     },
 
     formatTxWeight(num) {
-      const res =  this.web3.utils.fromWei(String(num), "ether")
-      return`${(Number(res) + 0.0081 ).toFixed(4)} DBIO`
+      const res = this.web3.utils.fromWei(String(num), "ether")
+      return `${(Number(res) + 0.0081).toFixed(4)} DBIO`
     },
 
     async getTxWeight() {

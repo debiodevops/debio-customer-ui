@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.5.0](https://github.com/debionetwork/debio-customer-ui/compare/2.4.2...2.5.0) (2023-04-28)
+
+
+### Features
+
+* handle enter on description symptom ([#842](https://github.com/debionetwork/debio-customer-ui/issues/842)) ([051ebf8](https://github.com/debionetwork/debio-customer-ui/commit/051ebf8dbfcb9709cc7d57c682295e5c3aaf2893))
+
+
+### Bug Fixes
+
+* date format when update mens cycle log ([#833](https://github.com/debionetwork/debio-customer-ui/issues/833)) ([7484315](https://github.com/debionetwork/debio-customer-ui/commit/748431589afe227736ea4d6dd4485f8b06f4faea))
+
 ## [2.4.2](https://github.com/debionetwork/debio-customer-ui/compare/2.4.1...2.4.2) (2023-03-30)
 
 

@@ -30,7 +30,7 @@ jobs:
     name: Test on Node.js 16 ( ${{ matrix.command }} )
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
         with:
           fetch-depth: 0
       - name: Set Up Node.js
@@ -51,14 +51,14 @@ jobs:
     name: Build
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
         with:
           fetch-depth: 0
       - name: Set Up QEMU
-        uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18
+        uses: docker/setup-qemu-action@2b82ce82d56a2a04d2637cd93a637ae1b359c0a7
       - name: Set Up Docker Buildx
         id: set-up-buildx
-        uses: docker/setup-buildx-action@4b4e9c3e2d4531116a6f8ba8e71fc6e2cb6e6c8c
+        uses: docker/setup-buildx-action@16c0bc4a6e6ada2cfd8afd41d22d95379cf7c32a
         with:
           install: true
       - name: Cache Docker Layers
@@ -69,7 +69,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
       - name: Build Docker
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825
         with:
           builder: ${{ steps.set-up-buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -97,12 +97,12 @@ jobs:
     name: Release Please
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
         with:
           fetch-depth: 0
       - name: Release
         id: release
-        uses: google-github-actions/release-please-action@c078ea33917ab8cfa5300e48f4b7e6b16606aede
+        uses: google-github-actions/release-please-action@8016a6649226f2ec88ed05441c11bb5410a22d29
         with:
           token: ${{ secrets.PAT }}
           fork: true
@@ -120,7 +120,7 @@ jobs:
     name: Publish Docker
     steps:
       - name: Login to DockerHub
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -165,18 +165,18 @@ jobs:
     name: Deploy to ${{ matrix.environment }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
         with:
           fetch-depth: 0
       - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@e8df18b60c5dd38ba618c121b779307266153fbf
+        uses: google-github-actions/auth@35b0e87d162680511bf346c299f71c9c5c379033
         with:
           workload_identity_provider: ${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_WORKLOAD_IDENTITY_PROVIDER')] }}
           service_account: ${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_WORKLOAD_IDENTITY_SERVICE_ACCOUNT')] }}
       - name: Set Up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@62d4898025f6041e16b1068643bfc5a696863587
+        uses: google-github-actions/setup-gcloud@e30db14379863a8c79331b04a9969f4c1e225e0b
       - name: Get GKE Credentials
-        uses: google-github-actions/get-gke-credentials@894c221960ab1bc16a69902f29f090638cca753f
+        uses: google-github-actions/get-gke-credentials@35ab0d2b2d48792c19f09325413bd185c8d44394
         with:
           cluster_name: ${{ secrets[format('{0}_{1}', matrix.environment, 'GKE_CLUSTER_NAME')] }}
           location: ${{ secrets[format('{0}_{1}', matrix.environment, 'GKE_LOCATION')] }}
