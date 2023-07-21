@@ -227,8 +227,8 @@ export default {
     ],
     plans: [
       { label: "Monthly", duration: "Monthly", description: "For users on a budget who want to try out menstrual calendar", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "Month", promoPrice: 0 },
-      { label: "Quarterly", duration: "Quarterly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 10%", periode: "3 Months", promoPrice: 0 },
-      { label: "Annualy", duration: "Yearly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "Save 50%", periode: "Year", promoPrice: 0 }
+      { label: "Quarterly", duration: "Quarterly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "3 Months", promoPrice: 0 },
+      { label: "Annually", duration: "Yearly", description: "Get full benefits on a discounted price", price: 0, currency: "DBIO", usd: 0, promo: "", periode: "Year", promoPrice: 0 }
     ],
     loading: false,
     error: null

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.1](https://github.com/debionetwork/debio-customer-ui/compare/2.5.0...2.5.1) (2023-07-10)
+
+
+### Bug Fixes
+
+* issue on upload error large file in request genetic data ([#869](https://github.com/debionetwork/debio-customer-ui/issues/869)) ([977b449](https://github.com/debionetwork/debio-customer-ui/commit/977b4491d5f237a2e766db261396bd50d598c0c0))
+
 ## [2.5.0](https://github.com/debionetwork/debio-customer-ui/compare/2.4.2...2.5.0) (2023-04-28)
 
 
