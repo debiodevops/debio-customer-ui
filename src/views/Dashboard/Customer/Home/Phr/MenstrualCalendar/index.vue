@@ -73,7 +73,7 @@
       .menstrual-calendar__subscription
         ui-debio-card.menstrual-calendar__subscription-text(width="654")
           .menstrual-calendar__subscription-text-span Get a Subcription plan!
-          .menstrual-calendar__subscription-text-header Benefit of Subscription
+          .menstrual-calendar__subscription-text-header The Benefits of A Subscription
           v-img.mt-10(
             block
             alt="no-list-data"
@@ -82,13 +82,13 @@
             )
 
           .menstrual-calendar__list
-            .menstrual-calendar__content-list Unlock Anonymous Menstrual Calendar Tracking & Estimation in Decentralized Manner
+            .menstrual-calendar__content-list A Decentralized and Anonymous Menstrual Cycle Tracking Tool
             .menstrual-calendar__content-list 
-              div Unlock Menstrual Calendar Cycle Report & Statistics
+              div Menstrual Calendar Cycle Report & Statistics
               v-alert.menstrual-calendar__alert(color="#FFE6E6" )
                 .menstrual-calendar__alert-text Coming Soon
             .menstrual-calendar__content-list 
-              div Unlock Menstrual Calendar Journaling & Mood Tracking
+              div Menstrual Calendar Journal & Mood Tracker
               v-alert.menstrual-calendar__alert(color="#FFE6E6" )
                 .menstrual-calendar__alert-text Coming Soon
 

@@ -2,8 +2,8 @@
   ui-debio-card(block)
     .second-opinion-banner
       .second-opinion-banner__content
-        .second-opinion-banner__title DeBio Second Opinion
-        .second-opinion-banner__sub-title Use your uploaded Health Record to get second opinion
+        .second-opinion-banner__title DeBio Second Opinion Marketplace
+        .second-opinion-banner__sub-title Use your uploaded health records to get a second opinion
 
       v-img(
         alt="no-list-data"

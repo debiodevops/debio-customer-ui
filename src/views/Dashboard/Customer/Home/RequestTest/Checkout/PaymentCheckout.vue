@@ -1,7 +1,7 @@
 <template lang="pug">
   .customer-payment-checkout
     .customer-payment-checkout__title(v-if="isCancelled") You have cancelled your order!
-    .customer-payment-checkout__title(v-else) Checkout your order!
+    .customer-payment-checkout__title(v-else) Confirm your order!
 
     template
       v-row.customer-payment-checkout__row

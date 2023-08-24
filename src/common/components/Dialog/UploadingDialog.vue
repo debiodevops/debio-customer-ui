@@ -32,8 +32,8 @@
               b Please wait, do not close this tab. 
             
             .dialog-uploading__border
-              .dialog-uploading__border-text The process may be longer associated with larger data on slower Internet connections.
-              .dialog-uploading__border-text The larger the data size, the longer it will take to process 
+              .dialog-uploading__border-text The process may take a while. Larger data sets and/or slower Internet connections may result in longer wait times.
+              .dialog-uploading__border-text Larger data sets will take longer to process. 
                 a.link(
                   target="_blank"
                   :href="renderUrlDownload"

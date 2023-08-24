@@ -3,7 +3,7 @@
     .genetic-data__wrapper
       ui-debio-banner.genetic-data__banner(
         title="My Genetic Data"
-        subtitle="A feature that allows you to request genetic analysis to a verified Genetic Analyst based on uploaded genetic data."
+        subtitle="This feature allows you to directly engage with our Genetic Analysts, They will use the uploaded data to provide you with comprehensive report on your unique genetic makeup."
         gradientColor="tertiary"
         with-decoration
       )

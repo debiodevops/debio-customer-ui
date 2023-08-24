@@ -96,7 +96,7 @@
         .customer-create-phr__files
           .customer-create-phr__files-title
             p {{ computeFiles.length ? "Uploaded Files" : "File Information" }}
-            p.mb-0(v-if="!computeFiles.length") Before uploading the document make sure to censored the KYC related in uploaded file
+            p.mb-0(v-if="!computeFiles.length") Before uploading the document, please ensure that all personal data is removed or redacted
           .customer-create-phr__files-items
             .customer-create-phr__file-item.customer-create-phr__file-item--no-file.d-flex.align-center(
               :class="{ 'customer-create-phr__file-item--error': fileEmpty }"

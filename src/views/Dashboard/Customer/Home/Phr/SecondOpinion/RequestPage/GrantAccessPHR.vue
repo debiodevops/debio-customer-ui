@@ -172,7 +172,7 @@
         .grant-access-card__files
           .grant-access-card__files-title
             p {{ computeFiles.length ? "Uploaded Files" : "File Information" }}
-            p(v-if="!computeFiles.length") Before uploading the document make sure to censored the KYC related in uploaded file
+            p(v-if="!computeFiles.length") Before uploading the document, please ensure that all personal data is removed or redacted
 
         .grant-access-card__files-items
           .grant-access-card__file-item.grant-access-card__file-item--no-file.d-flex.align-center(

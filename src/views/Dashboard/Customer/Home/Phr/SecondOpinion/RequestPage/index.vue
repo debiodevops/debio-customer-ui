@@ -7,7 +7,7 @@
 
     .request-second-opinion__nav-cards
       v-card.request-second-opinion__nav-card
-        .request-second-opinion__nav-card-title Complete two steps to request medical opinion
+        .request-second-opinion__nav-card-title Complete these two steps to get a second opinion
         .request-second-opinion__nav-card-title Step {{ step }}
         .request-second-opinion__nav-card-text {{ stepper[step] }}
         
@@ -18,7 +18,7 @@
 
       v-card.request-second-opinion__nav-card
         .request-second-opinion__nav-card-title Help Desk
-        .request-second-opinion__nav-card-text Our team is ready to answer all your questions about our program. What are you waiting for? 
+        .request-second-opinion__nav-card-text Our team is ready to answer all your questions with regards to our platform. 
           a  click here
 
 
@@ -38,8 +38,8 @@ export default {
     isGrantingAccess: false,
     dataRequest: null,
     stepper: {
-      1: "Describe your symptom by choosing what category it falls under, whether mental or physical.",
-      2: "Grant access to your personal health record for review by a health professional to provide you with a better secondary opinion solution."
+      1: "Describe your symptoms.\nChoose which category it falls under; either mental or physical.",
+      2: "Allow us to access your personal health records. The healthcare professional will use this information to provide you with an alternative solution."
     },
     step: 1
   }),

@@ -14,10 +14,10 @@
             v-img(v-bind:src="checkCircle" max-width="80")
 
           .dialog-success__message Your genetic data has been submitted.
-          .dialog-success__message Do you want to proceed request analysis?
+          .dialog-success__message Would you like your genetic data analyzed?
 
           .dialog-success__border 
-            .dialog-success__border-text A feature that allows you to request genetic/DNA analysis to Genetic Analyst in DeBio AppChain based on the genetic data uploaded
+            .dialog-success__border-text The Request Genetic Analysis feature allows you to directly engage with our Genetic Analysts, They will use the uploaded data to provide you with comprehensive report on your unique genetic makeup.
 
           .dialog-success__buttons
             ui-debio-button(

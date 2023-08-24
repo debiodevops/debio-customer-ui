@@ -40,7 +40,7 @@
 
         .genetic-data-add__files-title.mt-5(v-if="!document.file")
           p File Information
-          p.mb-0 Before uploading the document make sure to censored the KYC related in uploaded file
+          p.mb-0 Before uploading the document, please ensure that all personal data is removed or redacted
 
         ui-debio-file(
           withTooltip

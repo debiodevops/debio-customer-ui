@@ -2,7 +2,7 @@
 .customer-dashboard
   ui-debio-banner.customer-dashboard__banner(
     title="Dashboard"
-    subtitle="DeBio is the Most Privacy secured Platform for Personal Biomedical Testing!"
+    subtitle="DeBio is a Privacy Focused Platform for Personal Biomedical Testing."
     with-decoration
     gradient-color="violet"
   )
