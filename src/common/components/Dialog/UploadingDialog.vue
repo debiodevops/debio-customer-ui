@@ -24,7 +24,7 @@
                   target="_blank"
                   :href="renderUrlDownload"
                   @click.stop
-                ) here’s why
+                ) Here’s why
 
           template(v-if="type === 'Processing'" )
             .dialog-uploading__message
