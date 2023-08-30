@@ -120,7 +120,7 @@
                       )
                       v-alert.menstrual-calendar__plan-card-alert(v-if="plan.promo" color="#E7FFE6" )
                         .menstrual-calendar__plan-card-alert-text {{ plan.promo }}
-                      .menstrual-calendar__plan-card-price Burn {{ plan.price }} {{ plan.currency}}
+                      .menstrual-calendar__plan-card-price {{ plan.price }} {{ plan.currency}}
                         .menstrual-calendar__plan-card-price-scratch(v-if="plan.promo") Burn {{ plan.promoPrice }} {{ plan.currency }}
                         .menstrual-calendar__plan-card-price-convert ({{ plan.usd }} USD)
 
@@ -208,7 +208,7 @@ export default {
       {
         label: "Quarterly",
         duration: "Quarterly",
-        description: "Get full benefits on a discounted price",
+        description: "Get full benefits at a discounted price",
         price: 0,
         currency: "DBIO",
         usd: 0,
@@ -219,7 +219,7 @@ export default {
       {
         label: "Annually",
         duration: "Yearly",
-        description: "Get full benefits on a discounted price",
+        description: "Get full benefits at a discounted price",
         price: 0,
         currency: "DBIO",
         usd: 0,
@@ -342,7 +342,7 @@ export default {
         this.error = {
           title: "Insufficient Balance",
           message:
-            "Your transaction cannot succeed due to insufficient balance, check your account balance"
+            "Your transaction cannot go through because your account balance is too low or doesn't meet the minimum deposit needed. Please check your balance."
         };
         this.showAlert = false;
         this.loading = false;

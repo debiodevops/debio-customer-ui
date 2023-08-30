@@ -621,7 +621,7 @@ export default {
       if (Number(this.walletBalance) < Number(this.txWeight.split(" ")[0])) {
         this.error = {
           title: "Insufficient Balance",
-          message: "Your transaction cannot succeed due to insufficient balance, check your account balance"
+          message: "Your transaction cannot go through because your account balance is too low or doesn't meet the minimum deposit needed. Please check your balance."
         }
         return
       }
@@ -735,7 +735,7 @@ export default {
       if (Number(this.walletBalance) < Number(this.txWeight.split(" ")[0])) {
         this.error = {
           title: "Insufficient Balance",
-          message: "Your transaction cannot succeed due to insufficient balance, check your account balance"
+          message: "Your transaction cannot go through because your account balance is too low or doesn't meet the minimum deposit needed. Please check your balance."
         }
         return
       }

@@ -39,7 +39,7 @@ export const uploadFile = val => {
     (progressEvent) => {
       if (!progressEvent.lengthComputable) return
 
-      let percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total )
+      let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
       store.dispatch("geneticData/getLoadingProgress", { upload: percentCompleted || 0 })
     }
   )
@@ -53,15 +53,20 @@ export const downloadFile = async (ipfsLink, withMetaData = false) => {
   console.log("Downloading...")
 
   // TODO : ADD DOWNLOAD PROGRESS
-  
-  const result = await downloadJson(
-    ipfsLink,
-    withMetaData,
-    pinataJwtKey
-  )
+
+  try {
+
+    const result = await downloadJson(
+      ipfsLink,
+      withMetaData,
+      pinataJwtKey
+    )
+    return result
+  } catch (error) {
+    console.error(error)
+  }
   console.log("Success Downloaded!")
 
-  return result
 }
 
 export const getIpfsMetaData = async (cid) => {

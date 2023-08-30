@@ -3,7 +3,7 @@
     ui-debio-error-dialog(
       :show="errorAlert"
       title="Insufficient Balance"
-      message="Your transaction cannot succeed due to insufficient balance, check your account balance"
+      message="Your transaction cannot go through because your account balance is too low or doesn't meet the minimum deposit needed. Please check your balance."
       @close="errorAlert = false"
     )
     v-card.analyst-detail__card
@@ -85,7 +85,10 @@
 
       UploadingDialog(
         :show="isLoading"
-        type="Processing"
+        type="Uploading"
+        :isFailed="isFailed"
+        :totalChunks="totalChunks"
+        :currentChunkIndex="currentChunkIndex"
       )
 
     ui-debio-alert-dialog(
@@ -100,20 +103,24 @@
 </template>
 
 <script>
-
-import { mapState } from "vuex"
-import Kilt from "@kiltprotocol/sdk-js"
-import CryptoJS from "crypto-js"
-import cryptWorker from "@/common/lib/ipfs/crypt-worker"
-import { u8aToHex } from "@polkadot/util"
-import { queryLastGeneticAnalysisOrderByCustomerId, queryGeneticAnalystByAccountId } from "@debionetwork/polkadot-provider"
-import { createGeneticAnalysisOrderFee, createGeneticAnalysisOrder } from "@/common/lib/polkadot-provider/command/genetic-analysis-orders"
-import { queryLastGeneticAnalysisOrderByCustomer } from "@/common/lib/polkadot-provider/query/genetic-analysis-orders"
-import { downloadFile, uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
+import { mapState } from "vuex";
+import Kilt from "@kiltprotocol/sdk-js";
+import CryptoJS from "crypto-js";
+import cryptWorker from "@/common/lib/ipfs/crypt-worker";
+import { u8aToHex } from "@polkadot/util";
+import {
+  queryLastGeneticAnalysisOrderByCustomerId,
+  queryGeneticAnalystByAccountId
+} from "@debionetwork/polkadot-provider";
+import {
+  createGeneticAnalysisOrderFee,
+  createGeneticAnalysisOrder
+} from "@/common/lib/polkadot-provider/command/genetic-analysis-orders";
+import { queryLastGeneticAnalysisOrderByCustomer } from "@/common/lib/polkadot-provider/query/genetic-analysis-orders";
+import { downloadFile, uploadFile, getFileUrl } from "@/common/lib/pinata-proxy";
 // import SpinnerLoader from "@bit/joshk.vue-spinners-css.spinner-loader"
-import UploadingDialog from "@/common/components/Dialog/UploadingDialog"
-import { formatUSDTE } from "@/common/lib/price-format.js"
-
+import UploadingDialog from "@/common/components/Dialog/UploadingDialog";
+import { formatUSDTE } from "@/common/lib/price-format.js";
 
 export default {
   name: "AnalystDetail",
@@ -131,7 +138,10 @@ export default {
     isLoading: false,
     txWeight: "Calculating...",
     showAlert: false,
-    errorAlert: false
+    errorAlert: false,
+    totalChunks: 0,
+    currentChunkIndex: 0,
+    isFailed: false
   }),
 
   components: {
@@ -145,9 +155,9 @@ export default {
 
   async created() {
     if (this.mnemonicData) {
-      await this.getCustomerPublicKey() 
-      await this.getTxWeight()
-    } 
+      await this.getCustomerPublicKey();
+      await this.getTxWeight();
+    }
   },
 
   computed: {
@@ -164,23 +174,26 @@ export default {
     }),
 
     computeAvatar() {
-      const profile = this.service.analystsInfo.info.profileImage
-      return profile ? profile : require("@/assets/defaultAvatar.svg")
+      const profile = this.service.analystsInfo.info.profileImage;
+      return profile ? profile : require("@/assets/defaultAvatar.svg");
     },
-    
+
     computePrice() {
-      return `${this.formatBalance(this.service.priceDetail[0].totalPrice, formatUSDTE(this.service.priceDetail[0].currency))} ${formatUSDTE(this.service.priceDetail[0].currency)}`
+      return `${this.formatBalance(
+        this.service.priceDetail[0].totalPrice,
+        formatUSDTE(this.service.priceDetail[0].currency)
+      )} ${formatUSDTE(this.service.priceDetail[0].currency)}`;
     }
   },
 
   watch: {
     lastEventData(e) {
       if (e !== null) {
-        const dataEvent = JSON.parse(e.data.toString())
+        const dataEvent = JSON.parse(e.data.toString());
         if (e.method === "GeneticAnalysisOrderCreated") {
           if (dataEvent[0].customerId === this.wallet.address) {
-            this.isLoading = false
-            this.toCheckoutPage()
+            this.isLoading = false;
+            this.toCheckoutPage();
           }
         }
       }
@@ -188,19 +201,22 @@ export default {
   },
 
   methods: {
-    async getLastOrderStatus () {
-      let lastOrder 
+    async getLastOrderStatus() {
+      let lastOrder;
       try {
-        lastOrder = await queryLastGeneticAnalysisOrderByCustomerId(this.api, this.wallet.address)
+        lastOrder = await queryLastGeneticAnalysisOrderByCustomerId(
+          this.api,
+          this.wallet.address
+        );
 
-        return lastOrder.status
+        return lastOrder.status;
       } catch (error) {
-        lastOrder = null
-        return lastOrder
+        lastOrder = null;
+        return lastOrder;
       }
     },
 
-    async getTxWeight(){
+    async getTxWeight() {
       const txWeight = await createGeneticAnalysisOrderFee(
         this.api,
         this.wallet,
@@ -209,99 +225,118 @@ export default {
         0,
         this.publicKey,
         this.geneticLink
-      )
-      this.txWeight = `${Number(this.web3.utils.fromWei(String(txWeight.partialFee), "ether")).toFixed(4)} DBIO`
+      );
+      this.txWeight = `${Number(
+        this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
+      ).toFixed(4)} DBIO`;
     },
 
     async getCustomerPublicKey() {
-      const identity = Kilt.Identity.buildFromMnemonic(this.mnemonicData.toString(CryptoJS.enc.Utf8))
-      this.publicKey = u8aToHex(identity.boxKeyPair.publicKey)
-      this.privateKey = u8aToHex(identity.boxKeyPair.secretKey)
+      const identity = Kilt.Identity.buildFromMnemonic(
+        this.mnemonicData.toString(CryptoJS.enc.Utf8)
+      );
+      this.publicKey = u8aToHex(identity.boxKeyPair.publicKey);
+      this.privateKey = u8aToHex(identity.boxKeyPair.secretKey);
     },
 
-    async getAnalystPublicKey () {
-      const id = this.service.analystId
-      const analystDetail = await queryGeneticAnalystByAccountId(this.api, id)
-      const analystPublicKey = analystDetail.info.boxPublicKey
-      return analystPublicKey
+    async getAnalystPublicKey() {
+      const id = this.service.analystId;
+      const analystDetail = await queryGeneticAnalystByAccountId(this.api, id);
+      const analystPublicKey = analystDetail.info.boxPublicKey;
+      return analystPublicKey;
     },
 
     closeDialog() {
-      this.$emit("close")
+      this.$emit("close");
     },
 
     async handleDownloadReport() {
-      window.open(this.service.testResultSample)
+      window.open(this.service.testResultSample);
     },
 
     async onSelect() {
-      const status = await this.getLastOrderStatus()
+      const status = await this.getLastOrderStatus();
       if (status === "Unpaid") {
-        this.showAlert = true 
-        return
+        this.showAlert = true;
+        return;
       }
-
-      const txWeight = Number(this.txWeight.split(" ")[0])
+      const txWeight = Number(this.txWeight.split(" ")[0]);
       if (this.walletBalance < txWeight) {
-        this.errorAlert = true 
-        this.closeDialog()
-        return
+        this.errorAlert = true;
+        this.closeDialog();
+        return;
       }
+      this.isLoading = true;
+      this.geneticLink = "";
+      this.links = [];
+      console.log(this.selectedGeneticData)
+      const links = JSON.parse(this.selectedGeneticData.reportLink);
+      console.log(this.selectedGeneticData.reportLink)
+      let uploadedLinks = 0;
+      try{
+        for (let i = 0; i < links.length; i++) {
+          this.totalChunks = i + links.length;
+          this.currentChunkIndex = i + 1;
+          const { name, type, data } = await downloadFile(links[i], true);
+          const fileType = type;
+          const fileName = name;
 
-      this.isLoading = true
-      this.geneticLink = ""
-      this.links = []
-      const links = JSON.parse(this.selectedGeneticData.reportLink)
+          let { box, nonce } = data.data;
+          box = Object.values(box); // Convert from object to Array
+          nonce = Object.values(nonce); // Convert from object to Array
 
-      let download = []
-      let fileType
-      let fileName
-      for (let i = 0; i < links.length; i++) {
-        const { name, type, data } = await downloadFile(links[i], true)
-        fileType = type
-        fileName = name
-        download.push(data)
-      }
+          const toDecrypt = {
+            box: Uint8Array.from(box),
+            nonce: Uint8Array.from(nonce)
+          };
 
-      let arr = []
-      for (let i = 0; i < download.length; i++) {
-        let { box, nonce } = download[i].data
-        box = Object.values(box) // Convert from object to Array
-        nonce = Object.values(nonce) // Convert from object to Array
+          const decryptedObject = await Kilt.Utils.Crypto.decryptAsymmetric(
+            toDecrypt,
+            this.publicKey,
+            this.privateKey
+          );
 
-        const toDecrypt = {
-          box: Uint8Array.from(box),
-          nonce: Uint8Array.from(nonce)
+          const unit8Arr = new Uint8Array(decryptedObject);
+          const blob = new Blob([unit8Arr], { type: fileType });
+          const file = new File([blob], fileName);
+
+          const encryptedFile = await this.encrypt({
+            text: file,
+            fileType: fileType,
+            fileSize: file.size,
+            fileName: file.name
+          });
+          try {
+            await this.upload({
+              encryptedFileChunks: encryptedFile.chunks,
+              fileName: encryptedFile.fileName,
+              fileType: fileType,
+              fileSize: encryptedFile.fileSize
+            });
+            uploadedLinks++; // Increment the uploaded counter
+          } catch (error) {
+            this.uploadFailed = true;
+            this.currentFile = file;
+            this.uploadingType = "Uploading"; // Show the dialog with retry button
+          }
         }
-
-        console.log("Decrypting...")
-        const decryptedObject = await Kilt.Utils.Crypto.decryptAsymmetric(
-          toDecrypt,
-          this.publicKey,
-          this.privateKey
-        )
-        arr = [...arr, ...decryptedObject]
+      } catch (error) {
+        this.isFailed = true;
+        this.isLoading = false;
+        console.log(error);
       }
-      console.log("Decrypted!")
-
-      const unit8Arr = new Uint8Array(arr)
-      const blob = new Blob([unit8Arr], { type: fileType })
-      this.file = new File([blob], fileName)
-
-      const dataFile = await this.setupFileReader(this.file)
-
-      await this.upload({
-        encryptedFileChunks: dataFile.chunks,
-        fileSize: dataFile.fileSize,
-        fileName: dataFile.fileName,
-        fileType: fileType
-      })
+      if (uploadedLinks === links.length) {
+        this.geneticLink = JSON.stringify(this.links);
+        if (this.geneticLink) {
+          await this.createOrder();
+        }
+      }
     },
 
     setupFileReader(file) {
       return new Promise((res, rej) => {
-        const context = this
-        const fr = new FileReader()
+        const context = this;
+        const fr = new FileReader();
         fr.onload = async function () {
           try {
             const encrypted = await context.encrypt({
@@ -309,9 +344,9 @@ export default {
               fileType: file.type,
               fileSize: file.size,
               fileName: file.name
-            })
+            });
 
-            const { chunks, fileName, fileType, fileSize } = encrypted
+            const { chunks, fileName, fileType, fileSize } = encrypted;
             const dataFile = {
               title: "title",
               description: "description",
@@ -321,28 +356,27 @@ export default {
               fileName,
               fileType,
               createdAt: new Date().getTime()
-            }
+            };
 
-            res(dataFile)
+            res(dataFile);
           } catch (e) {
-            console.error(e)
+            console.error(e);
           }
-        }
-        fr.onerror = rej
-        fr.readAsArrayBuffer(file)
-      })
+        };
+        fr.onerror = rej;
+        fr.readAsArrayBuffer(file);
+      });
     },
 
     async encrypt({ text, fileType, fileName, fileSize }) {
-      console.log("encrypting..")
-      const analystPublicKey = await this.getAnalystPublicKey()
-      const context = this
-      const arrChunks = []
-      let chunksAmount
+      const analystPublicKey = await this.getAnalystPublicKey();
+      const context = this;
+      const arrChunks = [];
+      let chunksAmount;
       const pair = {
         secretKey: this.privateKey,
         publicKey: analystPublicKey
-      }
+      };
 
       return await new Promise((res, rej) => {
         try {
@@ -350,38 +384,36 @@ export default {
             pair,
             text,
             fileType
-          })
+          });
 
           cryptWorker.workerEncryptFile.onmessage = async (event) => {
             if (event.data.chunksAmount) {
-              chunksAmount = event.data.chunksAmount
-              return
+              chunksAmount = event.data.chunksAmount;
+              return;
             }
 
-            arrChunks.push(event.data)
-            context.encryptProgress = (arrChunks.length / chunksAmount) * 100
+            arrChunks.push(event.data);
+            context.encryptProgress = (arrChunks.length / chunksAmount) * 100;
 
-            if (arrChunks.length === chunksAmount ) {
+            if (arrChunks.length === chunksAmount) {
               res({
                 fileName,
                 fileType,
                 fileSize,
                 chunks: arrChunks
-              })
+              });
             }
-          }
-          console.log("encrypted")
+          };
         } catch (e) {
-          rej(new Error(e.message))
+          rej(new Error(e.message));
         }
-      })
-
+      });
     },
 
     async upload({ encryptedFileChunks, fileName, fileType, fileSize }) {
       for (let i = 0; i < encryptedFileChunks.length; i++) {
-        const data = JSON.stringify(encryptedFileChunks[i]) // not working if the size is large
-        const blob = new Blob([data], { type: fileType })
+        const data = JSON.stringify(encryptedFileChunks[i]); // not working if the size is large
+        const blob = new Blob([data], { type: fileType });
 
         // UPLOAD TO PINATA API
         const result = await uploadFile({
@@ -389,36 +421,35 @@ export default {
           type: fileType,
           size: fileSize,
           file: blob
-        })
-        const link = await getFileUrl(result.IpfsHash)
-        this.links.push(link)
-      }
-
-      this.geneticLink = JSON.stringify(this.links)
-      if (this.geneticLink) {
-        await this.createOrder()
+        });
+        const link = await getFileUrl(result.IpfsHash);
+        this.links.push(link);
       }
     },
 
     formatBalance(balance, currency) {
-      let unit
-      currency === "USDT"|| currency === "USDT.e" ? unit = "mwei" : unit = "ether"
-      const formatedBalance = this.web3.utils.fromWei(String(balance.replaceAll(",", "")), unit)
-      return Number(formatedBalance).toLocaleString("en-US")
+      let unit;
+      currency === "USDT" || currency === "USDT.e" ? (unit = "mwei") : (unit = "ether");
+      const formatedBalance = this.web3.utils.fromWei(
+        String(balance.replaceAll(",", "")),
+        unit
+      );
+      return Number(formatedBalance).toLocaleString("en-US");
     },
 
-
     async getAssetId(currency) {
-      let assetId = 0
-      const wallet = this.polkadotWallet.find(wallet => wallet?.currency?.toUpperCase() === currency?.toUpperCase())
-      assetId = wallet.id
-      return assetId
+      let assetId = 0;
+      const wallet = this.polkadotWallet.find(
+        (wallet) => wallet?.currency?.toUpperCase() === currency?.toUpperCase()
+      );
+      assetId = wallet.id;
+      return assetId;
     },
 
     async createOrder() {
-      const priceIndex = 0
-      const currency = this.service.priceDetail[0].currency
-      const assetId = await this.getAssetId(currency === "USDTE" ? "USDT.e" : currency)
+      const priceIndex = 0;
+      const currency = this.service.priceDetail[0].currency;
+      const assetId = await this.getAssetId(currency === "USDTE" ? "USDT.e" : currency);
 
       await createGeneticAnalysisOrder(
         this.api,
@@ -429,154 +460,159 @@ export default {
         this.publicKey,
         this.geneticLink,
         assetId
-      )
+      );
     },
 
     async toCheckoutPage() {
-      const lastOrder = await queryLastGeneticAnalysisOrderByCustomer(this.api, this.wallet.address)
-      this.$router.push({name: "customer-request-analysis-payment", params: { id: lastOrder}})
+      const lastOrder = await queryLastGeneticAnalysisOrderByCustomer(
+        this.api,
+        this.wallet.address
+      );
+      this.$router.push({
+        name: "customer-request-analysis-payment",
+        params: { id: lastOrder }
+      });
     },
 
     toPaymentHistory() {
-      this.$router.push({ name: "customer-payment-history" })
+      this.$router.push({ name: "customer-payment-history" });
     }
   }
-}
+};
 </script>
 
 <style lang="sass" scoped>
-  @import "@/common/styles/mixins.sass"
+@import "@/common/styles/mixins.sass"
 
-  .analyst-detail
-    &__card
-      padding: 5px
-      
-    &__service
-      margin: 15px 30px 0 30px
+.analyst-detail
+  &__card
+    padding: 5px
 
-    &__service-name
-      @include button-2
+  &__service
+    margin: 15px 30px 0 30px
 
-    &__service-description
-      height: 100px
-      margin-top: 8px
-      @include body-text-3-opensans
+  &__service-name
+    @include button-2
 
-      &::-webkit-scrollbar-track
-        background-color: #f2f2ff
+  &__service-description
+    height: 100px
+    margin-top: 8px
+    @include body-text-3-opensans
 
-      &::-webkit-scrollbar
-        width: 0.25rem
+    &::-webkit-scrollbar-track
+      background-color: #f2f2ff
 
-      &::-webkit-scrollbar-thumb
-        border-radius: 0.625rem
-        background: #a1a1ff
+    &::-webkit-scrollbar
+      width: 0.25rem
 
-    &__service-info
-      display: flex
-      justify-content: space-between
-      padding-bottom: 20px
+    &::-webkit-scrollbar-thumb
+      border-radius: 0.625rem
+      background: #a1a1ff
 
-    &__service-info-duration
-      letter-spacing: -0.004em
-      margin-left: 5px
-      @include body-text-3-opensans-medium
+  &__service-info
+    display: flex
+    justify-content: space-between
+    padding-bottom: 20px
 
-    &__service-info-price
-      margin-top: 5px
-      color: #F006CB
-      @include body-text-3-opensans
+  &__service-info-duration
+    letter-spacing: -0.004em
+    margin-left: 5px
+    @include body-text-3-opensans-medium
 
-    &__profil
-      margin-left: 0 !important
-      margin-right: 0 !important
-      padding: 12px 23px
+  &__service-info-price
+    margin-top: 5px
+    color: #F006CB
+    @include body-text-3-opensans
 
-    &__profil-name
-      margin-top: 12px
-      @include body-text-1
+  &__profil
+    margin-left: 0 !important
+    margin-right: 0 !important
+    padding: 12px 23px
 
-    &__profil-desc
-      color: #8C8C8C
-      @include body-text-3
+  &__profil-name
+    margin-top: 12px
+    @include body-text-1
 
-    &__profil-social
-      margin-top: 16px
-      
-    &__img
-      margin-top: 12px
+  &__profil-desc
+    color: #8C8C8C
+    @include body-text-3
+
+  &__profil-social
+    margin-top: 16px
+
+  &__img
+    margin-top: 12px
 
 
-    &__profil-experience
-      margin-left: 0 !important
-      padding: 12px 35px
-      @include button-2
+  &__profil-experience
+    margin-left: 0 !important
+    padding: 12px 35px
+    @include button-2
 
-    &__tx-weight
-      display: flex
-      align-items: center
-      justify-content: space-between
-      margin-top: 10px
-      padding: 0 35px
+  &__tx-weight
+    display: flex
+    align-items: center
+    justify-content: space-between
+    margin-top: 10px
+    padding: 0 35px
 
-    &__data-tx-weight
-      @include tiny-reg
+  &__data-tx-weight
+    @include tiny-reg
 
-    &__profil-experience-list
-      margin-left: 0 !important
-      padding-left: 35px
-      @include body-text-3
-    
-    &__button
-      display: flex
-      align-items: center
-      justify-content: space-between
-      padding: 29px 35px 55px 35px
-      gap: 10px
+  &__profil-experience-list
+    margin-left: 0 !important
+    padding-left: 35px
+    @include body-text-3
 
-    &__button-text
-      @include body-text-5-opensans
+  &__button
+    display: flex
+    align-items: center
+    justify-content: space-between
+    padding: 29px 35px 55px 35px
+    gap: 10px
 
-    &__close
-      display: flex
-      justify-content: flex-end
-      padding: 1.013rem !important
+  &__button-text
+    @include body-text-5-opensans
 
-    &__loading-title
-      display: flex
-      justify-content: center
-      align-items: center
-      letter-spacing: 0.0044em
-      margin-top: 80px
-      @include h6-opensans
+  &__close
+    display: flex
+    justify-content: flex-end
+    padding: 1.013rem !important
 
-    &__loading-spin
-      display: flex
-      justify-content: center
-      align-items: center
-      padding: 50px 0px
+  &__loading-title
+    display: flex
+    justify-content: center
+    align-items: center
+    letter-spacing: 0.0044em
+    margin-top: 80px
+    @include h6-opensans
 
-    &__loading-message
-      display: flex
-      flex-direction: column
-      justify-content: center
-      align-items: center
-      text-align: center
-      letter-spacing: -0.0075em
-      text-transform: initial
-      @include button-2
+  &__loading-spin
+    display: flex
+    justify-content: center
+    align-items: center
+    padding: 50px 0px
 
-    &__loading-border-text
-      display: flex
-      padding: 24px 0 154px 0
-      justify-content: center
-      letter-spacing: -0.004em
-      @include body-text-3-opensans
-    
+  &__loading-message
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    text-align: center
+    letter-spacing: -0.0075em
+    text-transform: initial
+    @include button-2
 
-    
-  .fixed-button
-    position: fixed
-    width: 50px
+  &__loading-border-text
+    display: flex
+    padding: 24px 0 154px 0
+    justify-content: center
+    letter-spacing: -0.004em
+    @include body-text-3-opensans
 
+
+
+.fixed-button
+  position: fixed
+  width: 50px
 </style>

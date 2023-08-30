@@ -6,7 +6,7 @@ export async function errorHandler(err) {
   case "1010: Invalid Transaction: Inability to pay some fees , e.g. account balance too low":
     error = {
       title: "Insufficient Balance",
-      message: "Your transaction cannot succeed due to insufficient balance, check your account balance"
+      message: "Your transaction cannot go through because your account balance is too low or doesn't meet the minimum deposit needed. Please check your balance."
     }
     break;
   case "MetaMask Tx Signature: User denied transaction signature.":

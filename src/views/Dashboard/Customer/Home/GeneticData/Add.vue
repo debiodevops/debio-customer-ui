@@ -40,7 +40,7 @@
 
         .genetic-data-add__files-title.mt-5(v-if="!document.file")
           p File Information
-          p.mb-0 Before uploading the document, please ensure that all personal data is removed or redacted
+          p.mb-0 Before uploading the document, please ensure that all personal data is removed or redacted.
 
         ui-debio-file(
           withTooltip
@@ -78,7 +78,13 @@
       UploadingDialog(
         :show="isLoading"
         type="Uploading"
+        :file="document.file"
+        :isFailed="isFailed"
+        :totalChunks="totalChunks"
+        :currentChunkIndex="currentChunkIndex"
+        @retry-upload="retryUpload" 
       )
+
 
       SuccessDialog(
         :show="isSuccess"
@@ -118,7 +124,8 @@ import {
   addGeneticData,
   updateGeneticData,
   addGeneticDataFee,
-  updateGeneticDataFee
+  updateGeneticDataFee,
+  createGeneticAnalysisOrder
 } from "@debionetwork/polkadot-provider"
 import rulesHandler from "@/common/constants/rules"
 import { validateForms } from "@/common/lib/validate"
@@ -157,7 +164,10 @@ export default {
     error: null,
     orderId: null,
     isUpdated: false,
-    loadingData: false
+    loadingData: false,
+    totalChunks: 0,          // Initialize totalChunks
+    currentChunkIndex: 0,    // Initialize currentChunkIndex
+    isFailed: false
   }),
 
   computed: {
@@ -169,7 +179,6 @@ export default {
       lastEventData: (state) => state.substrate.lastEventData,
       web3: (state) => state.metamask.web3
     }),
-
     disable() {
       const { title, description, file } = this.document
       return !title, description, file
@@ -246,6 +255,15 @@ export default {
   },
 
   methods: {
+    retryUpload() {
+      // Reset the progress state and retry the upload process
+      this.totalChunks = 0;
+      this.currentChunkIndex = 0;
+      this.isFailed = false;
+
+      // Retry the upload process (you should have your original upload code here)
+      this.onSubmit();
+    },
 
     async getDetails() {
       this.loadingData = true
@@ -367,24 +385,41 @@ export default {
       })
     },
 
-    async upload({ encryptedFileChunks, fileType, fileName, fileSize }) {
-      for (let i = 0; i < encryptedFileChunks.length; i++) {
-        const blob = new Blob([encryptedFileChunks[i]], { type: fileType });
+    async upload({ encryptedFileChunks, fileName, fileType, fileSize }) {
+      try {
+        this.totalChunks = encryptedFileChunks.length;
+        this.currentChunkIndex = 0;
+        this.isFailed = false; // Reset isFailed before starting the upload
 
-        // UPLOAD TO PINATA API
-        const result = await uploadFile({
-          title: fileName,
-          type: fileType,
-          size: fileSize,
-          file: blob
-        })
-        const link = await getFileUrl(result.IpfsHash)
-        this.links.push(link)
+        for (let i = 0; i < this.totalChunks; i++) {
+          const data = JSON.stringify(encryptedFileChunks[i]);
+          const blob = new Blob([data], { type: fileType });
+
+          try {
+            const result = await uploadFile({
+              title: fileName,
+              type: fileType,
+              size: fileSize,
+              file: blob
+            });
+
+            const link = await getFileUrl(result.IpfsHash);
+            this.links.push(link);
+          } catch (error) {
+            console.error("Error on chunk upload", error);
+            this.isFailed = true; // Set isFailed to true if the upload fails for any chunk
+          }
+
+          this.currentChunkIndex++; // Increment the currentChunkIndex regardless of success or failure
+        }
+        this.geneticLink = JSON.stringify(this.links);
+      } catch (e) {
+        console.error("Error on upload", e);
       }
-      this.link = JSON.stringify(this.links)
-
-
     },
+
+
+
 
     async onSubmit() {
       this._touchForms("document")
@@ -398,7 +433,7 @@ export default {
       if (this.walletBalance < txWeight) {
         this.error = {
           title: "Insufficient Balance",
-          message: "Your transaction cannot succeed due to insufficient balance, check your account balance"
+          message: "Your transaction cannot go through because your account balance is too low or doesn't meet the minimum deposit needed. Please check your balance."
         }
         return
       }
@@ -423,7 +458,7 @@ export default {
             this.dataId,
             this.document.title,
             this.document.description,
-            this.link
+            this.geneticLink
           )
 
         } else {
@@ -432,12 +467,12 @@ export default {
             this.wallet,
             this.document.title,
             this.document.description,
-            this.link
+            this.geneticLink
           )
         }
       } catch (e) {
         const error = await errorHandler(e.message)
-
+        console.log(e)
         this.error = error
         this.isLoading = false
       }
@@ -446,6 +481,23 @@ export default {
     formatTxWeight(num) {
       const res = this.web3.utils.fromWei(String(num), "ether")
       return `${(Number(res) + 0.0081).toFixed(4)} DBIO`
+    },
+
+    async createOrder() {
+      const priceIndex = 0
+      const currency = this.service.priceDetail[0].currency
+      const assetId = await this.getAssetId(currency === "USDTE" ? "USDT.e" : currency)
+
+      await createGeneticAnalysisOrder(
+        this.api,
+        this.wallet,
+        this.selectedGeneticData.id,
+        this.service.serviceId,
+        priceIndex,
+        this.publicKey,
+        this.geneticLink,
+        assetId
+      )
     },
 
     async getTxWeight() {

@@ -96,7 +96,7 @@
         .customer-create-phr__files
           .customer-create-phr__files-title
             p {{ computeFiles.length ? "Uploaded Files" : "File Information" }}
-            p.mb-0(v-if="!computeFiles.length") Before uploading the document, please ensure that all personal data is removed or redacted
+            p.mb-0(v-if="!computeFiles.length") Before uploading the document, please ensure that all personal data is removed or redacted.
           .customer-create-phr__files-items
             .customer-create-phr__file-item.customer-create-phr__file-item--no-file.d-flex.align-center(
               :class="{ 'customer-create-phr__file-item--error': fileEmpty }"
@@ -360,7 +360,7 @@ export default {
       if (Number(this.walletBalance) < Number(this.txWeight.split(" ")[0])) {
         this.error = {
           title: "Insufficient Balance",
-          message: "Your transaction cannot succeed due to insufficient balance, check your account balance"
+          message: "Your transaction cannot go through because your account balance is too low or doesn't meet the minimum deposit needed. Please check your balance."
         }
         return
       }
@@ -453,7 +453,7 @@ export default {
       if (Number(this.walletBalance) < Number(this.txWeight.split(" ")[0])) {
         this.error = {
           title: "Insufficient Balance",
-          message: "Your transaction cannot succeed due to insufficient balance, check your account balance"
+          message: "Your transaction cannot go through because your account balance is too low or doesn't meet the minimum deposit needed. Please check your balance."
         }
         return
       }

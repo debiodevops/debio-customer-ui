@@ -9,7 +9,7 @@
       v-card.request-second-opinion__nav-card
         .request-second-opinion__nav-card-title Complete these two steps to get a second opinion
         .request-second-opinion__nav-card-title Step {{ step }}
-        .request-second-opinion__nav-card-text {{ stepper[step] }}
+        .request-second-opinion__nav-card-text(v-html="stepperText")
         
         .request-second-opinion__step-wrapper
           .request-second-opinion__step-box(:class="{'request-second-opinion__step-box-selected': step === 1 || step === 2}")
@@ -19,6 +19,7 @@
       v-card.request-second-opinion__nav-card
         .request-second-opinion__nav-card-title Help Desk
         .request-second-opinion__nav-card-text Our team is ready to answer all your questions with regards to our platform. 
+        .request-second-opinion__link-card-text 
           a  click here
 
 
@@ -38,12 +39,18 @@ export default {
     isGrantingAccess: false,
     dataRequest: null,
     stepper: {
-      1: "Describe your symptoms.\nChoose which category it falls under; either mental or physical.",
+      1: `Describe your symptoms.
+          Choose which category it falls under; either mental or physical.`,
       2: "Allow us to access your personal health records. The healthcare professional will use this information to provide you with an alternative solution."
     },
     step: 1
   }),
 
+  computed: {
+    stepperText() {
+      return this.stepper[this.step].replace(/\n/g, "<br>");
+    }
+  },
 
   components: { Description, GrantAccessPHR },
 
@@ -110,5 +117,9 @@ export default {
     
     &__step-box-selected
       background: #FFC4F9
+    
+    &__link-card-text
+      display:block
+      margin-top: 20px
 
 </style>

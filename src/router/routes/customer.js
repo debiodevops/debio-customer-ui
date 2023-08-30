@@ -99,14 +99,14 @@ export default [
       {
         path: "phr/second-opinion",
         name: "second-opinion",
-        meta: { pageHeader: "Second Opinion", parent: "customer-phr" },
+        meta: { pageHeader: "Second Opinion Marketplace", parent: "customer-phr" },
         component: () => import(/* webpackChunkName */ "@/views/Dashboard/Customer/Home/Phr/SecondOpinion")
       },
 
       {
         path: "phr/second-opinion-request",
         name: "second-opinion-request",
-        meta: { pageHeader: "Second Opinion", parent: "customer-phr" },
+        meta: { pageHeader: "Second Opinion Marketplace", parent: "customer-phr" },
         component: () => import(/* webpackChunkName */ "@/views/Dashboard/Customer/Home/Phr/SecondOpinion/RequestPage/index.vue")
       },
 
