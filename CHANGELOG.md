@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.5.2](https://github.com/debionetwork/debio-customer-ui/compare/2.5.1...2.5.2) (2023-08-30)
+
+
+### Bug Fixes
+
+* message ([#880](https://github.com/debionetwork/debio-customer-ui/issues/880)) ([0ee305d](https://github.com/debionetwork/debio-customer-ui/commit/0ee305d41a37323f5bb635ae7311509eaa35c5a2))
+* subscription typo ([#874](https://github.com/debionetwork/debio-customer-ui/issues/874)) ([297cf5c](https://github.com/debionetwork/debio-customer-ui/commit/297cf5cb3948e07ef3f00da2ff6a67c96fe401f3))
+* text ([#883](https://github.com/debionetwork/debio-customer-ui/issues/883)) ([b7bd45d](https://github.com/debionetwork/debio-customer-ui/commit/b7bd45d2b07088c334bd65fdad19b6ff3222682a))
+* update subscribe ([297cf5c](https://github.com/debionetwork/debio-customer-ui/commit/297cf5cb3948e07ef3f00da2ff6a67c96fe401f3))
+* upload file ([#885](https://github.com/debionetwork/debio-customer-ui/issues/885)) ([48e2fdb](https://github.com/debionetwork/debio-customer-ui/commit/48e2fdbf5e3f3f00b351297452b022ba93f109ac))
+
 ## [2.5.1](https://github.com/debionetwork/debio-customer-ui/compare/2.5.0...2.5.1) (2023-07-10)
 
 

@@ -135,9 +135,21 @@
           StakingServiceTab(
             ref="staking"
             @unstake="showDialog = true"
+            @retrieve="showRetrieveDialog = true"
             @loading="loadingDialog = true"
             @closeLoading="loadingDialog = false"
             @error="showError"
+          )
+          ConfirmationDialog(
+            :show="showRetrieveDialog"
+            :loading="isLoading"
+            :txWeight="Number(txWeight).toFixed(4)"
+            title="Retrieve"
+            btnMessage="Retrieve"
+            message="Retrieve your staked currency"
+            @click="retrieveService"
+            this.isLoding = true
+            @close="showRetrieveDialog=false"
           )
           ConfirmationDialog(
             :show="showDialog"
@@ -175,7 +187,7 @@ import { u8aToHex } from "@polkadot/util"
 import { syncDecryptedFromIPFS } from "@/common/lib/ipfs"
 import ConfirmationDialog from "@/common/components/Dialog/ConfirmationDialog"
 import { createSyncEvent, getCategories, getOrderList } from "@/common/lib/api"
-import { queryDnaSamples, queryDnaTestResults, unstakeRequest, unstakeRequestFee } from "@debionetwork/polkadot-provider"
+import { queryDnaSamples, queryDnaTestResults, unstakeRequest, unstakeRequestFee, retrieveUnstakedAmount } from "@debionetwork/polkadot-provider"
 import { getDNACollectionProcess } from "@/common/lib/api"
 import { ORDER_STATUS_DETAIL } from "@/common/constants/status"
 import PaymentDialog from "@/common/components/Dialog/PaymentDialog"
@@ -205,6 +217,7 @@ export default {
     isBounty: false,
     isLoading: false,
     showDialog: false,
+    showRetrieveDialog: false,
     medicalResearchIllustration,
     isLoding: false,
     isLoadingData: false,
@@ -477,10 +490,29 @@ export default {
       )
     },
 
+    async retrieveService() {
+      const requestId = this.stakingId
+      this.isLoading = true
+      await retrieveUnstakedAmount(
+        this.api,
+        this.wallet,
+        requestId,
+        this.fetchStakingTab // eslint-disable-next-line no-unused-vars
+      ).catch(this.retrieveError())
+    },
+
     fetchStakingTab() {
       this.$refs.staking.fetchData()
       this.isLoading = false
       this.showDialog = false
+      this.showRetrieveDialog = false
+    },
+    retrieveError() {
+      this.fetchStakingTab()
+      this.error = {
+        title: "Error",
+        message: "Retrieval of unstaked amount failed"
+      }
     },
 
     showError() {

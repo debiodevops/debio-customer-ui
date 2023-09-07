@@ -54,6 +54,16 @@
             :disabled="item.request.status === 'Open'"
           ) Proceed
 
+        .customer-staking-tab__actions(v-else-if="compareRemainingStakingDate(item.request.unstaked_at)" )
+          ui-debio-button.pa-4(
+            :disabled="item.request.status === 'Processed' ||  item.request.status === 'Finalized'"
+            height="25px"
+            width="100px"
+            style="font-size: 1em"
+            color="primary"
+            @click="getRetrieveDialog(item.request.hash)"
+          ) Retrieve   
+
         .customer-staking-tab__actions(v-else)
           ui-debio-button(disabled width="220px" color="white" )
             vue-countdown-timer(
@@ -238,6 +248,12 @@ export default {
       return dueDate
     },
 
+    compareRemainingStakingDate(date) {
+      const formatedDate = new Date(parseInt(date.replace(/,/g, "")))
+      const dueDate = formatedDate.setDate(formatedDate.getDate() + 6)
+      return (Date.now() > dueDate)
+    },
+
     async toRequestTest(req) {
       this.loading = true
       this.stakingData = req.request
@@ -297,6 +313,12 @@ export default {
     async getUnstakingDialog(id) {
       this.setStakingId(id)
       await this.$emit("unstake")
+      this.requestId = id
+    },
+
+    async getRetrieveDialog(id) {
+      this.setStakingId(id)
+      await this.$emit("retrieve")
       this.requestId = id
     },
 
