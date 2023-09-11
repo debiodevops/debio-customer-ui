@@ -498,7 +498,7 @@ export default {
         this.wallet,
         requestId,
         this.fetchStakingTab // eslint-disable-next-line no-unused-vars
-      ).catch(this.retrieveError())
+      )
     },
 
     fetchStakingTab() {
@@ -506,13 +506,6 @@ export default {
       this.isLoading = false
       this.showDialog = false
       this.showRetrieveDialog = false
-    },
-    retrieveError() {
-      this.fetchStakingTab()
-      this.error = {
-        title: "Error",
-        message: "Retrieval of unstaked amount failed"
-      }
     },
 
     showError() {
