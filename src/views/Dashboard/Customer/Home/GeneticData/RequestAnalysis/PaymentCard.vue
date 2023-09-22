@@ -20,7 +20,13 @@
         .customer-analysis-payment-card__amount
           .customer-analysis-payment-card__data-text Service Price
           .customer-analysis-payment-card__data-text(:style="setStyleColor") {{ orderPrice }} {{ formatUSDTE(orderCurrency) }}
-        .customer-analysis-payment-card__rate ({{ orderPriceInUsd }} USD )
+        .customer-analysis-payment-card__amount
+          .customer-analysis-payment-card__data-text QC Price
+          .customer-analysis-payment-card__data-text(:style="setStyleColor") {{ qcPrice }} {{ formatUSDTE(orderCurrency) }}
+        .customer-analysis-payment-card__amount
+          .customer-analysis-payment-card__data-text Total Price
+          .customer-analysis-payment-card__data-text(:style="setStyleColor") {{ totalPrice }} {{ formatUSDTE(orderCurrency) }}
+        .customer-analysis-payment-card__rate ({{ totalPriceInUsd }} USD )
 
         .customer-analysis-payment-card__text-notes In adherence to the law and regulations of the country where your transaction will take place, service provider payouts may be processed in fiat currency. See our 
           a.link(target="_blank" href="https://docs.debio.network/legal/terms-and-condition" ) terms and conditions 
@@ -54,8 +60,14 @@
 
         .customer-analysis-payment-card__amount
           .customer-analysis-payment-card__data-text Service Price
-          b.customer-analysis-payment-card__data-text.mt-3 {{ orderPrice }} {{ formatUSDTE(orderCurrency) }}
-        .customer-analysis-payment-card__rate ( {{ orderPriceInUsd }} USD )
+          .customer-analysis-payment-card__data-text.mt-3 {{ orderPrice }} {{ formatUSDTE(orderCurrency) }}
+        .customer-analysis-payment-card__amount
+          .customer-analysis-payment-card__data-text QC Price
+          .customer-analysis-payment-card__data-text.mt-3 {{ qcPrice }} {{ formatUSDTE(orderCurrency) }}
+        .customer-analysis-payment-card__amount
+          .customer-analysis-payment-card__data-text Total Price
+          .customer-analysis-payment-card__data-text.mt-3 {{ totalPrice }} {{ formatUSDTE(orderCurrency) }}
+        .customer-analysis-payment-card__rate ({{ totalPriceInUsd }} USD )
 
         .customer-analysis-payment-card__button
           ui-debio-button.customer-analysis-payment-card__button-text(
@@ -115,8 +127,10 @@ export default {
     createdDate: null,
     orderStatus: null,
     orderPrice: null,
+    qcPrice: null,
+    totalPrice: null,
     orderCurrency: null,
-    orderPriceInUsd: null,
+    totalPriceInUsd: null,
     showCancelDialog: false,
     isLoading: false,
     isCancelling: false,
@@ -195,7 +209,7 @@ export default {
       await this.getBalance()
     }
 
-    if (Number(this.balance) <= Number(this.orderPrice.replaceAll(",", ""))) { 
+    if (Number(this.balance) <= Number(this.totalPrice.replaceAll(",", ""))) { 
       this.isDeficit = true
     }
   },
@@ -220,9 +234,13 @@ export default {
       this.createdDate = this.formatDate(this.geneticOrderDetail.createdAt)
       this.orderStatus = this.geneticOrderDetail.status
       this.orderPrice = this.formatBalance(this.geneticOrderDetail.prices[0].value, formatUSDTE(this.geneticOrderDetail.currency))
+      this.qcPrice = this.formatBalance(this.geneticOrderDetail.additionalPrices[0].value, formatUSDTE(this.geneticOrderDetail.currency))
+      this.totalPrice = (Number(this.qcPrice) + Number(this.orderPrice)).toLocaleString("en-US")
       this.orderCurrency = this.geneticOrderDetail.currency
       await this.getRate()
-      this.orderPriceInUsd = this.formatPriceInUsd(this.geneticOrderDetail.prices[0].value)
+      const orderPriceInUsd = this.formatPriceInUsd(this.geneticOrderDetail.prices[0].value)
+      const qcPriceInUsd = this.formatPriceInUsd(this.geneticOrderDetail.additionalPrices[0].value)
+      this.totalPriceInUsd = (Number(orderPriceInUsd) + Number(qcPriceInUsd)).toFixed(4)
       this.trackingId = this.geneticOrderDetail.geneticAnalysisTrackingId      
     },
 

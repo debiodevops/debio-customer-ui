@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.3](https://github.com/debionetwork/debio-customer-ui/compare/2.5.2...2.5.3) (2023-09-15)
+
+
+### Bug Fixes
+
+* handle unstaked amount retrieval ([#890](https://github.com/debionetwork/debio-customer-ui/issues/890)) ([de2ea0a](https://github.com/debionetwork/debio-customer-ui/commit/de2ea0ae1dc48656e98f60e562c8bb6c89491660))
+* user cant retrieve unstaked amount ([#888](https://github.com/debionetwork/debio-customer-ui/issues/888)) ([9aa1bf4](https://github.com/debionetwork/debio-customer-ui/commit/9aa1bf4cd1903ed03d3335a3419b5c4b84aebcf8))
+
 ## [2.5.2](https://github.com/debionetwork/debio-customer-ui/compare/2.5.1...2.5.2) (2023-08-30)
 
 
