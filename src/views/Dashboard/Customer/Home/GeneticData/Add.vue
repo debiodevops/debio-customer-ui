@@ -135,6 +135,7 @@ import SuccessDialog from "@/common/components/Dialog/SuccessDialog"
 import { errorHandler } from "@/common/lib/error-handler"
 import UploadingDialog from "@/common/components/Dialog/UploadingDialog"
 import { downloadFile, uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
+import store from "@/store"
 
 
 
@@ -330,6 +331,7 @@ export default {
 
             arrChunks.push(event.data)
             context.encryptProgress = (arrChunks.length / chunksAmount) * 100
+            
 
             if (arrChunks.length === chunksAmount) {
               res({
@@ -392,8 +394,10 @@ export default {
         this.isFailed = false; // Reset isFailed before starting the upload
 
         for (let i = 0; i < this.totalChunks; i++) {
-          const data = JSON.stringify(encryptedFileChunks[i]);
-          const blob = new Blob([data], { type: fileType });
+          store.dispatch("geneticData/getLoadingProgress", { upload: 0 })
+          let data = [`{"seed":${encryptedFileChunks[i].seed},"data":{"nonce":[${encryptedFileChunks[i].data.nonce}],"box":[${encryptedFileChunks[i].data.box}`]
+          data.push("]}}")
+          const blob = new Blob(data, { type: fileType });
 
           try {
             const result = await uploadFile({

@@ -121,6 +121,7 @@ import { downloadFile, uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
 // import SpinnerLoader from "@bit/joshk.vue-spinners-css.spinner-loader"
 import UploadingDialog from "@/common/components/Dialog/UploadingDialog";
 import { formatUSDTE } from "@/common/lib/price-format.js";
+import store from "@/store";
 
 export default {
   name: "AnalystDetail",
@@ -275,8 +276,8 @@ export default {
       let uploadedLinks = 0;
       try{
         for (let i = 0; i < links.length; i++) {
-          this.totalChunks = i + links.length;
-          this.currentChunkIndex = i + 1;
+          this.totalChunks = links.length;
+          this.currentChunkIndex = i;
           const { name, type, data } = await downloadFile(links[i], true);
           const fileType = type;
           const fileName = name;
@@ -412,18 +413,25 @@ export default {
 
     async upload({ encryptedFileChunks, fileName, fileType, fileSize }) {
       for (let i = 0; i < encryptedFileChunks.length; i++) {
-        const data = JSON.stringify(encryptedFileChunks[i]); // not working if the size is large
-        const blob = new Blob([data], { type: fileType });
+        store.dispatch("geneticData/getLoadingProgress", { upload: 0 })
+        let data = [`{"seed":${encryptedFileChunks[i].seed},"data":{"nonce":[${encryptedFileChunks[i].data.nonce}],"box":[${encryptedFileChunks[i].data.box}`]
+        data.push("]}}")
+        const blob = new Blob(data, { type: fileType });
 
-        // UPLOAD TO PINATA API
-        const result = await uploadFile({
-          title: fileName,
-          type: fileType,
-          size: fileSize,
-          file: blob
-        });
-        const link = await getFileUrl(result.IpfsHash);
-        this.links.push(link);
+        try {
+          const result = await uploadFile({
+            title: fileName,
+            type: fileType,
+            size: fileSize,
+            file: blob
+          });
+
+          const link = await getFileUrl(result.IpfsHash);
+          this.links.push(link);
+        } catch (error) {
+          console.error("Error on chunk upload", error);
+          this.isFailed = true; // Set isFailed to true if the upload fails for any chunk
+        }
       }
     },
 
