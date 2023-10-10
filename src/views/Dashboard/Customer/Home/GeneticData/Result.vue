@@ -40,7 +40,7 @@ import {
   queryGeneticAnalysisOrderById,
   queryGeneticAnalystServicesByHashId
 } from "@debionetwork/polkadot-provider"
-import { downloadFile, decryptFile } from "@/common/lib/pinata-proxy"
+import { downloadFile, decryptFile, downloadDocumentFile } from "@/common/lib/pinata-proxy"
 import { chevronLeftIcon } from "@debionetwork/ui-icons"
 
 
@@ -122,16 +122,29 @@ export default {
     },
 
     async parseResult(recordLink) {
+      let fileChunks = []
+      let fileType
+      const computeFileName = "Result"
       try {
-        this.isLoading = true
-
         const pair = { publicKey: this.publicKey, secretKey: this.secretKey }
-        const { type, data } = await downloadFile(recordLink, true)
-
-        const decryptedFile = decryptFile(data, pair, type)
-        const fileBlob = window.URL.createObjectURL(new Blob([decryptedFile], { type }))
-
-        this.result = fileBlob
+        this.isLoading = true
+        if (/^\[/.test(recordLink)) {
+          const links = JSON.parse(recordLink)
+          for (let i = 0; i < links.length; i++) {
+            const { type, data } = await downloadFile(links[i], true)
+            const decryptedFile = decryptFile([data], pair, type)
+            fileType = type
+            fileChunks = [...fileChunks, ...(decryptedFile ? decryptedFile : [])]
+          }
+        }
+        else {
+          const { type, data } = await downloadFile(recordLink, true)
+          const decryptedFile = decryptFile([data], pair, type)
+          fileType = type
+          fileChunks = [...fileChunks, ...(decryptedFile ? decryptedFile : [])]
+        }
+        const unit8arrays = new Uint8Array(fileChunks)
+        await downloadDocumentFile(unit8arrays, computeFileName, fileType)
       } catch {
         this.message = "Oh no! Something went wrong. Please try again later"
       } finally {
