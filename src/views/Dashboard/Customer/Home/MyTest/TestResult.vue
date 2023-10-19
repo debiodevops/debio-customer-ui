@@ -273,13 +273,34 @@ export default {
       try {
         const path = this.files[0].fileLink
         const pair = { secretKey: this.privateKey, publicKey: this.publicKey }
+        let fileChunks = [];
+        let fileType
+        let name
 
-        const { type, data } = await downloadFile(path, true)
+        if (/^\[/.test(path)) {
+          const links = JSON.parse(path);
+          for (let i = 0; i < links.length; i++) {
+            const { rows } = await getIpfsMetaData(links[i].split("/").pop())
+            const { type, data } = await downloadFile(links[i], true)
+            const decryptedFile = decryptFile([data], pair, type)
+            fileChunks = [...fileChunks, ...(decryptedFile ? decryptedFile : [])]
+            fileType = type
+            if (i === 0) {
+              name = rows             
+            }         
+          }
+          const unit8arrays = new Uint8Array(fileChunks)
+          await downloadDocumentFile(unit8arrays, name[0].metadata.name, fileType)
 
-        const decryptedFile = decryptFile(data, pair, type)
-        const fileBlob = window.URL.createObjectURL(new Blob([decryptedFile], { type }))
-
-        this.result = fileBlob
+        }
+        else {
+          const { type, data } = await downloadFile(path, true)
+          const decryptedFile = decryptFile([data], pair, type)
+          fileChunks = [...fileChunks, ...(decryptedFile ? decryptedFile : [])]
+          const unit8arrays = new Uint8Array(fileChunks)
+          await downloadDocumentFile(unit8arrays, name[0].metadata.name, fileType)
+        }
+        
         this.resultLoading = false
       } catch (error) {
         this.resultLoading = false
@@ -289,13 +310,35 @@ export default {
 
     actionDownload: generalDebounce(async function (link) {
       try {
-        const { rows } = await getIpfsMetaData(link.split("/").pop())
-        const { type, data } = await downloadFile(link, true)
-
         const pair = { secretKey: this.privateKey, publicKey: this.publicKey }
-        const decryptedFile = decryptFile(data, pair, type)
+        let fileChunks = []
+        let name 
+        let fileType 
+        if (/^\[/.test(link)) {
+          const links = JSON.parse(link);
+          for (let i = 0; i < links.length; i++) {
+            const { rows } = await getIpfsMetaData(links[i].split("/").pop())
+            const { type, data } = await downloadFile(links[i], true)
+            const decryptedFile = decryptFile([data], pair, type)
+            fileType = type
+            fileChunks = [...fileChunks, ...(decryptedFile ? decryptedFile : [])]
+            if (i === 0) {
+              name = rows
+            }
+            
+          }
+          const unit8arrays = new Uint8Array(fileChunks)
+          await downloadDocumentFile(unit8arrays, name[0].metadata.name, fileType)
 
-        await downloadDocumentFile(decryptedFile, rows[0].metadata.name, type)
+        }
+        else {
+          const { rows } = await getIpfsMetaData(link.split("/").pop())
+          const { type, data } = await downloadFile(link, true)
+          const decryptedFile = decryptFile([data], pair, type)
+          fileChunks = [...fileChunks, ...(decryptedFile ? decryptedFile : [])]
+          const unit8arrays = new Uint8Array(fileChunks)
+          await downloadDocumentFile(unit8arrays, rows[0].metadata.name, type)
+        }
       } catch (error) {
         console.error(error)
       }
