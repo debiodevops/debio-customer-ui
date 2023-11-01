@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.5.4](https://github.com/debionetwork/debio-customer-ui/compare/2.5.3...2.5.4) (2023-10-19)
+
+
+### Bug Fixes
+
+* add quality control price to genetic analysis order ([#897](https://github.com/debionetwork/debio-customer-ui/issues/897)) ([07b1b8d](https://github.com/debionetwork/debio-customer-ui/commit/07b1b8d5be0c92d958409fc8b88a4c0bb9f93924))
+* Download Genetic Analysis Report ([#905](https://github.com/debionetwork/debio-customer-ui/issues/905)) ([3c90fe6](https://github.com/debionetwork/debio-customer-ui/commit/3c90fe6c71402ad724a9abc5acf61e055611126b))
+* lab download ([#909](https://github.com/debionetwork/debio-customer-ui/issues/909)) ([3babbe5](https://github.com/debionetwork/debio-customer-ui/commit/3babbe5d0a2e63408f572ac102baad3e9ddea575))
+* stringify data before uploading ([#904](https://github.com/debionetwork/debio-customer-ui/issues/904)) ([7be90a3](https://github.com/debionetwork/debio-customer-ui/commit/7be90a31f9a9e5d6f25fdf34f06ebebedae71215))
+
 ## [2.5.3](https://github.com/debionetwork/debio-customer-ui/compare/2.5.2...2.5.3) (2023-09-15)
 
 
