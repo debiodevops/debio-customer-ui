@@ -17,6 +17,11 @@ export async function checkMyriadUsername(username) {
   return data
 }
 
+export async function findMyriadExperience(address) {
+  const { data } = await apiClientRequest.get(`myriad/experience/${address}`)
+  return data.id
+}
+
 export async function myriadRegistration(info) {
   const { data } =  await apiClientRequest.post(`myriad/register`, info)
 

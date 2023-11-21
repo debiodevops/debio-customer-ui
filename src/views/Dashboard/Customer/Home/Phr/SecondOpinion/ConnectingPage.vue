@@ -41,6 +41,7 @@ import {
 } from "@debionetwork/polkadot-provider"
 import getEnv from "@/common/lib/utils/env"
 import { downloadFile, decryptFile, uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
+import { findMyriadExperience } from "../../../../../../common/lib/api/customer/myriad"
 
 
 export default {
@@ -102,11 +103,12 @@ export default {
 
     async checkMyriadUser(address) {
       try {
+        const timelineId = await findMyriadExperience(address)
         const data = await myriadCheckUser(address)
         const userIds = await getMyriadListByRole(this.category)
         const userIdList = userIds.data.map((user) => user.user_id)
         
-        await this.createMyriadPost(data.jwt, data.user_id, userIdList)
+        await this.createMyriadPost(data.jwt, data.user_id, userIdList, timelineId)
 
         return data
       } catch (err) {
@@ -158,7 +160,7 @@ export default {
       return jwt
     },
 
-    async createMyriadPost(userJwt, userId, phIds) {
+    async createMyriadPost(userJwt, userId, phIds, timelineId) {
       const links = await this.prepareData()
       const text = [{
         "type": "p",
@@ -179,7 +181,8 @@ export default {
         selectedUserIds: phIds,
         visibility: "selected_user",
         postType:this.category.toUpperCase().split(" ").join("_"),
-        selectedTimelineIds: []
+        selectedTimelineIds: [],
+        timelineId: timelineId
       }
 
       const res = await myriadPostCreate(userJwt, info)      
