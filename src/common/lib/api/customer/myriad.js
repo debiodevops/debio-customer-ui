@@ -69,6 +69,6 @@ export async function myriadPostCreate( jwt, info) {
     }
   })
 
-  const data = request.post(`myriad/post/create`, info)
+  const data = await request.post(`myriad/post/create`, info)
   return data
 }

@@ -184,8 +184,8 @@ export default {
         selectedTimelineIds: [],
         timelineId: timelineId
       }
-
-      const res = await myriadPostCreate(userJwt, info)      
+      const res = await myriadPostCreate(userJwt, info)
+      
       await this.postToSubstrate(res.data, this.text)
       return res
     },

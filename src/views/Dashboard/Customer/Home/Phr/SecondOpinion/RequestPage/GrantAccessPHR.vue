@@ -523,8 +523,8 @@ export default {
       const injector = await web3FromAddress(sender)
       if (injector) {
         this.showConnect = false
-        this.isConnectToMyriad = true
-        // this.$router.push({ name: "connecting-page" })
+        // this.isConnectToMyriad = true
+        this.$router.push({ name: "connecting-page" })
       }
     },
 
