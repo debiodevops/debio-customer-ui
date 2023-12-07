@@ -660,9 +660,13 @@ export default {
         return
       }
 
-      this._touchForms("document")
-      const { title: docTitle, description: docDescription, file: docFile } = this.isDirty?.document
-      if (docTitle || docDescription || docFile) return
+      this._touchForms("document");
+      const {
+        title: docTitle,
+        description: docDescription,
+        file: docFile
+      } = this.isDirty?.document;
+      if (docTitle || docDescription || docFile) return;
 
       const context = this
       const fr = new FileReader()

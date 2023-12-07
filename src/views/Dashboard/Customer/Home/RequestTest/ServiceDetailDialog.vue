@@ -67,7 +67,7 @@
 <script>
 
 import { mapState } from "vuex"
-import { getLocations } from "@/common/lib/api"
+import { getLocations, getOrderList } from "@/common/lib/api"
 import CryptoJS from "crypto-js"
 import Kilt from "@kiltprotocol/sdk-js"
 import { u8aToHex } from "@polkadot/util"
@@ -184,6 +184,30 @@ export default {
 
       const customerBoxPublicKey = await this.getCustomerPublicKey()
       const assetId = await this.getAssetId(this.selectedService.currency === "USDTE" ? "USDT.e" : this.selectedService.currency)
+
+
+      try {
+        const { data } = await getOrderList(); 
+        const handleDescription = async (service) => {
+          const description = service.longDescription.split("||")[0];
+          if (this.web3.utils.isHex(description)) {
+            return this.web3.utils.hexToUtf8(description);
+          }
+          const regex = /^(https:\/\/ipfs.debio.network\/ipfs\/)/;
+          if (regex.test(description)) {
+            const response = await fetch(description);
+            return await response.text();
+          }
+
+          return description;
+        };
+
+        for (const service of data) {
+          service.newDescription = await handleDescription(service);
+        }
+      } catch (error) {
+        return error;
+      }
 
       await createOrder(
         this.api,

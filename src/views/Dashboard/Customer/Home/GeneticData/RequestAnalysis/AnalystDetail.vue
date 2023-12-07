@@ -173,7 +173,6 @@ export default {
       service: (state) => state.geneticData.selectedAnalysisSerivice,
       polkadotWallet: (state) => state.substrate.polkadotWallet
     }),
-
     computeAvatar() {
       const profile = this.service.analystsInfo.info.profileImage;
       return profile ? profile : require("@/assets/defaultAvatar.svg");
@@ -503,7 +502,7 @@ export default {
     @include button-2
 
   &__service-description
-    height: 100px
+    height: 100%
     margin-top: 8px
     @include body-text-3-opensans
 

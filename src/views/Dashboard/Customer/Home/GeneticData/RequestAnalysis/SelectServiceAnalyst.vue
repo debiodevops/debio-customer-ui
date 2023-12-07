@@ -124,8 +124,32 @@ export default {
     }),
     
     async getGeneticAnalystService() {
-      this.isLoading = true
-      const geneticAnalystService = await queryGetAllGeneticAnalystServices(this.api)
+      this.isLoading = true;
+      const geneticAnalystService = await queryGetAllGeneticAnalystServices(this.api);
+
+      const handleDescription = async (description) => {
+        try {
+          if (typeof description === "string" && description.startsWith("0x")) {
+            return this.web3.utils.hexToUtf8(description);
+          }
+          const regex = /^(https:\/\/ipfs.debio.network\/ipfs\/)/;
+          if (regex.test(description)) {
+            const response = await fetch(description);
+            if (response.ok) {
+              const text = await response.text();
+              return text;
+            } else {
+              console.error("Failed to fetch description:", response.status, response.statusText);
+              return "Description fetch failed";
+            }
+          }
+          return description;
+        } catch (error) {
+          console.error("Error in handleDescription:", error);
+          return "Description processing error";
+        }
+      };
+
 
       for (let i = 0; i < geneticAnalystService.length; i++) {
         let {
@@ -141,11 +165,13 @@ export default {
             description,
             testResultSample
           }     
-        } = geneticAnalystService[i][1].toHuman()  
-        
-        const analystsInfo = await queryGeneticAnalystByAccountId(this.api, analystId)
+        } = geneticAnalystService[i][1].toHuman();
+
+        const analystsInfo = await queryGeneticAnalystByAccountId(this.api, analystId);
 
         if (analystsInfo.verificationStatus === "Verified") {
+          description = await handleDescription(description);
+
           const service = {
             serviceId,
             analystId,
@@ -156,12 +182,13 @@ export default {
             description,
             testResultSample,
             analystsInfo
-          }
-          this.serviceList.push(service)
+          };
+          this.serviceList.push(service);
         }
       }
-      this.isLoading = false
+      this.isLoading = false;
     },
+
 
     handleBack() {
       this.$router.push({ name: "customer-request-analysis" })
