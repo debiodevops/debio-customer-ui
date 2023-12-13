@@ -43,14 +43,16 @@
       )
 
     template(slot="cta")
-      .banner-card
-        router-link.banner-card__container(:to="{name: 'customer-request-test'}")
-          ui-debio-icon.banner-card__icon(
-            :icon="cardGradient"
-            size="50"
-          )
-          .banner-card__text Request a Test
-            .banner-card__sub-text Get your biological sample tested or stake $DBIO to request Lab
+      ui-debio-card(
+        :to="{ name: 'customer-request-test'}"
+        title="Request a Test"
+        sub-title="Get your biological sample tested or stake $DBIO to request Lab"
+        tiny-card 
+        with-icon
+        width="250"
+        :block="cardBlock"
+      )
+        ui-debio-icon(:icon="cardGradient" slot="icon" size="34" color="#C400A5" fill)
 
   .customer-my-test
     .customer-my-test__tabs

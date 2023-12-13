@@ -3,18 +3,40 @@
   ui-debio-banner.customer-dashboard__banner(
     title="Dashboard"
     subtitle="DeBio is a Privacy Focused Platform for Personal Biomedical Testing."
-    with-decoration
     gradient-color="violet"
   )
 
     template(slot="cta")
-      .banner-card
-        router-link.banner-card__container(v-for="banner in banners" :key="banner.id" :to="{ name: banner.link}")
-          ui-debio-icon.banner-card__icon(
-            :icon="banner.icon"
-            size="50"
-          )
-          .banner-card__text {{ banner.text }}
+      ui-debio-card(
+        :to="{ name: 'customer-request-analysis'}"
+        title="Request Genetic Analysis"
+        sub-title=""
+        tiny-card 
+        with-icon
+        width="250"
+        :block="cardBlock"
+      )
+        ui-debio-icon(:icon="bookGradient" slot="icon" size="34" color="#C400A5" fill)
+      ui-debio-card(
+        :to="{ name: 'customer-request-test'}"
+        title="Request Genetic Test"
+        sub-title=""
+        tiny-card 
+        with-icon
+        width="250"
+        :block="cardBlock"
+      )
+        ui-debio-icon(:icon="cardGradient" slot="icon" size="34" color="#C400A5" fill)
+      ui-debio-card(
+        :to="{ name: 'customer-phr-create'}"
+        title="Upload Health Record"
+        sub-title=""
+        tiny-card 
+        with-icon
+        width="250"
+        :block="cardBlock"
+      )
+        ui-debio-icon(:icon="partialBookGradient" slot="icon" size="34" color="#C400A5" fill)
 
   .customer-dashboard__tables
     .tables
@@ -164,23 +186,6 @@ export default {
         sortable: false,
         align: "center",
         width: "5%"
-      }
-    ],
-    banners: [
-      {
-        icon: bookGradient,
-        text: "Request Genetic Analysis",
-        link: "customer-request-analysis"
-      },
-      {
-        icon: cardGradient,
-        text: "Request Genetic Test",
-        link: "customer-request-test"
-      },
-      {
-        icon: partialBookGradient,
-        text: "Upload Health Record",
-        link: "customer-phr-create"
       }
     ],
     isLoadingPayments: false,
