@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.6.0](https://github.com/debionetwork/debio-customer-ui/compare/2.5.4...2.6.0) (2023-12-13)
+
+
+### Features
+
+* desc genetic analyst ([#926](https://github.com/debionetwork/debio-customer-ui/issues/926)) ([1f0b330](https://github.com/debionetwork/debio-customer-ui/commit/1f0b330b4b84e7aa7c5b80297a00a354d921de2e))
+
+
+### Bug Fixes
+
+* adjustment on downloading dialog test result ([#917](https://github.com/debionetwork/debio-customer-ui/issues/917)) ([5444556](https://github.com/debionetwork/debio-customer-ui/commit/5444556a9cf2c9de59cfadc8fcda446595eeade1))
+* crash issue with ui components ([#930](https://github.com/debionetwork/debio-customer-ui/issues/930)) ([b1f782e](https://github.com/debionetwork/debio-customer-ui/commit/b1f782e34f32c0b5348b84385dfa0135893d2e5c))
+* redirect second opinion to myriad ([#914](https://github.com/debionetwork/debio-customer-ui/issues/914)) ([5659b25](https://github.com/debionetwork/debio-customer-ui/commit/5659b256ce9c36abcec08c2cd6228c1e1a8d7687))
+* redirect to myriad ([#923](https://github.com/debionetwork/debio-customer-ui/issues/923)) ([2da443a](https://github.com/debionetwork/debio-customer-ui/commit/2da443a917048f185c22eb3fb722cb7c8086335e))
+* select timeline when post to myriad ([#922](https://github.com/debionetwork/debio-customer-ui/issues/922)) ([6036235](https://github.com/debionetwork/debio-customer-ui/commit/60362352077c11432e3f602e2e5f1d2d3f019fe9))
+
 ## [2.5.4](https://github.com/debionetwork/debio-customer-ui/compare/2.5.3...2.5.4) (2023-10-19)
 
 

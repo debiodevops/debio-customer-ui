@@ -49,13 +49,16 @@
       ui-debio-icon.banner-illustration(:icon="analiticIllustration" :size="cardBlock ? 250 : 180" view-box="0 0 252 252" fill)
 
     template(slot="cta")
-      .banner-card
-        router-link.banner-card__container(:to="{name: 'customer-phr-create'}")
-          ui-debio-icon.banner-card__icon(
-            :icon="partialBookGradient"
-            size="50"
-          )
-          .banner-card__text Upload Health Record
+      ui-debio-card(
+        :to="{ name: 'customer-phr-create'}"
+        title="Upload Health Record"
+        sub-title=""
+        tiny-card 
+        with-icon
+        width="250"
+        :block="cardBlock"
+      )
+        ui-debio-icon(:icon="partialBookGradient" slot="icon" size="34" color="#C400A5" fill)
 
   ui-debio-data-table(
     :headers="headers"
