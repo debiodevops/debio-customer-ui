@@ -67,7 +67,7 @@
 <script>
 
 import { mapState } from "vuex"
-import { getLocations, getOrderList } from "@/common/lib/api"
+import { getLocations } from "@/common/lib/api"
 import CryptoJS from "crypto-js"
 import Kilt from "@kiltprotocol/sdk-js"
 import { u8aToHex } from "@polkadot/util"
@@ -186,28 +186,29 @@ export default {
       const assetId = await this.getAssetId(this.selectedService.currency === "USDTE" ? "USDT.e" : this.selectedService.currency)
 
 
-      try {
-        const { data } = await getOrderList(); 
-        const handleDescription = async (service) => {
-          const description = service.longDescription.split("||")[0];
-          if (this.web3.utils.isHex(description)) {
-            return this.web3.utils.hexToUtf8(description);
-          }
-          const regex = /^(https:\/\/ipfs.debio.network\/ipfs\/)/;
-          if (regex.test(description)) {
-            const response = await fetch(description);
-            return await response.text();
-          }
+      // try {
+      //   const { orders } = await getOrderList();
+      //   console.log("data is", orders.data)
+      //   const handleDescription = async (service) => {
+      //     const description = service.longDescription.split("||")[0];
+      //     if (this.web3.utils.isHex(description)) {
+      //       return this.web3.utils.hexToUtf8(description);
+      //     }
+      //     const regex = /^(https:\/\/ipfs.debio.network\/ipfs\/)/;
+      //     if (regex.test(description)) {
+      //       const response = await fetch(description);
+      //       return await response.text();
+      //     }
 
-          return description;
-        };
+      //     return description;
+      //   };
 
-        for (const service of data) {
-          service.newDescription = await handleDescription(service);
-        }
-      } catch (error) {
-        return error;
-      }
+      //   for (const service of orders.data) {
+      //     service.newDescription = await handleDescription(service);
+      //   }
+      // } catch (error) {
+      //   console.error(error)
+      // }
 
       await createOrder(
         this.api,

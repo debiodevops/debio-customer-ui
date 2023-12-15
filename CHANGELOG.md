@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/debionetwork/debio-customer-ui/compare/2.6.0...2.6.1) (2023-12-13)
+
+
+### Bug Fixes
+
+* crash caused by ui components ([#931](https://github.com/debionetwork/debio-customer-ui/issues/931)) ([3f64679](https://github.com/debionetwork/debio-customer-ui/commit/3f646795173bccf84210983fb8f310b9f75eef98))
+
 ## [2.6.0](https://github.com/debionetwork/debio-customer-ui/compare/2.5.4...2.6.0) (2023-12-13)
 
 
