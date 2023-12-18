@@ -109,7 +109,7 @@ import CryptoJS from "crypto-js"
 import { queryDnaTestResults } from "@debionetwork/polkadot-provider"
 import { queryLabById } from "@debionetwork/polkadot-provider"
 import { generalDebounce } from "@/common/lib/utils"
-import { downloadFile, decryptFile, downloadDocumentFile, getIpfsMetaData } from "@/common/lib/pinata-proxy"
+import { downloadFile, decryptFile, downloadDocumentFile, getIpfsMetaData, downloadDocumentTestFile } from "@/common/lib/pinata-proxy"
 import { queryOrderDetailByOrderID, queryServiceById } from "@debionetwork/polkadot-provider"
 import { u8aToHex } from "@polkadot/util"
 import { submitRatingOrder, getRatingByOrderId } from "@/common/lib/api"
@@ -288,14 +288,13 @@ export default {
             const { rows } = await getIpfsMetaData(links[i].split("/").pop())
             const { type, data } = await downloadFile(links[i], true)
             const decryptedFile = decryptFile([data], pair, type)
-            fileChunks = [...fileChunks, ...(decryptedFile ? decryptedFile : [])]
+            fileChunks = fileChunks.concat(decryptedFile)
             fileType = type
             if (i === 0) {
               name = rows             
             }         
           }
-          const unit8arrays = new Uint8Array(fileChunks)
-          await downloadDocumentFile(unit8arrays, name[0].metadata.name, fileType)
+          await downloadDocumentTestFile(fileChunks, name[0].metadata.name, fileType)
 
         }
         else {

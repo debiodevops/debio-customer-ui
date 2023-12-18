@@ -105,3 +105,17 @@ export const downloadDocumentFile = (data, fileName, type) => {
     console.error(error)
   }
 }
+
+export const downloadDocumentTestFile = (data, fileName, type) => {
+  try {
+    const blob = new Blob(data, { type });
+    const a = document.createElement("a");
+
+    a.download = fileName;
+    a.href = window.URL.createObjectURL(blob);
+    a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
+    a.click()
+  } catch (error) {
+    console.error(error)
+  }
+}
