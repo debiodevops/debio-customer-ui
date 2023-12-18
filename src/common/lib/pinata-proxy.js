@@ -92,17 +92,32 @@ export const decryptFile = (obj, pair) => {
   else return decryptedFile
 }
 
-export const downloadDocumentFile = (data, fileName, type) => {
-  try {
-    const blob = new Blob([data], { type });
-    const a = document.createElement("a");
+export const downloadDocumentFile = (data, fileName, type, array=false) => {
+  if (array === true) {
+    try {
+      const blob = new Blob(data, { type });
+      const a = document.createElement("a");
+  
+      a.download = fileName;
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
+      a.click()
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  else {
+    try {
+      const blob = new Blob([data], { type });
+      const a = document.createElement("a");
 
-    a.download = fileName;
-    a.href = window.URL.createObjectURL(blob);
-    a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
-    a.click()
-  } catch (error) {
-    console.error(error)
+      a.download = fileName;
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
+      a.click()
+    } catch (error) {
+      console.error(error)
+    }
   }
 }
 
