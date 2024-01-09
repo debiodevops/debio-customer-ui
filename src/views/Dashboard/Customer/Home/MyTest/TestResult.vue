@@ -98,6 +98,8 @@ v-container
   )
   DownloadingDialog(
     :show="resultLoading"
+    :chunks="chunks"
+    :totalChunks="totalChunks"
   )
 
 </template>
@@ -149,7 +151,9 @@ export default {
     resultLoading: false,
     showModal: false,
     showModalRating: false,
-    files: []
+    files: [],
+    chunks:0,
+    totalChunks:0
   }),
 
   computed: {
@@ -284,6 +288,7 @@ export default {
 
         if (/^\[/.test(path)) {
           const links = JSON.parse(path);
+          this.totalChunks = links.length
           for (let i = 0; i < links.length; i++) {
             const { rows } = await getIpfsMetaData(links[i].split("/").pop())
             const { type, data } = await downloadFile(links[i], true)
@@ -292,9 +297,12 @@ export default {
             fileType = type
             if (i === 0) {
               name = rows             
-            }         
+            }
+            this.chunks +=1 ;     
           }
-          await downloadDocumentFile(fileChunks, name[0].metadata.name, fileType, true)
+
+          await downloadDocumentFile(fileChunks, name[0].metadata.name, fileType, true);
+          this.chunks = 0;
 
         }
         else {

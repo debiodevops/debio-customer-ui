@@ -6,6 +6,7 @@
 
         v-card-text
           .dialog-uploading__title Download in progress...
+          .dialog-uploading__title {{ chunks }} of {{ totalChunks }} chunks
 
           .dialog-uploading__card-loading
             SpinnerLoader(
@@ -35,7 +36,9 @@ export default {
   },
 
   props: {
-    show: Boolean
+    show: Boolean,
+    chunks: Number,
+    totalChunks: Number
   }
 }
 </script>

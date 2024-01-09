@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.6.2](https://github.com/debionetwork/debio-customer-ui/compare/2.6.1...2.6.2) (2023-12-18)
+
+
+### Bug Fixes
+
+* download test file ([#936](https://github.com/debionetwork/debio-customer-ui/issues/936)) ([5d3a9d9](https://github.com/debionetwork/debio-customer-ui/commit/5d3a9d97e63dbe5f6625d527db0030a67c04f8b2))
+* raw data download ([#937](https://github.com/debionetwork/debio-customer-ui/issues/937)) ([e4afa16](https://github.com/debionetwork/debio-customer-ui/commit/e4afa162d0eae10b65f23b95402e1659b6a05c8d))
+
+
+### Reverts
+
+* parse url in description ([#934](https://github.com/debionetwork/debio-customer-ui/issues/934)) ([225450e](https://github.com/debionetwork/debio-customer-ui/commit/225450ee0fc2fb64fdc42398ad7304979fb14426))
+
 ## [2.6.1](https://github.com/debionetwork/debio-customer-ui/compare/2.6.0...2.6.1) (2023-12-13)
 
 
