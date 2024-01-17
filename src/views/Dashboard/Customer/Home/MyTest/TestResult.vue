@@ -339,9 +339,11 @@ export default {
             if (i === 0) {
               name = rows
             }
+            this.chunks +=1 ;
             
           }
           await downloadDocumentFile(fileChunks, name[0].metadata.name, fileType, true)
+          this.chunks = 0;
 
         }
         else {
