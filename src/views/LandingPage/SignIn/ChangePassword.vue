@@ -94,7 +94,7 @@ export default {
     passwordRules() {
       return [
         val => !!val || errorMessage.REQUIRED,
-        val => (val && val.length >= 8) && /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(val) || errorMessage.PASSWORD(8, " UPPER/lowercase characters, number and special character in (!@#$%^&*)")
+        val => (val && val.length >= 8) && /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W])[A-Za-z\d\W]{8,}$/.test(val) || errorMessage.PASSWORD(8, " UPPER/lowercase characters, number and special character in (!@#$%^&*)")
       ]
     },
 

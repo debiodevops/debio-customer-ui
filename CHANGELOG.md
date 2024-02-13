@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.6.3](https://github.com/debionetwork/debio-customer-ui/compare/2.6.2...2.6.3) (2024-01-17)
+
+
+### Bug Fixes
+
+* add chunks progress in download dialog ([#940](https://github.com/debionetwork/debio-customer-ui/issues/940)) ([8c4148c](https://github.com/debionetwork/debio-customer-ui/commit/8c4148c358b755a8d281e45ba54e4013c7c0278e))
+* chunks progress in download ([#945](https://github.com/debionetwork/debio-customer-ui/issues/945)) ([bbfe0e1](https://github.com/debionetwork/debio-customer-ui/commit/bbfe0e1e70f8348b07c6cdd92348e3691b13e3c0))
+
 ## [2.6.2](https://github.com/debionetwork/debio-customer-ui/compare/2.6.1...2.6.2) (2023-12-18)
 
 
