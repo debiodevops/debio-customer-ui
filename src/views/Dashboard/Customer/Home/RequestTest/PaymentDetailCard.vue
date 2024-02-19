@@ -34,8 +34,6 @@ v-container.container-card
         | {{ dataService.totalPrice }} 
         | {{ formatUSDTE(dataService.currency)}}
 
-    .menu-card__rate ( {{ this.usdRate }} USD )
-
     .menu-card__details.mt-5(v-if="$route.name === 'customer-request-test-checkout'")
       .menu-card__trans-weight Estimated Transaction Weight
         v-tooltip.visible(bottom)
@@ -171,7 +169,7 @@ import {
   setOrderPaidFee,
   setOrderPaid
 } from "@/common/lib/polkadot-provider/command/order";
-import { getConversion, getOrderDetail } from "@/common/lib/api";
+import { getOrderDetail } from "@/common/lib/api";
 import { getDNACollectionProcess } from "@/common/lib/api";
 import { errorHandler } from "@/common/lib/error-handler";
 import { createOrder } from "@/common/lib/polkadot-provider/command/order";
@@ -239,7 +237,7 @@ export default {
       }
     }
 
-    await this.getUsdRate();
+    // await this.getUsdRate();
     await this.calculateTxWeight();
   },
 
@@ -298,11 +296,11 @@ export default {
 
       if (event.method === "ServiceRequestUpdated")
         this.$router.push({ name: "customer-request-test-success" });
-    },
-
-    dataService(val) {
-      if (val) this.getUsdRate();
     }
+
+    // dataService(val) {
+    //   if (val) this.getUsdRate();
+    // }
   },
 
   methods: {
@@ -336,21 +334,6 @@ export default {
         this.stakingData.hash,
         event.id
       );
-    },
-
-    async getUsdRate() {
-      this.fetching = true;
-      let totalPrice;
-
-      if (this.$route.params.id) {
-        totalPrice = this.dataService.totalPrice;
-      } else {
-        totalPrice = this.dataService.totalPrice.split(",").join("");
-      }
-
-      this.rate = await getConversion(this.dataService.currency, "USD");
-      this.usdRate = Number(this.rate.conversion * totalPrice).toFixed(4);
-      this.fetching = false;
     },
 
     toPaymentHistory() {

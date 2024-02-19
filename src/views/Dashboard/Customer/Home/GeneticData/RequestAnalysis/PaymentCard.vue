@@ -67,7 +67,6 @@
         .customer-analysis-payment-card__amount
           .customer-analysis-payment-card__data-text Total Price
           .customer-analysis-payment-card__data-text.mt-3 {{ totalPrice }} {{ formatUSDTE(orderCurrency) }}
-        .customer-analysis-payment-card__rate ({{ totalPriceInUsd }} USD )
 
         .customer-analysis-payment-card__button
           ui-debio-button.customer-analysis-payment-card__button-text(
@@ -272,7 +271,19 @@ export default {
         return
       }
 
-      this.rate = await getConversion(this.orderCurrency, "USD")
+      if (this.orderCurrency?.toUpperCase() === "USDTE") {
+        this.rate = {conversion : 1.000}
+        return
+      }
+
+      try {
+        this.rate = await getConversion(this.orderCurrency, "USD")
+      }
+      catch(error) {
+        this.rate = {conversion : 1.000}
+      }
+
+      
 
     },
 

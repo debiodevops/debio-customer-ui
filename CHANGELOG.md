@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.6.4](https://github.com/debionetwork/debio-customer-ui/compare/2.6.3...2.6.4) (2024-02-13)
+
+
+### Bug Fixes
+
+* password ([a1d87db](https://github.com/debionetwork/debio-customer-ui/commit/a1d87db5927be5adb2c6140e3838394937c72318))
+* some special character not accepted in password field ([#954](https://github.com/debionetwork/debio-customer-ui/issues/954)) ([a1d87db](https://github.com/debionetwork/debio-customer-ui/commit/a1d87db5927be5adb2c6140e3838394937c72318))
+
 ## [2.6.3](https://github.com/debionetwork/debio-customer-ui/compare/2.6.2...2.6.3) (2024-01-17)
 
 
