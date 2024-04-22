@@ -1,10 +1,9 @@
-import store from "@/store"
-const web3 = store.getters["metamask/getWeb3"]
+import Web3 from "web3"
 
 export function formatPrice(price, currency) {
   let unit
   currency === "USDT" || currency === "USDTE" || currency === "USDTE" ? unit = "mwei" : unit = "ether"
-  const formatedPrice = web3.utils.fromWei(String(price.replaceAll(",", "")), unit)
+  const formatedPrice = Web3.utils.fromWei(String(price.replaceAll(",", "")), unit)
   return Number(formatedPrice).toLocaleString("en-US")
 }
 

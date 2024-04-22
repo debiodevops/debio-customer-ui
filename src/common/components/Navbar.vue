@@ -137,6 +137,7 @@ import {
 } from "@debionetwork/ui-icons";
 
 import localStorage from "@/common/lib/local-storage";
+import Web3 from "web3"
 import { generalDebounce } from "@/common/lib/utils";
 import { queryAccountBalance } from "@debionetwork/polkadot-provider";
 import { setReadNotification } from "@/common/lib/api";
@@ -367,10 +368,11 @@ export default {
           const data = this.octopusAsset.find(
             (a) => a.name === wallet.name || a.tokenId === wallet.tokenId
           );
+          console.log("Data is ", data)
           wallet.id = data.id;
           if (!data) return;
           if (data.data) {
-            wallet.balance = this.web3.utils.fromWei(
+            wallet.balance = Web3.utils.fromWei(
               data.data.balance.replaceAll(",", ""),
               wallet.unit
             );

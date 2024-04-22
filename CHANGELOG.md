@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.5](https://github.com/debionetwork/debio-customer-ui/compare/2.6.4...2.6.5) (2024-02-19)
+
+
+### Bug Fixes
+
+* payment ([#957](https://github.com/debionetwork/debio-customer-ui/issues/957)) ([32be7d4](https://github.com/debionetwork/debio-customer-ui/commit/32be7d4f7f5caa730930e93041d00892c93713ba))
+
 ## [2.6.4](https://github.com/debionetwork/debio-customer-ui/compare/2.6.3...2.6.4) (2024-02-13)
 
 
