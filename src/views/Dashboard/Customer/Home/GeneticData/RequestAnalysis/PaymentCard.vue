@@ -110,6 +110,7 @@ import {
   cancelGeneticAnalysisOrderFee } from "@debionetwork/polkadot-provider"
 import { setGeneticAnalysisPaid } from "@/common/lib/polkadot-provider/command/genetic-analysis-orders"
 import { formatUSDTE } from "@/common/lib/price-format.js"
+import Web3 from "web3"
 
 
 export default {
@@ -151,8 +152,7 @@ export default {
       wallet: (state) => state.substrate.wallet,
       walletBalance: (state) => state.substrate.walletBalance,
       usdtBalance: (state) => state.substrate.usdtBalance,
-      lastEventData: (state) => state.substrate.lastEventData,
-      web3: (state) => state.metamask.web3
+      lastEventData: (state) => state.substrate.lastEventData
     }),
 
     setStyleColor() {
@@ -247,13 +247,13 @@ export default {
       let unit
       currency === "USDT" || currency === "USDT.e" ?unit = "mwei" : unit = "ether"
 
-      const formatedBalance = this.web3.utils.fromWei(String(val.replaceAll(",", "")), unit)
+      const formatedBalance = Web3.utils.fromWei(String(val.replaceAll(",", "")), unit)
       return Number(formatedBalance).toLocaleString("en-US")
     },
 
     formatPriceInUsd(val) {
       const priceInUsd = Number(val.replaceAll(",", ""))
-      const formatedBalance = this.web3.utils.fromWei(String(priceInUsd), "mwei")
+      const formatedBalance = Web3.utils.fromWei(String(priceInUsd), "mwei")
       return Number(formatedBalance * this.rate.conversion).toFixed(4)
     },
 
@@ -301,7 +301,7 @@ export default {
     async getCancelOrderFee() {
       const txWeight = await cancelGeneticAnalysisOrderFee(this.api, this.wallet, this.orderId)
     
-      this.txWeight = this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
+      this.txWeight = Web3.utils.fromWei(String(txWeight.partialFee), "ether")
       this.showCancelDialog = true
     },
 

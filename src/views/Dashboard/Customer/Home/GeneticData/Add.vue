@@ -136,6 +136,7 @@ import { errorHandler } from "@/common/lib/error-handler"
 import UploadingDialog from "@/common/components/Dialog/UploadingDialog"
 import { downloadFile, uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
 import store from "@/store"
+import Web3 from "web3"
 
 
 
@@ -177,8 +178,7 @@ export default {
       wallet: (state) => state.substrate.wallet,
       walletBalance: (state) => state.substrate.walletBalance,
       mnemonicData: (state) => state.substrate.mnemonicData,
-      lastEventData: (state) => state.substrate.lastEventData,
-      web3: (state) => state.metamask.web3
+      lastEventData: (state) => state.substrate.lastEventData
     }),
     disable() {
       const { title, description, file } = this.document
@@ -483,7 +483,7 @@ export default {
     },
 
     formatTxWeight(num) {
-      const res = this.web3.utils.fromWei(String(num), "ether")
+      const res = Web3.utils.fromWei(String(num), "ether")
       return `${(Number(res) + 0.0081).toFixed(4)} DBIO`
     },
 

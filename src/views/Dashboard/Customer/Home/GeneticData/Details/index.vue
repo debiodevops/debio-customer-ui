@@ -43,6 +43,7 @@ import { getOrderDetail } from "@/common/lib/api"
 import { queryGeneticAnalysisByGeneticAnalysisTrackingId } from "@debionetwork/polkadot-provider"
 import { cancelGeneticAnalysisOrder, cancelGeneticAnalysisOrderFee } from "@debionetwork/polkadot-provider"
 import { formatPrice } from "@/common/lib/price-format.js"
+import Web3 from "web3"
 
 export default {
   name: "GAOrderDetail",
@@ -58,8 +59,7 @@ export default {
     ...mapState({
       api: (state) => state.substrate.api,
       lastEventData: (state) => state.substrate.lastEventData,
-      wallet: (state) => state.substrate.wallet,
-      web3: (state) => state.metamask.web3
+      wallet: (state) => state.substrate.wallet
     })
   },
 
@@ -130,7 +130,7 @@ export default {
 
     async getCancelFee() {
       const txWeight = await cancelGeneticAnalysisOrderFee(this.api, this.wallet, this.orderId)
-      this.txWeight = this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
+      this.txWeight = Web3.utils.fromWei(String(txWeight.partialFee), "ether")
     },
 
     async cancelOrder() {

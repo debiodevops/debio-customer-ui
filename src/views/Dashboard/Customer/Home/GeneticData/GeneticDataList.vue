@@ -48,6 +48,7 @@ import { pencilIcon, trashIcon } from "@debionetwork/ui-icons"
 import { queryGeneticDataByOwnerId, removeGeneticData, removeGeneticDataFee} from "@debionetwork/polkadot-provider"
 import { errorHandler } from "@/common/lib/error-handler"
 import ConfirmationDialog from "@/common/components/Dialog/ConfirmationDialog"
+import Web3 from "web3"
 
 
 export default {
@@ -61,8 +62,7 @@ export default {
     ...mapState({
       api: (state) => state.substrate.api,
       wallet: (state) => state.substrate.wallet,
-      lastEventData: (state) => state.substrate.lastEventData,
-      web3: (state) => state.metamask.web3
+      lastEventData: (state) => state.substrate.lastEventData
     })
   },
 
@@ -171,7 +171,7 @@ export default {
 
     async getRemoveDataFee() {
       const txWeight = await removeGeneticDataFee(this.api, this.wallet, this.selectedDataId)
-      this.txWeight = this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
+      this.txWeight = Web3.utils.fromWei(String(txWeight.partialFee), "ether")
     },
 
     async confirmedDelete() {
