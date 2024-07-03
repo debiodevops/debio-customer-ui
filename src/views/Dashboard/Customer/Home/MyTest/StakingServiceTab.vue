@@ -7,7 +7,7 @@
     )
       template(v-slot:[`item.id`]="{ item }")
         .customer-staking-tab__id
-          div {{ formatId(item.request.hash) }}
+          div {{ "N/A" }}
 
       template(v-slot:[`item.country`]="{ item }")
         .customer-staking-tab__country
@@ -105,6 +105,7 @@ import { queryLastOrderHashByCustomer, queryServiceById, queryLabById, queryOrde
 import { fmtReferenceFromHex } from "@/common/lib/string-format"
 import { queryGetServiceOfferById } from "@/common/lib/polkadot-provider/query/service-request"
 import { formatPrice } from "@/common/lib/price-format"
+import Web3 from "web3"
 
 
 export default {
@@ -229,7 +230,7 @@ export default {
     },
 
     setAmount(amount) {
-      const formatedAmount = this.web3.utils.fromWei(String(amount.replaceAll(",", "")), "ether")
+      const formatedAmount = Web3.utils.fromWei(String(amount.replaceAll(",", "")), "ether")
       return formatedAmount
     },
 
