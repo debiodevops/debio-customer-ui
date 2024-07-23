@@ -34,7 +34,6 @@ export default {
   computed: {
     ...mapState({
       api: (state) => state.substrate.api,
-      web3: (state) => state.metamask.web3,
       dataService: (state) => state.testRequest.products
     })
   },

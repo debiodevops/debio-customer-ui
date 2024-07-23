@@ -86,7 +86,6 @@ export default {
   computed: {
     ...mapState({
       api: (state) => state.substrate.api,
-      web3: (state) => state.metamask.web3,
       wallet: (state) => state.substrate.wallet,
       country: (state) => state.lab.country,
       city: (state) => state.lab.city,

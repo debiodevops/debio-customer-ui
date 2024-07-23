@@ -112,7 +112,6 @@ import { setGeneticAnalysisPaid } from "@/common/lib/polkadot-provider/command/g
 import { formatUSDTE } from "@/common/lib/price-format.js"
 import Web3 from "web3"
 
-
 export default {
   name: "PaymentCard",
 
@@ -246,6 +245,7 @@ export default {
     formatBalance(val, currency) {
       let unit
       currency === "USDT" || currency === "USDT.e" ?unit = "mwei" : unit = "ether"
+
 
       const formatedBalance = Web3.utils.fromWei(String(val.replaceAll(",", "")), unit)
       return Number(formatedBalance).toLocaleString("en-US")

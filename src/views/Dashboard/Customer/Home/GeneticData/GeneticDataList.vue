@@ -48,6 +48,7 @@ import { pencilIcon, trashIcon } from "@debionetwork/ui-icons"
 import { queryGeneticDataByOwnerId, removeGeneticData, removeGeneticDataFee} from "@debionetwork/polkadot-provider"
 import { errorHandler } from "@/common/lib/error-handler"
 import ConfirmationDialog from "@/common/components/Dialog/ConfirmationDialog"
+
 import Web3 from "web3"
 
 

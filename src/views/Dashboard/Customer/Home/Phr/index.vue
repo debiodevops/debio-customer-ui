@@ -120,6 +120,7 @@ import CryptoJS from "crypto-js";
 import Kilt from "@kiltprotocol/sdk-js";
 import { u8aToHex } from "@polkadot/util";
 import { errorHandler } from "@/common/lib/error-handler";
+import Web3 from "web3"
 
 export default {
   name: "CustomerPHR",
@@ -187,8 +188,7 @@ export default {
       wallet: (state) => state.substrate.wallet,
       mnemonicData: (state) => state.substrate.mnemonicData,
       lastEventData: (state) => state.substrate.lastEventData,
-      loadingData: (state) => state.auth.loadingData,
-      web3: (state) => state.metamask.web3
+      loadingData: (state) => state.auth.loadingData
     })
   },
 
@@ -329,7 +329,7 @@ export default {
         item.id
       );
       this.txWeight = `${Number(
-        this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
+        Web3.utils.fromWei(String(txWeight.partialFee), "ether")
       ).toFixed(4)} DBIO`;
     },
 

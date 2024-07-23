@@ -74,6 +74,7 @@ import {
   queryGeneticAnalystByAccountId, 
   queryGeneticAnalystQualificationsByHashId } from "@debionetwork/polkadot-provider"
 import ImportantDialog from "./Information.vue"
+import Web3 from "web3"
 
 export default {
   name: "SelectServiceAnalyst",
@@ -130,7 +131,7 @@ export default {
       const handleDescription = async (description) => {
         try {
           if (typeof description === "string" && description.startsWith("0x")) {
-            return this.web3.utils.hexToUtf8(description);
+            return Web3.utils.hexToUtf8(description);
           }
           const regex = /^(https:\/\/ipfs.debio.network\/ipfs\/)/;
           if (regex.test(description)) {

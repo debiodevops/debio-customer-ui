@@ -158,6 +158,7 @@ import errorMessage from "@/common/constants/error-messages"
 import {errorHandler} from "@/common/lib/error-handler"
 import { getLocations, getStates, getCities, getCategories } from "@/common/lib/api"
 import { alertIcon } from "@debionetwork/ui-icons"
+import Web3 from "web3"
 
 
 export default {
@@ -207,7 +208,6 @@ export default {
       setCity: (state) => state.lab.city,
       setCategory: (state) => state.lab.category,
       lastEventData: (state) => state.substrate.lastEventData,
-      web3: (state) => state.metamask.web3,
       walletBalance: (state) => state.substrate.walletBalance
     }),
 
@@ -230,7 +230,7 @@ export default {
     await this.getServiceCategory()
 
     const txWeight = await createRequestFee(this.api, this.pair, this.country, this.state, this.city, this.category)
-    this.txWeight = this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
+    this.txWeight = Web3.utils.fromWei(String(txWeight.partialFee), "ether")
   },
 
   watch: {

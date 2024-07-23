@@ -185,6 +185,7 @@ import {
 import { formatPrice } from "@/common/lib/price-format";
 import { generalDebounce } from "@/common/lib/utils";
 import { getConversion } from "@/common/lib/api";
+import Web3 from "web3"
 
 export default {
   name: "MenstrualCalendar",
@@ -255,7 +256,6 @@ export default {
     ...mapState({
       api: (state) => state.substrate.api,
       wallet: (state) => state.substrate.wallet,
-      web3: (state) => state.metamask.web3,
       lastEventData: (state) => state.substrate.lastEventData,
       walletBalance: (state) => state.substrate.walletBalance
     })
@@ -416,7 +416,7 @@ export default {
         this.subscription.currency
       );
       this.txWeight = `${Number(
-        this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
+        Web3.utils.fromWei(String(txWeight.partialFee), "ether")
       ).toFixed(8)} DBIO`;
     },
 
