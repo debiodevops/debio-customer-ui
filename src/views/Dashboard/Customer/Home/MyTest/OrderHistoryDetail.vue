@@ -214,8 +214,7 @@ export default {
 
   computed: {
     ...mapState({
-      api: (state) => state.substrate.api,
-      web3: (state) => state.metamask.web3
+      api: (state) => state.substrate.api
     }),
 
     computeDifferenceAmount() {

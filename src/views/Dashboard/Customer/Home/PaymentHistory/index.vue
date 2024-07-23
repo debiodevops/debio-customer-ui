@@ -57,7 +57,6 @@ import { getOrderList } from "@/common/lib/api"
 import { formatPrice, formatUSDTE } from "@/common/lib/price-format.js"
 import { getMenstrualSubscriptionPrices } from "@/common/lib/polkadot-provider/query/menstrual-subscription"
 
-
 export default {
   name: "CustomerPaymentHistory",
 
@@ -81,7 +80,6 @@ export default {
   computed: {
     ...mapState({
       api: (state) => state.substrate.api,
-      web3: (state) => state.metamask.web3,
       lastEventData: (state) => state.substrate.lastEventData
     })
   },

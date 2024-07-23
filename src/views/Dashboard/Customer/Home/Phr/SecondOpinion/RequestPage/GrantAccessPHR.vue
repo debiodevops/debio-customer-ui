@@ -304,6 +304,7 @@ import { fileTextIcon, alertIcon, pencilIcon, trashIcon, eyeOffIcon, eyeIcon } f
 import { web3Enable, web3Accounts, web3FromAddress } from "@polkadot/extension-dapp"
 import localStorage from "@/common/lib/local-storage"
 import getEnv from "@/common/lib/utils/env"
+import Web3 from "web3"
 
 
 const englishAlphabet = val => (val && /^[A-Za-z0-9!@#$%^&*\\(\\)\-_=+:;"',.\\/? ]+$/.test(val)) || errorMessage.INPUT_CHARACTER("English alphabet")
@@ -378,7 +379,6 @@ export default {
       wallet: (state) => state.substrate.wallet,
       lastEventData: (state) => state.substrate.lastEventData,
       mnemonicData: (state) => state.substrate.mnemonicData,
-      web3: (state) => state.metamask.web3,
       walletBalance: (state) => state.substrate.walletBalance
     }),
 
@@ -428,7 +428,7 @@ export default {
         this.txWeight = "Calculating..."
 
         const txWeight = await registerElectronicMedicalRecordFee(this.api, this.wallet, val)
-        this.txWeight = `${Number(this.web3.utils.fromWei(String(txWeight.partialFee), "ether")).toFixed(4)} DBIO`
+        this.txWeight = `${Number(Web3.utils.fromWei(String(txWeight.partialFee), "ether")).toFixed(4)} DBIO`
       }, 500)
     }
   },

@@ -193,6 +193,7 @@ import { queryDnaSamples, queryDnaTestResults, unstakeRequest, unstakeRequestFee
 import { getDNACollectionProcess } from "@/common/lib/api"
 import { ORDER_STATUS_DETAIL } from "@/common/constants/status"
 import PaymentDialog from "@/common/components/Dialog/PaymentDialog"
+import Web3 from "web3"
 
 export default {
   name: "MyTest",
@@ -244,8 +245,7 @@ export default {
       wallet: (state) => state.substrate.wallet,
       lastEventData: (state) => state.substrate.lastEventData,
       mnemonicData: (state) => state.substrate.mnemonicData,
-      stakingId: (state) => state.lab.stakingId,
-      web3: (state) => state.metamask.web3
+      stakingId: (state) => state.lab.stakingId
     }),
 
     userAddress() {
@@ -305,7 +305,7 @@ export default {
 
     await this.fetchOrderList()
     const txWeight = await unstakeRequestFee(this.api, this.wallet, this.stakingId)
-    this.txWeight = this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
+    this.txWeight = Web3.utils.fromWei(String(txWeight.partialFee), "ether")
   },
 
   async created() {

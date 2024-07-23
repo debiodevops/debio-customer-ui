@@ -73,6 +73,7 @@ import Kilt from "@kiltprotocol/sdk-js"
 import { u8aToHex } from "@polkadot/util"
 import { queryLastOrderHashByCustomer } from "@debionetwork/polkadot-provider"
 import { createOrder } from "@/common/lib/polkadot-provider/command/order.js"
+import Web3 from "web3"
 
 export default {
   name: "ServiceDetailDialog",
@@ -100,7 +101,6 @@ export default {
       mnemonicData: (state) => state.substrate.mnemonicData,
       stakingData: (state) => state.lab.stakingData,
       selectedService: (state) => state.testRequest.products,
-      web3: (state) => state.metamask.web3,
       polkadotWallet: (state) => state.substrate.polkadotWallet,
       lastEventData: (state) => state.substrate.lastEventData,
       usnBalance: (state) => state.substrate.usnBalance,
@@ -114,8 +114,8 @@ export default {
     computeLongDescription() {
       if (this.selectedService.longDescription) {
         const description = this.selectedService.longDescription.split("||")[0]
-        if (this.web3.utils.isHex(description)) {
-          return this.web3.utils.hexToUtf8(description)
+        if (Web3.utils.isHex(description)) {
+          return Web3.utils.hexToUtf8(description)
         }
         return description
       }
@@ -191,8 +191,8 @@ export default {
       //   console.log("data is", orders.data)
       //   const handleDescription = async (service) => {
       //     const description = service.longDescription.split("||")[0];
-      //     if (this.web3.utils.isHex(description)) {
-      //       return this.web3.utils.hexToUtf8(description);
+      //     if (Web3.utils.isHex(description)) {
+      //       return Web3.utils.hexToUtf8(description);
       //     }
       //     const regex = /^(https:\/\/ipfs.debio.network\/ipfs\/)/;
       //     if (regex.test(description)) {

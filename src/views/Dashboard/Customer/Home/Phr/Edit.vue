@@ -215,7 +215,7 @@ import {
   updateElectronicMedicalRecord,
   registerElectronicMedicalRecordFee
 } from "@debionetwork/polkadot-provider";
-
+import Web3 from "web3"
 import {
   uploadFile,
   getFileUrl,
@@ -291,7 +291,6 @@ export default {
       wallet: (state) => state.substrate.wallet,
       lastEventData: (state) => state.substrate.lastEventData,
       mnemonicData: (state) => state.substrate.mnemonicData,
-      web3: (state) => state.metamask.web3,
       walletBalance: (state) => state.substrate.walletBalance
     }),
 
@@ -599,7 +598,7 @@ export default {
         this.phr
       );
       this.txWeight = `${Number(
-        this.web3.utils.fromWei(String(txWeight.partialFee), "ether")
+        Web3.utils.fromWei(String(txWeight.partialFee), "ether")
       ).toFixed(4)} DBIO`;
     },
 

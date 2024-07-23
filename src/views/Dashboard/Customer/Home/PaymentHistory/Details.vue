@@ -106,7 +106,7 @@ import { mapState } from "vuex"
 import getEnv from "@/common/lib/utils/env"
 import { formatUSDTE } from "@/common/lib/price-format.js"
 import { getMenstrualSubscriptionById, getMenstrualSubscriptionPrices} from "@/common/lib/polkadot-provider/query/menstrual-subscription";
-
+import Web3 from "web3"
 
 // NOTE: Use anchor tag with "noreferrer noopener nofollow" for security
 let timeout
@@ -130,8 +130,7 @@ export default {
     ...mapState({
       api: (state) => state.substrate.api,
       rating: (state) => state.rating.rate,
-      lastEventData: (state) => state.substrate.lastEventData,
-      web3: (state) => state.metamask.web3
+      lastEventData: (state) => state.substrate.lastEventData
     }),
 
     computeProviderName() {
@@ -311,7 +310,7 @@ export default {
     formatPrice(price, currency) {
       let unit
       currency === "USDT" || currency === "USDTE" ? unit = "mwei" : unit = "ether"
-      const formatedPrice = this.web3.utils.fromWei(String(price.replaceAll(",", "")), unit)
+      const formatedPrice = Web3.utils.fromWei(String(price.replaceAll(",", "")), unit)
       return parseFloat(formatedPrice)
     },
 

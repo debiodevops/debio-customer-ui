@@ -206,6 +206,7 @@ import { generalDebounce } from "@/common/lib/utils"
 import errorMessage from "@/common/constants/error-messages"
 import { uploadFile, getFileUrl } from "@/common/lib/pinata-proxy"
 import { fileTextIcon, alertIcon, pencilIcon, trashIcon, eyeOffIcon, eyeIcon } from "@debionetwork/ui-icons"
+import Web3 from "web3"
 
 const englishAlphabet = val => (val && /^[A-Za-z0-9!@#$%^&*\\(\\)\-_=+:;"',.\\/? ]+$/.test(val)) || errorMessage.INPUT_CHARACTER("English alphabet")
 
@@ -256,7 +257,6 @@ export default {
       wallet: (state) => state.substrate.wallet,
       lastEventData: (state) => state.substrate.lastEventData,
       mnemonicData: (state) => state.substrate.mnemonicData,
-      web3: (state) => state.metamask.web3,
       walletBalance: (state) => state.substrate.walletBalance
     }),
 
@@ -298,7 +298,7 @@ export default {
         this.txWeight = "Calculating..."
 
         const txWeight = await registerElectronicMedicalRecordFee(this.api, this.wallet, val)
-        this.txWeight = `${Number(this.web3.utils.fromWei(String(txWeight.partialFee), "ether")).toFixed(4)} DBIO`
+        this.txWeight = `${Number(Web3.utils.fromWei(String(txWeight.partialFee), "ether")).toFixed(4)} DBIO`
       }, 500)
     }
   },

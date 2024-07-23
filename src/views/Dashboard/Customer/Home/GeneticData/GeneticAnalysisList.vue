@@ -57,7 +57,6 @@ export default {
       api: (state) => state.substrate.api,
       wallet: (state) => state.substrate.wallet,
       lastEventData: (state) => state.substrate.lastEventData,
-      web3: (state) => state.metamask.web3,
       mnemonicData: (state) => state.substrate.mnemonicData
     })
   },

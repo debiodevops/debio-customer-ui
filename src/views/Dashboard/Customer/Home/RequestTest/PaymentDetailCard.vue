@@ -176,6 +176,7 @@ import { createOrder } from "@/common/lib/polkadot-provider/command/order";
 import { formatUSDTE } from "@/common/lib/price-format.js";
 import { processRequest } from "@/common/lib/polkadot-provider/command/service-request";
 import PaymentDialog from "@/common/components/Dialog/PaymentDialog"
+import Web3 from "web3"
 export default {
   name: "PaymentDetailCard",
 
@@ -249,7 +250,6 @@ export default {
       dataService: (state) => state.testRequest.products,
       metamaskWalletAddress: (state) => state.metamask.metamaskWalletAddress,
       stakingData: (state) => state.lab.stakingData,
-      web3: (state) => state.metamask.web3,
       lastEventData: (state) => state.substrate.lastEventData,
       usdtBalance: (state) => state.substrate.usdtBalance,
       polkadotWallet: (state) => state.substrate.polkadotWallet
@@ -321,7 +321,7 @@ export default {
         this.wallet,
         this.dataService.serviceId
       );
-      this.txWeight = this.web3.utils.fromWei(
+      this.txWeight = Web3.utils.fromWei(
         String(txWeight.partialFee),
         "ether"
       );
